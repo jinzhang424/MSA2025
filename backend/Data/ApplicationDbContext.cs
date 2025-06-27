@@ -9,6 +9,6 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<User>().HasKey(u => u.Id); // Explicitly set Id as the primary key
+        modelBuilder.Entity<User>().HasKey(u => u.UserId); // Explicitly set Id as the primary key
     }
 }
