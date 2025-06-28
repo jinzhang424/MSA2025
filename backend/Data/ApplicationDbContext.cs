@@ -21,7 +21,7 @@ public class ApplicationDbContext : DbContext
             .HasKey(c => c.ChatroomId);
 
         modelBuilder.Entity<Message>()
-            .HasKey(m => new { m.SenderId, m.ChatroomId });
+            .HasKey(m => m.MessageId);
 
         modelBuilder.Entity<ChatroomUser>()
             .HasKey(cu => new { cu.UserId, cu.ChatroomId });
