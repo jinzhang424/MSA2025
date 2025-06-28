@@ -5,6 +5,6 @@ public class User
     public string Email { get; set; } = null!;
     public string PasswordHash { get; set; } = null!;
 
-    public ICollection<UserChatroom> UserChatrooms { get; set; } = [];
+    public ICollection<ChatroomUser> ChatroomUsers { get; set; } = [];
     public ICollection<Message> Messages { get; set; } = [];
 }
