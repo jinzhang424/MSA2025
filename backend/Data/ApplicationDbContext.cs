@@ -6,8 +6,10 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Chatroom> Chatrooms { get; set; }
+    public DbSet<ChatroomUser> ChatroomUser { get; set; }
     public DbSet<Message> Messages { get; set; }
-    public DbSet<ChatroomUser> ChatroomUser { get; set; } 
+    public DbSet<Project> Projects { get; set; }
+    public DbSet<ProjectMember> ProjectMmembers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,5 +50,16 @@ public class ApplicationDbContext : DbContext
             .HasOne(m => m.Chatroom)
             .WithMany(c => c.Messages)
             .HasForeignKey(m => m.ChatroomId);
+
+        // Creating a many-to-many relationship between users and projects
+        modelBuilder.Entity<ProjectMember>()
+            .HasOne(pm => pm.User)
+            .WithMany(u => u.ProjectMembers)
+            .HasForeignKey(pm => pm.UserId);
+
+        modelBuilder.Entity<ProjectMember>()
+            .HasOne(pm => pm.Project)
+            .WithMany(p => p.ProjectMembers)
+            .HasForeignKey(pm => pm.ProjectId);
     }
 }
