@@ -10,6 +10,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<ProjectMember> ProjectMmembers { get; set; }
+    public DbSet<ProjectWaitingList> ProjectWaitingList { get; set; }
+    public DbSet<ProjectWaitingListUser> ProjectWaitingListUser { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,6 +29,12 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<ChatroomUser>()
             .HasKey(cu => new { cu.UserId, cu.ChatroomId });
+
+        modelBuilder.Entity<ProjectWaitingList>()
+            .HasKey(pwl => pwl.ProjectId);
+
+        modelBuilder.Entity<ProjectWaitingListUser>()
+            .HasKey(pwu => new { pwu.ProjectId, pwu.UserId });
 
         // Creating the many to many relationship between User and Chatroom
         modelBuilder.Entity<ChatroomUser>()
@@ -61,5 +69,22 @@ public class ApplicationDbContext : DbContext
             .HasOne(pm => pm.Project)
             .WithMany(p => p.ProjectMembers)
             .HasForeignKey(pm => pm.ProjectId);
+
+        // Creating a one-to-one relationship between a project and a project waiting list
+        modelBuilder.Entity<Project>()
+        .HasOne(p => p.ProjectWaitingList)
+        .WithOne(pwl => pwl.Project)
+        .HasForeignKey<ProjectWaitingList>(pwl => pwl.ProjectId);
+
+        // Creating a many-to-many relationship between a project waiting list and user
+        modelBuilder.Entity<ProjectWaitingListUser>()
+            .HasOne(pwl => pwl.User)
+            .WithMany(u => u.WaitingListUsers)
+            .HasForeignKey(pwl => pwl.UserId);
+
+        modelBuilder.Entity<ProjectWaitingListUser>()
+            .HasOne(pwl => pwl.ProjectWaitingList)
+            .WithMany(p => p.WaitingListUsers)
+            .HasForeignKey(pwl => pwl.ProjectId);
     }
 }
