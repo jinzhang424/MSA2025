@@ -30,6 +30,9 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ChatroomUser>()
             .HasKey(cu => new { cu.UserId, cu.ChatroomId });
 
+        modelBuilder.Entity<ProjectMember>()
+            .HasKey(pm => new { pm.UserId, pm.ProjectId });
+
         modelBuilder.Entity<ProjectWaitingList>()
             .HasKey(pwl => pwl.ProjectId);
 
