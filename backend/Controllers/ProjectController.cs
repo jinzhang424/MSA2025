@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,20 +9,23 @@ using Microsoft.EntityFrameworkCore;
 public class ProjectController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly JwtTokenService _jwtService;
 
-    public ProjectController(ApplicationDbContext context)
+    public ProjectController(ApplicationDbContext context, JwtTokenService jwtService)
     {
         _context = context;
+        _jwtService = jwtService;
     }
 
-    [HttpPost("CreateProject/{userId}")]
-    public async Task<IActionResult> CreateProject([FromBody] ProjectDto projectDto, int userId)
+    [Authorize]
+    [HttpPost("CreateProject")]
+    public async Task<IActionResult> CreateProject([FromBody] ProjectDto projectDto)
     {
         // Prevent unauthorized users from creating a project
-        var userExists = await _context.Users.AnyAsync(u => u.UserId == userId);
-        if (!userExists)
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
         {
-            return NotFound("User not found.");
+            return Unauthorized("Invalid token.");
         }
 
         var project = new Project
@@ -37,7 +42,7 @@ public class ProjectController : ControllerBase
         var projectMember = new ProjectMember
         {
             Role = "Owner",
-            UserId = userId,
+            UserId = int.Parse(userId),
             ProjectId = project.ProjectId
         };
 
@@ -54,9 +59,39 @@ public class ProjectController : ControllerBase
         return Ok(projects);
     }
 
+    [HttpGet("GetProject/{projectId}")]
+    public async Task<IActionResult> GetProject(int projectId)
+    {
+        var project = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
+        if (project == null)
+        {
+            return NotFound("Project not found");
+        }
+
+        return Ok(project);
+    }
+
+    [Authorize]
     [HttpDelete("DeleteProject/{projectId}")]
     public async Task<IActionResult> DeleteProject(int projectId)
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        var projectMember = await _context.ProjectMmembers
+            .FirstOrDefaultAsync(pm => pm.UserId == int.Parse(userId));
+        if (projectMember == null)
+        {
+            return NotFound("User not found");
+        }
+        else if (projectMember.Role != "Owner")
+        {
+            return Unauthorized("Only project owners can delete a project");
+        }
+
         var project = await _context.Projects.FirstOrDefaultAsync();
         if (project == null)
         {
@@ -69,9 +104,27 @@ public class ProjectController : ControllerBase
         return Ok("Successfully removed project");
     }
 
+    [Authorize]
     [HttpPatch("UpdateProjectDetails/{projectId}")]
     public async Task<IActionResult> UpdateProjectDetails([FromBody] ProjectDto projectDto, int projectId)
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return Unauthorized("Invalid Token");
+        }
+
+        var projectMember = await _context.ProjectMmembers
+            .FirstOrDefaultAsync(pm => pm.ProjectId == projectId && pm.UserId == int.Parse(userId));
+        if (projectMember == null)
+        {
+            return NotFound("User was is not part of project");
+        }
+        else if (projectMember.Role != "Owner")
+        {
+            return Unauthorized("User must be owner to remove this project");
+        }
+
         var project = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
         if (project == null)
         {
@@ -87,15 +140,21 @@ public class ProjectController : ControllerBase
         return Ok("Successfully updated project details.");
     }
 
-    [HttpGet("GetProject/{projectId}")]
-    public async Task<IActionResult> GetProject(int projectId)
+    [Authorize]
+    [HttpGet("GetAllUserProjects")]
+    public async Task<IActionResult> GetAllUserProjects()
     {
-        var project = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
-        if (project == null)
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId != null)
         {
-            return NotFound("Project not found");
+            return Unauthorized("Invalid Token");
         }
 
-        return Ok(project);
+        var projects = await _context.ProjectMmembers
+            .Where(pm => pm.UserId.ToString() == userId)
+            .Select(pm => pm.Project)
+            .ToListAsync();
+
+        return Ok(projects);
     }
 }
