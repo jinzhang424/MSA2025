@@ -1,6 +1,9 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+[Authorize]
 [ApiController]
 [Route("WaitingList")]
 
@@ -8,13 +11,23 @@ public class WaitingListController(ApplicationDbContext context) : ControllerBas
 {
     private readonly ApplicationDbContext _context = context;
 
-    [HttpPut("ApplyForProject/{userId}/{projectId}")]
-    public async Task<IActionResult> ApplyForProject(int userId, int projectId)
+    public async void RemoveUserFromWaitingList(int userId, int projectId)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
-        if (user == null)
+        var waitingListUser = await _context.ProjectWaitingListUser
+            .FirstOrDefaultAsync(pwu => pwu.UserId == userId && pwu.ProjectId == projectId)
+            ?? throw new Exception("User not found in this project's waiting list");
+
+        _context.ProjectWaitingListUser.Remove(waitingListUser);
+        await _context.SaveChangesAsync();
+    }
+
+    [HttpPut("ApplyForProject/{projectId}")]
+    public async Task<IActionResult> ApplyForProject(int projectId)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
         {
-            return Unauthorized("Unauthorized user");
+            return Unauthorized("Invalid token");
         }
 
         var projectExists = await _context.ProjectWaitingList.AnyAsync(p => p.ProjectId == projectId);
@@ -26,7 +39,7 @@ public class WaitingListController(ApplicationDbContext context) : ControllerBas
         var waitingListUser = new ProjectWaitingListUser
         {
             ProjectId = projectId,
-            UserId = userId
+            UserId = int.Parse(userId)
         };
 
         await _context.ProjectWaitingListUser.AddAsync(waitingListUser);
@@ -35,31 +48,24 @@ public class WaitingListController(ApplicationDbContext context) : ControllerBas
         return Ok("Successfully applied to project");
     }
 
-    [HttpDelete("RemoveProjectApplication/{userId}/{projectId}")]
-    public async Task<IActionResult> RemoveProjectApplication(int userId, int projectId)
+    [HttpDelete("RemoveProjectApplication/{projectId}")]
+    public IActionResult RemoveProjectApplication(int projectId)
     {
-        var waitingListUser = await _context.ProjectWaitingListUser
-            .FirstOrDefaultAsync(pwu => pwu.UserId == userId && pwu.ProjectId == projectId);
-
-        if (waitingListUser == null)
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
         {
-            return NotFound("User or project was not found in waiting list");
+            return Unauthorized("Invalid Token");
         }
 
-        _context.ProjectWaitingListUser.Remove(waitingListUser);
-        await _context.SaveChangesAsync();
-
-        return Ok("Successfully removed from project waiting list");
-    }
-
-    public async void RemoveUserFromWaitingList(int userId, int projectId)
-    {
-        var waitingListUser = await _context.ProjectWaitingListUser
-            .FirstOrDefaultAsync(pwu => pwu.UserId == userId && pwu.ProjectId == projectId)
-            ?? throw new Exception("User not found in this project's waiting list");
-
-        _context.ProjectWaitingListUser.Remove(waitingListUser);
-        await _context.SaveChangesAsync();
+        try
+        {
+            RemoveUserFromWaitingList(int.Parse(userId), projectId);
+            return Ok("Successfully removed from project waiting list");
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpPut("AcceptUserApplication/{userId}/{projectId}")]
@@ -87,24 +93,37 @@ public class WaitingListController(ApplicationDbContext context) : ControllerBas
         {
             RemoveUserFromWaitingList(userId, projectId);
         }
-        catch
+        catch (Exception e)
         {
-            return NotFound("User not found in this project's waiting list");
+            return BadRequest(e.Message);
         }
 
         return Ok("Successfully accepted user into project");
     }
 
-    [HttpDelete("RejectUserApplication/{userId}/{projectId}")]
-    public IActionResult RejectUserApplication(int userId, int projectId)
+    [HttpDelete("RejectUserApplication/{victimId}/{projectId}")]
+    public async Task<IActionResult> RejectUserApplication(int victimId, int projectId)
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return Unauthorized("Invalid token");
+        }
+
+        var projectMember = await _context.ProjectMmembers
+            .FirstOrDefaultAsync(pm => pm.UserId == int.Parse(userId) && pm.ProjectId == projectId);
+        if (projectMember == null || projectMember.Role != "Owner")
+        {
+            return Unauthorized("Only owners can reject applicants");
+        }
+
         try
         {
-            RemoveUserFromWaitingList(userId, projectId);
+            RemoveUserFromWaitingList(victimId, projectId);
         }
-        catch 
+        catch (Exception e)
         {
-            return NotFound("User not found in this project's waiting list");
+            return NotFound(e.Message);
         }
         
         return Ok("Successfully rejected user");
