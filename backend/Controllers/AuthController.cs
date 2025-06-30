@@ -9,10 +9,12 @@ namespace backend.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly JwtTokenService _jwtService;
 
-    public AuthController(ApplicationDbContext context)
+    public AuthController(ApplicationDbContext context, JwtTokenService jwtService)
     {
         _context = context;
+        _jwtService = jwtService;
     }
 
     [HttpPost("RegisterUser")]
@@ -61,6 +63,6 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid email or password");
         }
 
-        return Ok("Successfully Signed In");
+        return Ok(_jwtService.GenerateJwtToken(user.UserId.ToString()));
     }
 }
