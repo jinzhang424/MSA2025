@@ -23,12 +23,6 @@ public class ChatController : ControllerBase
     [HttpPost("CreateChatroom")]
     public IActionResult CreateChatroom([FromBody] ChatroomDto chatroomDto)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
-        {
-            return Unauthorized("Invalid token");
-        }
-
         var chatroom = new Chatroom
         {
             Name = chatroomDto.Name,
@@ -53,12 +47,6 @@ public class ChatController : ControllerBase
     [HttpGet("GetChatroomUsers/{chatroomId}")]
     public IActionResult GetChatroomUsers(int chatroomId)
     {
-        var chatroomExists = _context.Chatrooms.Any(c => c.ChatroomId == chatroomId);
-        if (!chatroomExists)
-        {
-            return NotFound("Chatroom not found");
-        }
-
         var chatroomUsers = _context.ChatroomUser
             .Where(cu => cu.ChatroomId == chatroomId)
             .Include(cu => cu.User)
@@ -142,7 +130,7 @@ public class ChatController : ControllerBase
         {
             return Unauthorized("Invalid token");
         }
-        
+
         var chatroomUser = _context.ChatroomUser.FirstOrDefault(
             cu => cu.UserId == chatroomUserDto.RequesterId && cu.ChatroomId == chatroomUserDto.ChatroomId);
         var chatroom = _context.Chatrooms.FirstOrDefault(
