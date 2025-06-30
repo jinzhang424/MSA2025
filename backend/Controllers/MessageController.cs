@@ -1,24 +1,33 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+[Authorize]
 [ApiController]
 [Route("Message")]
 public class MessageController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly JwtTokenService _jwtService;
 
-    public MessageController(ApplicationDbContext context)
+    public MessageController(ApplicationDbContext context, JwtTokenService jwtService)
     {
         _context = context;
+        _jwtService = jwtService;
     }
 
     [HttpPost("SendMessages")]
     public IActionResult SendMessage([FromBody] MessageDto messageDto)
     {
-        var chatExists = _context.Chatrooms.Any(c => c.ChatroomId == messageDto.ChatroomId);
-        var userExists = _context.Users.Any(u => u.UserId == messageDto.SenderId);
-        if (!chatExists || !userExists)
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
         {
-            return NotFound("Chatroom or user not found");
+            return Unauthorized("Invalid Token");
+        }
+
+        if (int.Parse(userId) != messageDto.SenderId)
+        {
+            return BadRequest("Sender id and user id do not match");
         }
 
         // Checking if the user is actually a part of the chatroom
@@ -26,7 +35,7 @@ public class MessageController : ControllerBase
             cu.UserId == messageDto.SenderId && cu.ChatroomId == messageDto.ChatroomId);
         if (!userExistsInChat)
         {
-            return BadRequest("The user does not have permission to message in this chatroom");
+            return Unauthorized("You must be part of the chatroom to send a message");
         }
 
         var message = new Message
@@ -44,10 +53,18 @@ public class MessageController : ControllerBase
     [HttpGet("GetChatroomMessages/{chatroomId}")]
     public IActionResult GetMessages(int chatroomId)
     {
-        var chatroomExists = _context.Chatrooms.Any(c => c.ChatroomId == chatroomId);
-        if (!chatroomExists)
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
         {
-            return NotFound("Chatroom not found");
+            return Unauthorized("Invalid token");
+        }
+
+        // Checking if user is part of chatroom before getting all the messages
+        var userExistsInChatroom = _context.ChatroomUser
+            .Any(cu => cu.ChatroomId == chatroomId && cu.UserId == chatroomId);
+        if (!userExistsInChatroom)
+        {
+            return Unauthorized("Insufficient permission to view this chatroom's messages");
         }
 
         var messages = _context.Messages
@@ -61,10 +78,17 @@ public class MessageController : ControllerBase
     [HttpDelete("DeleteMessage/{messageId}")]
     public IActionResult DeleteMessage(int messageId)
     {
-        var message = _context.Messages.FirstOrDefault(m => m.MessageId == messageId);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return Unauthorized("Invalid token");
+        }
+
+        var message = _context.Messages
+            .FirstOrDefault(m => m.MessageId == messageId && m.SenderId == int.Parse(userId));
         if (message == null)
         {
-            return NotFound("Message not found.");
+            return NotFound("Insufficient permission to delete this message");
         }
 
         _context.Messages.Remove(message);
