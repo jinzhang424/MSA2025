@@ -1,27 +1,32 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("Chatroom")]
 
 public class ChatController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly JwtTokenService _jwtService;
 
-    public ChatController(ApplicationDbContext context)
+    public ChatController(ApplicationDbContext context, JwtTokenService jwtService)
     {
         _context = context;
+        _jwtService = jwtService;
     }
 
     [HttpPost("CreateChatroom")]
     public IActionResult CreateChatroom([FromBody] ChatroomDto chatroomDto)
     {
-        var userExists = _context.Users.Any(u => u.UserId == chatroomDto.OwnerId);
-        if (!userExists)
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
         {
-            return BadRequest("Missing owner id");
+            return Unauthorized("Invalid token");
         }
 
         var chatroom = new Chatroom
@@ -71,10 +76,21 @@ public class ChatController : ControllerBase
     [HttpDelete("DeleteChatroom")]
     public IActionResult DeleteChatroom([FromBody] ChatroomUserDto chatroomDto)
     {
-        var chatroom = _context.Chatrooms.FirstOrDefault(c => c.ChatroomId == chatroomDto.RequesterId);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return Unauthorized("Invalid token");
+        }
+
+        var chatroom = _context.Chatrooms.FirstOrDefault(c => c.ChatroomId == chatroomDto.ChatroomId);
         if (chatroom == null)
         {
             return NotFound("Chatrooom not found");
+        }
+
+        if (int.Parse(userId) != chatroom.OwnerId)
+        {
+            return Unauthorized("Only owners can delete a chatroom");
         }
 
         _context.Chatrooms.Remove(chatroom);
@@ -84,13 +100,26 @@ public class ChatController : ControllerBase
     }
 
     [HttpPut("AddChatroomUser")]
-    public IActionResult AddChatroomUser([FromBody] ChatroomUserDto chatroomUserDto)
+    public async Task<IActionResult> AddChatroomUser([FromBody] ChatroomUserDto chatroomUserDto)
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return Unauthorized("Invalid token");
+        }
+
         // Checking if that the user and chatroom exists
+        var chatroom = await _context.Chatrooms.FirstOrDefaultAsync(c => c.ChatroomId == chatroomUserDto.ChatroomId);
         if (!_context.Users.Any(u => u.UserId == chatroomUserDto.RequesterId) ||
-            !_context.Chatrooms.Any(c => c.ChatroomId == chatroomUserDto.ChatroomId))
+            chatroom == null)
         {
             return NotFound("User or chatroom not found");
+        }
+
+        // Prevent non-owners from adding people to the chatroom
+        if (int.Parse(userId) != chatroom.OwnerId)
+        {
+            return Unauthorized("Only owners can add others to the chatroom");
         }
 
         var chatroomUser = new ChatroomUser
@@ -108,6 +137,12 @@ public class ChatController : ControllerBase
     [HttpDelete("RemoveUser/{victimId}")]
     public IActionResult RemoveUser([FromBody] ChatroomUserDto chatroomUserDto, int victimId)
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            return Unauthorized("Invalid token");
+        }
+        
         var chatroomUser = _context.ChatroomUser.FirstOrDefault(
             cu => cu.UserId == chatroomUserDto.RequesterId && cu.ChatroomId == chatroomUserDto.ChatroomId);
         var chatroom = _context.Chatrooms.FirstOrDefault(
