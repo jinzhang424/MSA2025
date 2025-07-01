@@ -1,9 +1,10 @@
+import NavBar from "../components/NavBar"
+
 export default function LandingPage() {
     return (
-        <div>
+        <div className="bg-blue-500">
+            <NavBar/>
             Hello World
-
-            dwdadawdawd
         </div>
     )
 }
