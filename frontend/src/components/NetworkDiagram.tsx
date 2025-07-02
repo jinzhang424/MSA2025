@@ -83,7 +83,7 @@ const NetworkDiagram = () => {
       })}
 
       {/* Large center circle */}
-      <div className="absolute left-[200px] top-[150px] w-[100px] h-[100px] rounded-full border-2 border-white/30 flex items-center justify-center">
+      <div className="absolute left-[200px] top-[150px] w-[100px] h-[100px] rounded-full border-3 border-white/30 flex items-center justify-center">
         <div className="text-center">
           <div className="text-3xl font-bold text-white">20k+</div>
           <div className="text-sm text-white">Specialists</div>
@@ -99,8 +99,6 @@ const NetworkDiagram = () => {
           style={{
             width: `${node.size}px`,
             height: `${node.size}px`,
-            left: 0, // Center X - radius
-            top: 0,  // Center Y - radius
             zIndex: 2,
           }}
         >
