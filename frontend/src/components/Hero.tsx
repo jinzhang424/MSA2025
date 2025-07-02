@@ -1,8 +1,8 @@
-
+import NetworkDiagram from "./NetworkDiagram"
 
 const Hero = () => {
     return (
-        <div className="flex items-center w-full h-screen p-12 bg-purple-950 bg-gradient-to-br from-orange-300">
+        <div className="flex justify-between items-center w-full h-screen p-26 bg-purple-950 bg-gradient-to-br from-orange-300">
             <div className="flex flex-col space-y-3">
                 <header className="text-6xl font-bold text-white">
                     <h1>Connect,</h1>
@@ -25,6 +25,8 @@ const Hero = () => {
                     </button>
                 </div>
             </div>
+
+            <NetworkDiagram/>
         </div>
     )
 }
