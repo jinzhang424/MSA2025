@@ -34,22 +34,21 @@ const Hero = () => {
                         <path 
                             d={`
                                 M 0,0 
-                                L ${screenSize.width * 0.46},0
+                                L ${screenSize.width * 0.45},0
                                 Q ${screenSize.width * 0.4},${screenSize.height * 0.8} ${screenSize.width * 0.35},${screenSize.height} 
                                 L 0,${screenSize.height}
                                 Z
                             `}
                         />
-                    {/* Second path with curve */}
-                    <path 
-                        d={`
-                            M ${screenSize.width},0 
-                            L ${screenSize.width * 0.54}, 0
-                            Q ${screenSize.width * 0.6},${screenSize.height * 0.8} ${screenSize.width * 0.65},${screenSize.height}
-                            L ${screenSize.width},${screenSize.height}  
-                            Z
-                        `}
-                    />
+                        <path 
+                            d={`
+                                M ${screenSize.width},0 
+                                L ${screenSize.width * 0.55}, 0
+                                Q ${screenSize.width * 0.6},${screenSize.height * 0.8} ${screenSize.width * 0.65},${screenSize.height}
+                                L ${screenSize.width},${screenSize.height}  
+                                Z
+                            `}
+                        />
                     </clipPath>
                 </defs>
             </svg>
@@ -57,10 +56,11 @@ const Hero = () => {
             <div className="flex justify-center items-center w-full h-screen p-26 bg-purple-950 bg-gradient-to-br from-orange-300">
                 {/* Overlay HTML grid */}
                 <div 
-                    className="absolute top-0 left-0 h-full flex bg-navy w-full"
+                    className="absolute top-0 left-0 h-full flex bg-navy w-full bg-center bg-contain"
                     style={{
                         clipPath: `url(#combined-clip)`,
-                        filter: `url(#noise-effect)`
+                        filter: `url(#noise-effect)`,
+                        backgroundImage: "url('/grid.svg')",
                     }}
                 >
                 </div>
@@ -78,7 +78,7 @@ const Hero = () => {
 
                     {/* Get started */}
                     <div className="flex flex-col space-y-3 justify-center items-center">
-                        <button className="peer p-3 pl-7 pr-7 text-white bg-navy rounded-sm hover:cursor-pointer font-semibold drop-shadow-xs hover:scale-110 duration-300 ease-in-out">
+                        <button className="peer p-3 pl-7 pr-7 border-2 border-navy text-white bg-navy rounded-sm hover:cursor-pointer font-semibold drop-shadow-xs">
                             <p>Get Started</p>
                         </button>
                         <CgChevronDown size={24} color="white" className="peer-hover:translate-y-2 duration-300 ease-in-out"/>
