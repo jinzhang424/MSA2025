@@ -1,15 +1,18 @@
 import NavBar from "../components/NavBar"
 import Hero from "../components/Hero"
+import HowItWorks from "../components/HowItWorks"
 
 export default function LandingPage() {
     return (
-        <div className="relative w-full">
+        <div className="relative w-full bg-purple-950 bg-gradient-to-br from-orange-300">
             <title>Home</title>
             
             <div className="absolute w-full">
                 <NavBar/>
             </div>
             <Hero/>
+
+            <HowItWorks/>
         </div>
     )
 }
