@@ -3,14 +3,14 @@ import { CgChevronDown } from "react-icons/cg";
 
 const Hero = () => {
     const [screenSize, setScreenSize] = useState({
-        width: typeof window !== 'undefined' ? window.innerWidth : 0,
+        width: typeof window !== 'undefined' ? document.documentElement.clientWidth : 0,
         height: typeof window !== 'undefined' ? window.innerHeight : 0
     });
 
     useEffect(() => {
         const handleResize = () => {
             setScreenSize({
-                width: window.innerWidth,
+                width: document.documentElement.clientWidth,
                 height: window.innerHeight
             });
         };
