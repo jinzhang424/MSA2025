@@ -4,7 +4,7 @@ import HowItWorks from "../components/HowItWorks"
 
 export default function LandingPage() {
     return (
-        <div className="relative w-full bg-purple-950 bg-gradient-to-br from-orange-300">
+        <div className="relative w-full">
             <title>Home</title>
             
             <div className="absolute w-full">
