@@ -2,67 +2,60 @@ import { useEffect, useState } from "react";
 import { CgChevronDown } from "react-icons/cg";
 
 const Hero = () => {
-    const [screenSize, setScreenSize] = useState({
-        width: typeof window !== 'undefined' ? document.documentElement.clientWidth : 0,
-        height: typeof window !== 'undefined' ? window.innerHeight : 0
-    });
+    const [scrollOffset, setScrollOffset] = useState(0) 
 
     useEffect(() => {
-        const handleResize = () => {
-            setScreenSize({
-                width: document.documentElement.clientWidth,
-                height: window.innerHeight
-            });
+        const handleScroll = () => {
+            setScrollOffset(window.scrollY);
         };
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        handleScroll();
+        window.addEventListener('scroll', handleScroll);
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, []);
 
     return (
         <div>
-            <svg className="absolute w-full h-full">
-                <defs>
-                    {/* Noise effect filter */}
-                    <filter id="noise-effect" x="0" y="0" width="100%" height="100%">
-                        <feTurbulence type="fractalNoise" baseFrequency="1" numOctaves="2" stitchTiles="stitch" />
-                        <feBlend mode="multiply" in="SourceGraphic" />
-                    </filter>
-
-                    {/* Clipping paths for polygons */}
-                    <clipPath id="combined-clip">
-                        <path 
-                            d={`
-                                M 0,0 
-                                L ${screenSize.width * 0.45},0
-                                Q ${screenSize.width * 0.4},${screenSize.height * 0.8} ${screenSize.width * 0.35},${screenSize.height} 
-                                L 0,${screenSize.height}
-                                Z
-                            `}
-                        />
-                        <path 
-                            d={`
-                                M ${screenSize.width},0 
-                                L ${screenSize.width * 0.55}, 0
-                                Q ${screenSize.width * 0.6},${screenSize.height * 0.8} ${screenSize.width * 0.65},${screenSize.height}
-                                L ${screenSize.width},${screenSize.height}  
-                                Z
-                            `}
-                        />
-                    </clipPath>
-                </defs>
-            </svg>
-
-            <div className="flex justify-center items-center w-full h-screen p-26 bg-purple-950 bg-gradient-to-br from-orange-300">
-                {/* Overlay HTML grid */}
-                <div 
-                    className="absolute top-0 left-0 h-full flex bg-navy w-full bg-center bg-contain"
-                    style={{
-                        clipPath: `url(#combined-clip)`,
-                        filter: `url(#noise-effect)`,
-                        backgroundImage: "url('/grid.svg')",
-                    }}
-                >
+            <div className="flex justify-center items-center w-full h-screen p-26">
+                <div className="absolute flex w-full overflow-hidden justify-center">
+                    {/* Left piece */}
+                    <div 
+                        className="top-0 left-0 inset-0 h-screen w-1/2 bg-navy duration-150 ease-in-out"
+                        style={{
+                            clipPath: `polygon(
+                                0% 0%, 
+                                90% 0%, 
+                                75% 100%, 
+                                0% 100%
+                            )`,
+                            filter: `url(#noise-effect)`,
+                            backgroundImage: "url('/grid.svg')",
+                            backgroundSize: 1350,
+                            backgroundPosition: 'center',
+                            transform: `translateX(-${scrollOffset}px)`
+                        }}
+                    />
+                    
+                    {/* Right piece */}
+                    <div 
+                        className="top-0 left-0 h-screen w-1/2 inset-0 bg-navy duration-150 ease-in-out"
+                        style={{
+                            clipPath: `polygon(
+                                10% 0%,
+                                100% 0%,
+                                100% 100%,
+                                25% 100%
+                            )`,
+                            filter: `url(#noise-effect)`,
+                            backgroundImage: "url('/grid.svg')",
+                            backgroundSize: 1350,
+                            backgroundPosition: 'center',
+                            transform: `translateX(${scrollOffset}px)`
+                        }}
+                    />
                 </div>
                 
                 {/* Main section of hero */}
