@@ -2,6 +2,7 @@ import NavBar from "../components/NavBar"
 import Hero from "../components/Hero"
 import HowItWorks from "../components/HowItWorks"
 import WhoIsItFor from "../components/WhoIsItFor"
+import ReadyToStart from "../components/ReadyToStart"
 
 export default function LandingPage() {
     return (
@@ -15,6 +16,7 @@ export default function LandingPage() {
 
             <HowItWorks/>
             <WhoIsItFor/>
+            <ReadyToStart/>
         </div>
     )
 }
