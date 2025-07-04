@@ -9,9 +9,9 @@ interface ButtonProps {
 function BGFadeButton({bgFade = false, children, className}: ButtonProps) {
     let buttonStyle = "rounded-md outline outline-white outline-2 hover:cursor-pointer font-semibold"
     if (bgFade) {
-        buttonStyle += " text-white hover:text-purple-950 bg-white/0 hover:bg-white/100 duration-300 ease-in-out"
+        buttonStyle += " text-white hover:text-navy bg-white/0 hover:bg-white/100 duration-300 ease-in-out"
     } else {
-        buttonStyle += " text-purple-950 bg-white"
+        buttonStyle += " text-navy bg-white"
     }
 
     buttonStyle += ` ${className}`
