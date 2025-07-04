@@ -3,6 +3,7 @@ import Hero from "../components/Hero"
 import HowItWorks from "../components/HowItWorks"
 import WhoIsItFor from "../components/WhoIsItFor"
 import ReadyToStart from "../components/ReadyToStart"
+import Footer from "../components/Footer"
 
 export default function LandingPage() {
     return (
@@ -16,7 +17,9 @@ export default function LandingPage() {
 
             <HowItWorks/>
             <WhoIsItFor/>
+            <div className="h-24"/>
             <ReadyToStart/>
+            <Footer/>
         </div>
     )
 }
