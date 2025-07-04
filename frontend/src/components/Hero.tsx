@@ -105,14 +105,14 @@ const Hero = () => {
                 
                 {/* Main section of hero - Responsive text and spacing */}
                 <div className="absolute flex flex-col justify-center items-center space-y-8 sm:space-y-12 md:space-y-16 mt-4 sm:mt-8 md:mt-12 px-4 sm:px-8">
-                    <header className="flex flex-col justify-center items-center text-white space-y-2 sm:space-y-3 md:space-y-4 text-center">
+                    <div className="flex flex-col justify-center items-center text-white space-y-2 sm:space-y-3 md:space-y-4 text-center">
                         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                             Connect, Collaborate, Create.
                         </h1>
                         <h2 className="flex font-semibold text-sm sm:text-base md:text-lg px-4 sm:px-0">
                             Connect with others. Collaborate on projects. Create your vision.
                         </h2>
-                    </header>
+                    </div>
 
                     {/* Get started - Responsive button */}
                     <div className="flex flex-col space-y-2 sm:space-y-3 justify-center items-center">

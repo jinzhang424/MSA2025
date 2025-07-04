@@ -7,13 +7,13 @@ import { PiSuitcase } from "react-icons/pi";
 function WhoIsItFor() {
   return (
     <div className="flex flex-col p-16 space-y-12">
-        <header className="flex flex-col justify-center items-center space-y-4 text-black">
+        <div className="flex flex-col justify-center items-center space-y-4 text-black">
           <h1 className="text-4xl font-bold">Who is CoCreate For?</h1>
           <h2 className="flex flex-col justify-center items-center text-center text-gray-700">
               <p>Our platform is designed to help everyone from students to professionals connect and</p>
               <p>collaborate.</p>
           </h2>
-        </header>
+        </div>
 
         <div className="flex space-x-12">
           <WhoIsItForCard 

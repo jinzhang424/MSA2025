@@ -10,10 +10,10 @@ function Footer() {
         <div className='bg-navy p-12 pb-10'>
             <div className="flex">
                 <div className="flex flex-col space-y-8">
-                    <header className="flex flex-col space-y-2">
+                    <div className="flex flex-col space-y-2">
                         <h1 className='text-slate-50 text-2xl font-bold'>CoCreate</h1>
                         <h2 className='text-slate-300 max-w-96'>Connect with talented individuals and teams for your next remote project.</h2>
-                    </header>
+                    </div>
                     <div className="flex space-x-3">
                         <FaXTwitter className="w-8 h-8 p-1 rounded-sm bg-slate-100"/>
                         <FaGithub className="w-8 h-8 p-1 rounded-sm bg-slate-100"/>

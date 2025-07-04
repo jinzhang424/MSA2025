@@ -3,13 +3,13 @@ import HowItWorksCard from "./HowItWorksCard"
 function HowItWorks() {
     return (
         <div className="flex flex-col space-y-4 w-full p-16">
-            <header className="flex flex-col justify-center items-center space-y-4 text-black">
+            <div className="flex flex-col justify-center items-center space-y-4 text-black">
                 <h1 className="text-4xl font-bold">How It Works</h1>
                 <h2 className="flex flex-col justify-center items-center text-center text-gray-700">
                     <p>Whether you're looking to gain experience or build your portfolio, Marketeam connects you</p>
                     <p>with the right people for your projects.</p>
                 </h2>
-            </header>
+            </div>
 
             <div className="grid grid-cols-3">
                 <HowItWorksCard stepNum={1} title="Connect With Others" bodyText="Find fellow talents by posting your project idea or browse through available projects that match your skills and interests."/>
