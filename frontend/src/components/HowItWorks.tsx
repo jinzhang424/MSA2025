@@ -2,7 +2,7 @@ import HowItWorksCard from "./HowItWorksCard"
 
 function HowItWorks() {
     return (
-        <div className="h-screen w-full bg-white p-16">
+        <div className="h-screen w-full p-16">
             <header className="flex flex-col justify-center items-center space-y-4 text-black">
                 <h1 className="text-4xl font-bold">How It Works</h1>
                 <h2 className="flex flex-col justify-center items-center text-center text-gray-700">

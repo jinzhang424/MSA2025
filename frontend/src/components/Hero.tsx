@@ -19,7 +19,7 @@ const Hero = () => {
 
     return (
         <div>
-            <div className="relative flex justify-center items-center w-full h-screen p-26 bg-purple-950 bg-gradient-to-br from-orange-300 blur-">
+            <div className="relative flex justify-center items-center w-full h-screen p-26 bg-purple-950 bg-gradient-to-br from-orange-300">
                 <div className="absolute flex w-full overflow-hidden justify-center">
                     {/* Left piece */}
                     <div 
