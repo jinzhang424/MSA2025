@@ -6,45 +6,56 @@ import { MdOutlineCopyright } from "react-icons/md";
 import { Link } from "react-router";
 
 function Footer() {
+    const socialMediaIconStyle = "w-8 h-8 p-1 rounded-sm bg-slate-100 opacity-70 hover:opacity-100 duration-200 hover:cursor-pointer"
+
     return (
-        <div className='bg-navy p-12 pb-10'>
+        <footer className='bg-navy p-12 pb-10'>
             <div className="flex">
                 <div className="flex flex-col space-y-8">
                     <div className="flex flex-col space-y-2">
                         <h1 className='text-slate-50 text-2xl font-bold'>CoCreate</h1>
                         <h2 className='text-slate-300 max-w-96'>Connect with talented individuals and teams for your next remote project.</h2>
                     </div>
+                    
+                    {/* Social Media */}
                     <div className="flex space-x-3">
-                        <FaXTwitter className="w-8 h-8 p-1 rounded-sm bg-slate-100"/>
-                        <FaGithub className="w-8 h-8 p-1 rounded-sm bg-slate-100"/>
-                        <SiDiscord className="w-8 h-8 p-1 rounded-sm bg-slate-100"/>
+                        <FaXTwitter className={socialMediaIconStyle}/>
+                        <FaGithub className={socialMediaIconStyle}/>
+                        <SiDiscord className={socialMediaIconStyle}/>
                     </div>
                 </div>
 
                 {/* Other Links */}
                 <div className="flex space-x-24 ml-auto mr-auto">
+                    {/* Platform Links */}
                     <FooterLinkSection title="Platform">
-                        <Link to="">Discover Projects</Link>
-                        <Link to="">Create Project</Link>
-                        <Link to="">About Us</Link>
+                        <Link className="hover:underline" to="">Discover Projects</Link>
+                        <Link className="hover:underline" to="">Create Project</Link>
+                        <Link className="hover:underline" to="">About Us</Link>
                     </FooterLinkSection>
+
+                    {/* Legality Links */}
                     <FooterLinkSection title="Company">
-                        <Link to="">Privacy Policy</Link>
-                        <Link to="">Terms Of Service</Link>
+                        <Link className="hover:underline" to="">Privacy Policy</Link>
+                        <Link className="hover:underline" to="">Terms Of Service</Link>
                     </FooterLinkSection>
+
+                    {/* Auth Links */}
                     <FooterLinkSection title="Auth">
-                        <Link to="">Register</Link>
-                        <Link to="">Login</Link>
+                        <Link className="hover:underline" to="">Register</Link>
+                        <Link className="hover:underline" to="">Login</Link>
                     </FooterLinkSection>
                 </div>
             </div>
 
             <div className="w-full bg-white h-0.5 opacity-20 mt-10"/>
+
+            {/* Copy Right */}
             <div className="flex text-slate-300 w-full justify-center space-x-2 items-center mt-10">
                 <MdOutlineCopyright className="w-6 h-6 2025 Marketeam. All rights reserved."/>
                 <p>2025 CoCreate. All rights reserved.</p>
             </div>
-        </div>
+        </footer>
     )
 }
 

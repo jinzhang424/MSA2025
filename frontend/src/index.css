@@ -3,3 +3,8 @@
 @theme {
     --color-navy: #1E1833;
 }
+
+.a:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
