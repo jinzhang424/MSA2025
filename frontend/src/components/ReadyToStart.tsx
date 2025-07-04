@@ -1,4 +1,4 @@
-
+import BGFadeButton from "./buttons/BGFadeButton"
 
 function ReadyToStart() {
     return (
@@ -10,13 +10,13 @@ function ReadyToStart() {
                 </h2>
             </div>
 
-            <div className="flex space-x-8 justify-center">
-                <button className="bg-white border-3 border-white p-4 pl-5 pr-5 text-purple-950 rounded-md font-semibold w-full max-w-44 cursor-pointer">
+            <div className="flex space-x-8 justify-center grid-cols-2">
+                <BGFadeButton className="p-4 pl-5 pr-5 w-44">
                     Discover Projects
-                </button>
-                <button className="border-3 border-white p-4 pl-5 pr-5 text-white rounded-md font-semibold w-full max-w-44 cursor-pointer">
+                </BGFadeButton>
+                <BGFadeButton bgFade={true} className="p-4 pl-5 pr-5 w-44">
                     Create Project
-                </button>
+                </BGFadeButton> 
             </div>
         </div>
     )
