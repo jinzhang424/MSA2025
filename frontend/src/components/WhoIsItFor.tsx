@@ -15,7 +15,7 @@ function WhoIsItFor() {
           </h2>
         </div>
 
-        <div className="flex space-x-12">
+        <div className="flex flex-wrap justify-center gap-12">
           <WhoIsItForCard 
             icon={<PiStudent className="w-full h-full text-purple-800"/>} 
             title="Students" 
