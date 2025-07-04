@@ -10,8 +10,8 @@ function Footer() {
 
     return (
         <footer className='bg-navy p-12 pb-10'>
-            <div className="flex">
-                <div className="flex flex-col space-y-8">
+            <div className="flex flex-wrap gap-12">
+                <div className="flex flex-col space-y-8 w-full max-w-[550px]">
                     <div className="flex flex-col space-y-2">
                         <h1 className='text-slate-50 text-2xl font-bold'>CoCreate</h1>
                         <h2 className='text-slate-300 max-w-96'>Connect with talented individuals and teams for your next remote project.</h2>
@@ -26,7 +26,7 @@ function Footer() {
                 </div>
 
                 {/* Other Links */}
-                <div className="flex space-x-24 ml-auto mr-auto">
+                <div className="flex gap-x-20 gap-y-8 flex-wrap">
                     {/* Platform Links */}
                     <FooterLinkSection title="Platform">
                         <Link className="hover:underline" to="">Discover Projects</Link>
