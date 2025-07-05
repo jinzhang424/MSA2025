@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router"
 import LandingPage from "./pages/LandingPage"
 import ProjectDiscovery from "./pages/ProjectDiscoveryPage"
 import ProjectCreationPage from "./pages/ProjectCreationPage"
+import ProjectPage from "./pages/ProjectPage"
 
 function App() {
     return (
@@ -10,6 +11,7 @@ function App() {
           <Route path="/" element={<LandingPage/>} />
           <Route path="/discover-projects" element={<ProjectDiscovery/>}/>
           <Route path="/create-project" element={<ProjectCreationPage/>}/>
+          <Route path="/project/:id" element={<ProjectPage/>}/>
         </Routes>
       </BrowserRouter>
     )
