@@ -75,7 +75,7 @@ const ProjectDiscoveryPage = () => {
         <div className="bg-gray-50 min-h-screen">
             <SimpleHero heading='Discover Projects' subheading='Find remote collaboration opportunities that match your skills and interests'/>
 
-            <div className="p-24">
+            <div className="p-12 sm:p-20">
                 <h1 className='text-3xl font-bold text-navy'>Search For Projects</h1>
 
                 <div className="bg-white p-4 rounded-lg shadow-sm mb-8 mt-8">
