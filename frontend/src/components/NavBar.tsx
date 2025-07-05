@@ -18,6 +18,24 @@ export default function NavBar() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const navbarLinks = [
+        {
+            icon: <ImCompass className="mr-4" size={20}/>,
+            header: "Discover",
+            to: "/"
+        },
+        {
+            icon: <IoCreateOutline className="mr-4" size={20}/>,
+            header: "Create Project",
+            to: "/"
+        },
+        {
+            icon: <AiOutlineTeam className="mr-4" size={20}/>,
+            header: "About Us",
+            to: "/"
+        },
+    ]
+
     const useMenu = windowWidth < 1200;
 
     return (
@@ -41,18 +59,16 @@ export default function NavBar() {
                         }}
                     >
                         <div className="flex flex-col font-semibold justify-around items-center">
-                            <Link to="/" className="flex items-center p-4 pl-6 w-full hover:bg-white/5 duration-300">
-                                <ImCompass className="mr-4" size={20}/>
-                                Discover
-                            </Link>
-                            <Link to="/" className="flex items-center p-4 pl-6 w-full hover:bg-white/5 duration-300">
-                                <IoCreateOutline className="mr-4" size={20}/>
-                                Create Project
-                            </Link>
-                            <Link to="/" className="flex items-center p-4 pl-6 w-full hover:bg-white/5 duration-300">
-                                <AiOutlineTeam className="mr-4" size={20}/>
-                                About Us
-                            </Link>
+                            {navbarLinks.map((linkInfo, i) => (
+                                <Link 
+                                    className="flex items-center p-4 pl-6 w-full hover:bg-white/5 duration-300" 
+                                    to={linkInfo.to} 
+                                    key={i}
+                                >
+                                    {linkInfo.icon}
+                                    {linkInfo.header}
+                                </Link>
+                            ))}
                         </div>
 
                         <div className="flex flex-col items-center font-semibold justify-end">
@@ -74,9 +90,11 @@ export default function NavBar() {
                 <h1 className="text-3xl font-bold text-white">CoCreate</h1>
 
                 <div className="flex font-semibold text-white justify-around items-center">
-                    <Link to="/" className="hover:underline underline-offset-2">Discover</Link>
-                    <Link to="/" className="hover:underline underline-offset-2">Create Project</Link>
-                    <Link to="/" className="hover:underline underline-offset-2">About Us</Link>
+                    {navbarLinks.map((linkInfo, i) => (
+                        <Link to={linkInfo.to} className="hover:underline underline-offset-2" key={i}>
+                            {linkInfo.header}
+                        </Link>
+                    ))}
                 </div>
 
                 <div className="flex items-center space-x-4 font-semibold justify-end">
