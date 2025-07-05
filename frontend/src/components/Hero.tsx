@@ -23,7 +23,7 @@ const Hero = () => {
                 <div className="absolute flex w-full overflow-hidden justify-center">
                     {/* Left piece */}
                     <div 
-                        className="top-0 left-0 inset-0 h-screen w-1/2 bg-navy duration-150 ease-in-out"
+                        className="top-0 left-0 inset-0 h-screen w-1/2 min-w-[650px] bg-navy duration-150 ease-in-out"
                         style={{
                             clipPath: `polygon(
                                 0% 0%, 
@@ -41,7 +41,7 @@ const Hero = () => {
                     
                     {/* Right piece */}
                     <div 
-                        className="top-0 left-0 h-screen w-1/2 inset-0 bg-navy duration-150 ease-in-out"
+                        className="top-0 left-0 h-screen w-1/2 min-w-[650px] inset-0 bg-navy duration-150 ease-in-out"
                         style={{
                             clipPath: `polygon(
                                 10% 0%,
@@ -62,42 +62,42 @@ const Hero = () => {
                 <div className="relative w-full h-screen">
                     {/* Miro */}
                     <img 
-                        className="absolute w-8 h-8 sm:w-12 sm:h-12 md:w-14 md:h-14 top-1/6 left-1/4 sm:left-1/3 -rotate-6 drop-shadow-[0_0_10px_rgba(253,182,105,0.6)]" 
+                        className="absolute w-14 h-14 sm:w-12 sm:h-12 md:w-14 md:h-14 top-1/6 left-1/4 sm:left-1/3 -rotate-6 drop-shadow-[0_0_10px_rgba(253,182,105,0.6)]" 
                         src="https://cdn.brandfetch.io/idAnDTFapY/theme/dark/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B" 
                         alt="" 
                     />
                     
                     {/* Figma */}
                     <img 
-                        className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 top-1/7 right-1/5 sm:right-1/4 rotate-18 rounded-2xl drop-shadow-[0_0_10px_rgba(253,182,105,0.3)]" 
+                        className="absolute w-14 h-14 md:w-16 md:h-16 top-1/5 right-1/7 md:t-1/3 rotate-18 rounded-2xl drop-shadow-[0_0_10px_rgba(253,182,105,0.3)]" 
                         src="/figma-logo.svg" 
                         alt="" 
                     />
                     
                     {/* Github */}
                     <img 
-                        className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 left-1/5 sm:left-1/4 top-2/3 -rotate-12 drop-shadow-[0_0_10px_rgba(253,182,105,0.4)]" 
+                        className="absolute w-14 h-14 sm:w-14 sm:h-14 md:w-16 md:h-16 left-1/5 sm:left-1/4 top-2/3 -rotate-12 drop-shadow-[0_0_10px_rgba(253,182,105,0.4)]" 
                         src="/github-logo.svg" 
                         alt="" 
                     />
                     
                     {/* After Effect */}
                     <img 
-                        className="absolute w-8 h-8 sm:w-12 sm:h-12 md:w-14 md:h-14 right-1/5 sm:right-1/4 bottom-1/8 rotate-6 rounded-md shadow-orange-300/10 drop-shadow-[0_0_10px_rgba(253,182,105,0.3)]" 
+                        className="absolute w-14 h-14 md:w-14 md:h-14 right-1/5 sm:right-1/4 bottom-1/8 rotate-6 rounded-md shadow-orange-300/10 drop-shadow-[0_0_10px_rgba(253,182,105,0.3)]" 
                         src="/aftereffects-logo.svg" 
                         alt="" 
                     />
                     
                     {/* VS Code */}
                     <img 
-                        className="absolute -rotate-12 w-10 h-10 sm:w-16 sm:h-16 md:w-18 md:h-18 drop-shadow-[0_0_10px_rgba(253,182,105,0.3)] top-1/4 left-2 sm:left-4 md:left-8" 
+                        className="absolute -rotate-12 w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 drop-shadow-[0_0_10px_rgba(253,182,105,0.3)] top-1/4 left-2 sm:left-4 md:left-8" 
                         src="/vscode-logo.svg" 
                         alt="" 
                     />
                     
                     {/* Photoshop */}
                     <img 
-                        className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 right-[8%] sm:right-[5%] bottom-1/3 rounded-lg shadow-orange-300/10 drop-shadow-[0_0_10px_rgba(253,182,105,0.3)] -rotate-6" 
+                        className="absolute w-14 h-14 md:w-16 md:h-16 right-[8%] sm:right-[5%] bottom-1/3 rounded-lg shadow-orange-300/10 drop-shadow-[0_0_10px_rgba(253,182,105,0.3)] -rotate-6" 
                         src="/photoshop-logo.png" 
                         alt="" 
                     />
