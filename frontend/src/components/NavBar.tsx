@@ -22,7 +22,7 @@ export default function NavBar() {
         {
             icon: <ImCompass className="mr-4" size={20}/>,
             header: "Discover",
-            to: "/"
+            to: "/discover-projects"
         },
         {
             icon: <IoCreateOutline className="mr-4" size={20}/>,
