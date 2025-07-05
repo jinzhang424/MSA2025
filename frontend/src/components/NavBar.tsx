@@ -27,7 +27,7 @@ export default function NavBar() {
         {
             icon: <IoCreateOutline className="mr-4" size={20}/>,
             header: "Create Project",
-            to: "/"
+            to: "/create-project"
         },
         {
             icon: <AiOutlineTeam className="mr-4" size={20}/>,
