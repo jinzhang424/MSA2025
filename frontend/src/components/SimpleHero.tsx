@@ -17,7 +17,7 @@ function SimpleHero({ heading, subheading } : SimpleHeroProps) {
             <h1 className='text-white text-4xl font-bold text-center'>{heading}</h1>
             <h2 className='text-slate-200 font-semibold text-center'>{subheading}</h2>
 
-            <div className="absolute h-[400px] w-full bg-gradient-to-b to-black/10"/>
+            <div className="absolute h-[400px] w-full bg-gradient-to-b to-black/10 pointer-events-none"/>
         </div>
     )
 }
