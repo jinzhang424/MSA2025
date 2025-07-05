@@ -58,44 +58,44 @@ const Hero = () => {
                     />
                 </div>
                 
-                {/* Logos - Responsive positioning and sizing */}
+                {/* Logos */}
                 <div className="relative w-full h-screen">
-                    {/* First logo - Top left */}
+                    {/* Miro */}
                     <img 
                         className="absolute w-8 h-8 sm:w-12 sm:h-12 md:w-14 md:h-14 top-1/6 left-1/4 sm:left-1/3 -rotate-6 drop-shadow-[0_0_10px_rgba(253,182,105,0.6)]" 
                         src="https://cdn.brandfetch.io/idAnDTFapY/theme/dark/symbol.svg?c=1dxbfHSJFAPEGdCLU4o5B" 
                         alt="" 
                     />
                     
-                    {/* Second logo - Top right */}
+                    {/* Figma */}
                     <img 
                         className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 top-1/7 right-1/5 sm:right-1/4 rotate-18 rounded-2xl drop-shadow-[0_0_10px_rgba(253,182,105,0.3)]" 
                         src="/figma-logo.svg" 
                         alt="" 
                     />
                     
-                    {/* Third logo - Left bottom */}
+                    {/* Github */}
                     <img 
                         className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 left-1/5 sm:left-1/4 top-2/3 -rotate-12 drop-shadow-[0_0_10px_rgba(253,182,105,0.4)]" 
                         src="/github-logo.svg" 
                         alt="" 
                     />
                     
-                    {/* Fourth logo - Right bottom */}
+                    {/* After Effect */}
                     <img 
                         className="absolute w-8 h-8 sm:w-12 sm:h-12 md:w-14 md:h-14 right-1/5 sm:right-1/4 bottom-1/8 rotate-6 rounded-md shadow-orange-300/10 drop-shadow-[0_0_10px_rgba(253,182,105,0.3)]" 
                         src="/aftereffects-logo.svg" 
                         alt="" 
                     />
                     
-                    {/* Fifth logo - Left top */}
+                    {/* VS Code */}
                     <img 
                         className="absolute -rotate-12 w-10 h-10 sm:w-16 sm:h-16 md:w-18 md:h-18 drop-shadow-[0_0_10px_rgba(253,182,105,0.3)] top-1/4 left-2 sm:left-4 md:left-8" 
                         src="/vscode-logo.svg" 
                         alt="" 
                     />
                     
-                    {/* Sixth logo - Right center */}
+                    {/* Photoshop */}
                     <img 
                         className="absolute w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 right-[8%] sm:right-[5%] bottom-1/3 rounded-lg shadow-orange-300/10 drop-shadow-[0_0_10px_rgba(253,182,105,0.3)] -rotate-6" 
                         src="/photoshop-logo.png" 
@@ -103,8 +103,9 @@ const Hero = () => {
                     />
                 </div>
                 
-                {/* Main section of hero - Responsive text and spacing */}
+                {/* Main section of hero */}
                 <div className="absolute flex flex-col justify-center items-center space-y-8 sm:space-y-12 md:space-y-16 mt-4 sm:mt-8 md:mt-12 px-4 sm:px-8">
+                    {/* Heading and subheader */}
                     <div className="flex flex-col justify-center items-center text-white space-y-2 sm:space-y-3 md:space-y-4 text-center">
                         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                             Connect, Collaborate, Create.
@@ -114,7 +115,7 @@ const Hero = () => {
                         </h2>
                     </div>
 
-                    {/* Get started - Responsive button */}
+                    {/* Get started */}
                     <div className="flex flex-col space-y-2 sm:space-y-3 justify-center items-center">
                         <button className="peer p-2 sm:p-3 pl-4 sm:pl-6 md:pl-7 pr-4 sm:pr-6 md:pr-7 border-2 border-navy text-white bg-navy rounded-sm hover:cursor-pointer font-semibold drop-shadow-xs text-sm sm:text-base">
                             <p>Get Started</p>
