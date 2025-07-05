@@ -5,60 +5,62 @@ import SimpleHero from '../components/SimpleHero';
 import { BsFilterRight } from "react-icons/bs";
 
 const CATEGORIES = ['All', 'Software Development', 'Web Design', 'Mobile App', 'Graphic Design', 'UI/UX', 'Data Science', 'Game Development'];
-const SAMPLE_PROJECTS = [{
-  id: '1',
-  title: 'E-commerce Website Redesign',
-  description: 'Looking for frontend developers and UI/UX designers to collaborate on redesigning an e-commerce platform with modern design principles and improved user experience.',
-  image: 'https://images.unsplash.com/photo-1661956602944-249bcd04b63f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-  category: 'Web Design',
-  availableSpots: 3,
-  deadline: 'Oct 15, 2023',
-  skills: ['React', 'UI/UX', 'Figma', 'JavaScript', 'Responsive Design']
-}, {
-  id: '2',
-  title: 'Mobile Fitness Tracking App',
-  description: 'Developing a fitness tracking app that allows users to monitor workouts, set goals, and connect with friends. Need mobile developers and backend engineers.',
-  image: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-  category: 'Mobile App',
-  availableSpots: 2,
-  deadline: 'Nov 30, 2023',
-  skills: ['Swift', 'Kotlin', 'Firebase', 'UX Design', 'API Development']
-}, {
-  id: '3',
-  title: 'Data Visualization Dashboard',
-  description: 'Creating an interactive dashboard to visualize complex data sets for a research project. Looking for data scientists and frontend developers.',
-  image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-  category: 'Data Science',
-  availableSpots: 4,
-  deadline: 'Dec 10, 2023',
-  skills: ['D3.js', 'React', 'Python', 'Data Analysis', 'SQL']
-}, {
-  id: '4',
-  title: 'Brand Identity Design for Tech Startup',
-  description: 'Seeking graphic designers to help create a comprehensive brand identity including logo, color palette, and brand guidelines for a new tech startup.',
-  image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=871&q=80',
-  category: 'Graphic Design',
-  availableSpots: 2,
-  skills: ['Logo Design', 'Branding', 'Adobe Illustrator', 'Typography', 'Color Theory']
-}, {
-  id: '5',
-  title: '2D Platformer Game Development',
-  description: 'Building a fun 2D platformer game with unique mechanics. Need game designers, developers, and artists to join the team.',
-  image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-  category: 'Game Development',
-  availableSpots: 5,
-  deadline: 'Jan 20, 2024',
-  skills: ['Unity', 'C#', 'Game Design', '2D Art', 'Animation']
-}, {
-  id: '6',
-  title: 'AI-Powered Chatbot for Customer Service',
-  description: 'Developing a chatbot using natural language processing to improve customer service experiences. Looking for ML engineers and UX designers.',
-  image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=806&q=80',
-  category: 'Software Development',
-  availableSpots: 3,
-  deadline: 'Nov 15, 2023',
-  skills: ['NLP', 'Python', 'Machine Learning', 'API Integration', 'UX Writing']
-}];
+const SAMPLE_PROJECTS = [
+    {
+        id: '1',
+        title: 'E-commerce Website Redesign',
+        description: 'Looking for frontend developers and UI/UX designers to collaborate on redesigning an e-commerce platform with modern design principles and improved user experience.',
+        image: 'https://images.unsplash.com/photo-1661956602944-249bcd04b63f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
+        category: 'Web Design',
+        availableSpots: 3,
+        deadline: 'Oct 15, 2023',
+        skills: ['React', 'UI/UX', 'Figma', 'JavaScript', 'Responsive Design']
+    }, {
+        id: '2',
+        title: 'Mobile Fitness Tracking App',
+        description: 'Developing a fitness tracking app that allows users to monitor workouts, set goals, and connect with friends. Need mobile developers and backend engineers.',
+        image: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+        category: 'Mobile App',
+        availableSpots: 2,
+        deadline: 'Nov 30, 2023',
+        skills: ['Swift', 'Kotlin', 'Firebase', 'UX Design', 'API Development']
+    }, {
+        id: '3',
+        title: 'Data Visualization Dashboard',
+        description: 'Creating an interactive dashboard to visualize complex data sets for a research project. Looking for data scientists and frontend developers.',
+        image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
+        category: 'Data Science',
+        availableSpots: 4,
+        deadline: 'Dec 10, 2023',
+        skills: ['D3.js', 'React', 'Python', 'Data Analysis', 'SQL']
+    }, {
+        id: '4',
+        title: 'Brand Identity Design for Tech Startup',
+        description: 'Seeking graphic designers to help create a comprehensive brand identity including logo, color palette, and brand guidelines for a new tech startup.',
+        image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=871&q=80',
+        category: 'Graphic Design',
+        availableSpots: 2,
+    skills: ['Logo Design', 'Branding', 'Adobe Illustrator', 'Typography', 'Color Theory']
+    }, {
+        id: '5',
+        title: '2D Platformer Game Development',
+        description: 'Building a fun 2D platformer game with unique mechanics. Need game designers, developers, and artists to join the team.',
+        image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
+        category: 'Game Development',
+        availableSpots: 5,
+        deadline: 'Jan 20, 2024',
+        skills: ['Unity', 'C#', 'Game Design', '2D Art', 'Animation']
+    }, {
+        id: '6',
+        title: 'AI-Powered Chatbot for Customer Service',
+        description: 'Developing a chatbot using natural language processing to improve customer service experiences. Looking for ML engineers and UX designers.',
+        image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=806&q=80',
+        category: 'Software Development',
+        availableSpots: 3,
+        deadline: 'Nov 15, 2023',
+        skills: ['NLP', 'Python', 'Machine Learning', 'API Integration', 'UX Writing']
+    }
+];
 
 const ProjectDiscoveryPage = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -151,13 +153,13 @@ const ProjectDiscoveryPage = () => {
                         </svg>
                     </div>
 
-                    <h3 className="text-xl font-medium mb-2">No projects found</h3>
+                    <h3 className="text-xl font-medium mb-2 text-navy">No projects found</h3>
                     <p className="text-gray-500 mb-4">
                         Try adjusting your search or filter criteria to find more projects.
                     </p>
 
                     <button 
-                        className="text-purple-600 hover:text-purple-800" 
+                        className="text-purple-950 hover:text-purple-700 font-semibold cursor-pointer" 
                         onClick={() => { 
                             setSearchQuery('');
                             setSelectedCategory('All');
