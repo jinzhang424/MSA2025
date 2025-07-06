@@ -29,7 +29,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
       {/* Image and category */}
       <div className="relative h-48 overflow-hidden">
         <img src={image} alt={title} className="w-full h-full object-cover" />
-        <div className="absolute top-4 left-4 bg-navy/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
+        <div className="absolute top-4 left-4 bg-purple-950/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
           {category}
         </div>
       </div>
@@ -69,7 +69,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
               <span>Due {deadline || "TBD"}</span>
             </div>}
         </div>
-        <Link to={`/project/${id}`} className="bg-navy text-slate-100 px-4 py-2 rounded-md hover:bg-gray-800 text-center font-semibold">
+        <Link to={`/project/${id}`} className="bg-purple-950 duration-200 text-slate-100 px-4 py-2 rounded-md hover:bg-purple-800 text-center font-semibold">
           View Project
         </Link>
       </div>
