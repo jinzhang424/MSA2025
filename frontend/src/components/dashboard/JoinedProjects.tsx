@@ -173,74 +173,73 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                                         className="w-full h-full object-cover"
                                     />
                                     <div className="absolute top-3 left-3 flex gap-2">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                                        <span className={`px-2 py-1 rounded-sm text-xs font-medium ${getStatusColor(project.status)}`}>
                                             {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
                                         </span>
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(membership.role)}`}>
+                                        <span className={`px-2 py-1 rounded-sm text-xs font-medium ${getRoleColor(membership.role)}`}>
                                             {membership.role.charAt(0).toUpperCase() + membership.role.slice(1)}
                                         </span>
                                     </div>
                                     <div className="absolute top-3 right-3">
-                                        <span className="px-2 py-1 bg-white/90 rounded-full text-xs font-medium text-gray-700">
+                                        <span className="px-2 py-1 bg-white/90 rounded-sm text-xs font-medium text-gray-700">
                                             {project.category}
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Project Content */}
-                                <div className="p-6">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{project.title}</h3>
-                                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{project.description}</p>
+                                <div className="flex flex-col p-6 justify-between min-h-64">
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{project.title}</h3>
+                                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">{project.description}</p>
+                                    </div>
 
-                                    {/* Project Stats */}
-                                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                                        <div className="flex items-center">
-                                            <FiUsers size={16} className="mr-1" />
-                                            {project.totalSpots - project.availableSpots}/{project.totalSpots} filled
-                                        </div>
-                                        {project.deadline && (
+                                    <div>
+                                        {/* Project Stats */}
+                                        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                                             <div className="flex items-center">
-                                                <FiCalendar size={16} className="mr-1" />
-                                                {new Date(project.deadline).toLocaleDateString()}
+                                                <FiUsers size={16} className="mr-1" />
+                                                {project.totalSpots - project.availableSpots}/{project.totalSpots} filled
                                             </div>
-                                        )}
-                                    </div>
+                                            {project.deadline && (
+                                                <div className="flex items-center">
+                                                    <FiCalendar size={16} className="mr-1" />
+                                                    {new Date(project.deadline).toLocaleDateString()}
+                                                </div>
+                                            )}
+                                        </div>
 
-                                    {/* Skills */}
-                                    <div className="flex flex-wrap gap-1 mb-4">
-                                        {project.skills.slice(0, 3).map((skill) => (
-                                            <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                                {skill}
-                                            </span>
-                                        ))}
-                                        {project.skills.length > 3 && (
-                                            <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                                +{project.skills.length - 3} more
-                                            </span>
-                                        )}
-                                    </div>
+                                        {/* Skills */}
+                                        <div className="flex flex-wrap gap-1 mb-4">
+                                            {project.skills.slice(0, 3).map((skill) => (
+                                                <span key={skill} className="px-2 py-1 bg-purple-200 text-purple-700 rounded text-sm font-medium">
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                            {project.skills.length > 3 && (
+                                                <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                    +{project.skills.length - 3} more
+                                                </span>
+                                            )}
+                                        </div>
 
-                                    {/* Membership Info */}
-                                    <div className="text-xs text-gray-500 mb-4">
-                                        Joined {new Date(membership.joinedAt).toLocaleDateString()}
-                                    </div>
-
-                                    {/* Actions */}
-                                    <div className="flex items-center justify-between">
-                                        <Link
-                                            to={`/project/${project.id}`}
-                                            className="inline-flex items-center px-3 py-2 bg-purple-950 text-white rounded-lg hover:bg-purple-900 transition-colors text-sm"
-                                        >
-                                            <FiEye size={14} className="mr-2" />
-                                            View Project
-                                        </Link>
-                                        <button
-                                            onClick={() => handleLeaveProject(membership.id, project.title)}
-                                            className="p-2 text-gray-500 hover:text-red-600 transition-colors"
-                                            title="Leave Project"
-                                        >
-                                            <FiLogOut size={16} />
-                                        </button>
+                                        {/* Actions */}
+                                        <div className="relative flex items-center justify-between bottom-0">
+                                            <Link
+                                                to={`/project/${project.id}`}
+                                                className="inline-flex items-center px-3 py-2 bg-purple-950 text-white rounded-lg hover:bg-purple-900 transition-colors text-sm font-medium"
+                                            >
+                                                <FiEye size={14} className="mr-2" />
+                                                View Project
+                                            </Link>
+                                            <button
+                                                onClick={() => handleLeaveProject(membership.id, project.title)}
+                                                className="p-2 text-gray-500 hover:text-red-600 transition-colors"
+                                                title="Leave Project"
+                                            >
+                                                <FiLogOut size={16} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
