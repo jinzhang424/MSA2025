@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { IoIosArrowRoundBack } from 'react-icons/io';
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md';
+import BackLink from '../components/BackLink';
 
 interface RegisterFormData {
     firstName: string;
@@ -131,17 +131,13 @@ const RegisterationPage = () => {
     };
 
     return (
-        <div className="relative bg-purple-950 bg-gradient-to-br from-orange-300 flex items-center justify-center p-24">
+        <div className="relative h-full bg-purple-950 bg-gradient-to-br from-orange-300 lg:p-24 py-20 px-8">
             {/* Back to home button */}
-            <Link 
-                className="group flex gap-2 items-center absolute top-6 left-6 sm:left-12 font-semibold text-white text-md z-10" 
-                to="/"
-            >
-                <IoIosArrowRoundBack className="group-hover:-translate-x-2 duration-300 transition-transform" size={28}/>
+            <BackLink to="/">
                 Back to home
-            </Link>
+            </BackLink>
 
-            <div className="w-full max-w-[600px]">
+            <div className="mx-auto max-w-[600px]">
                 <div className="relative z-10 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
                     {/* Header */}
                     <div className="text-center mb-8">
