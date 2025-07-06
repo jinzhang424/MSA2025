@@ -1,5 +1,6 @@
 import { FiFolder, FiUsers, FiFileText, FiTrendingUp } from 'react-icons/fi';
 import { type User } from '../../types/dashboard';
+import { FaCircle } from "react-icons/fa";
 
 interface DashboardOverviewProps {
     user: User;
@@ -14,38 +15,34 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
         completedProjects: 12
     };
 
-    const recentActivity = [
+    const recentApplications = [
         {
             id: 1,
-            type: 'application',
-            message: 'New application received for "E-commerce Platform"',
+            applicantName: 'Alice Johnson',
+            projectName: 'E-commerce Platform',
             time: '2 hours ago',
-            status: 'pending'
+            status: 'pending',
+            skills: ['React', 'Node.js', 'PostgreSQL']
         },
         {
             id: 2,
-            type: 'project',
-            message: 'Project "Mobile App" deadline approaching',
+            applicantName: 'Bob Smith',
+            projectName: 'E-commerce Platform',
             time: '5 hours ago',
-            status: 'warning'
+            status: 'pending',
+            skills: ['Vue.js', 'Python', 'MongoDB']
         },
         {
             id: 3,
-            type: 'accepted',
-            message: 'Your application for "AI Chatbot" was accepted',
+            applicantName: 'Carol Davis',
+            projectName: 'Mobile Learning App',
             time: '1 day ago',
-            status: 'success'
+            status: 'accepted',
+            skills: ['React Native', 'Firebase', 'UI/UX']
         },
-        {
-            id: 4,
-            type: 'completed',
-            message: 'Project "Portfolio Website" marked as completed',
-            time: '2 days ago',
-            status: 'info'
-        }
     ];
 
-    const upcomingDeadlines = [
+    let upcomingDeadlines = [
         {
             id: 1,
             projectName: 'E-commerce Platform',
@@ -83,6 +80,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* My Projects */}
                 <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                     <div className="flex items-center">
                         <div className="p-3 rounded-full bg-blue-100 text-blue-600">
@@ -95,6 +93,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     </div>
                 </div>
 
+                {/* Joined Projects */}
                 <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                     <div className="flex items-center">
                         <div className="p-3 rounded-full bg-green-100 text-green-600">
@@ -107,6 +106,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     </div>
                 </div>
 
+                {/* Pending Apps */}
                 <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                     <div className="flex items-center">
                         <div className="p-3 rounded-full bg-yellow-100 text-yellow-600">
@@ -119,6 +119,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     </div>
                 </div>
 
+                {/* Completed */}
                 <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
                     <div className="flex items-center">
                         <div className="p-3 rounded-full bg-purple-100 text-purple-600">
@@ -133,24 +134,48 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent Activity */}
+                {/* Recent Applications */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                     <div className="p-6 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Recent Applications</h3>
                     </div>
                     <div className="p-6">
                         <div className="space-y-4">
-                            {recentActivity.map((activity) => (
-                                <div key={activity.id} className="flex items-start space-x-3">
-                                    <div className={`w-2 h-2 rounded-full mt-2 ${
-                                        activity.status === 'pending' ? 'bg-yellow-500' :
-                                        activity.status === 'warning' ? 'bg-orange-500' :
-                                        activity.status === 'success' ? 'bg-green-500' :
-                                        'bg-blue-500'
-                                    }`} />
+                            {recentApplications.map((application) => (
+                                <div key={application.id} className="flex items-start space-x-3">
+                                    <div className="w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
+                                        <span className="text-white font-semibold text-sm">
+                                            {application.applicantName.split(' ').map(n => n[0]).join('')}
+                                        </span>
+                                    </div>
+                                    
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm text-gray-900">{activity.message}</p>
-                                        <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                                        <div className="flex items-center justify-between">
+                                            <h4 className="text-sm font-medium text-gray-900">
+                                                {application.applicantName}
+                                            </h4>
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                application.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                application.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                                                'bg-red-100 text-red-800'
+                                            }`}>
+                                                {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm text-gray-600 mt-1">Applied to: {application.projectName}</p>
+                                        <div className="flex flex-wrap gap-1 mt-2">
+                                            {application.skills.slice(0, 2).map((skill) => (
+                                                <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                            {application.skills.length > 2 && (
+                                                <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                    +{application.skills.length - 2} more
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-gray-500 mt-2">{application.time}</p>
                                     </div>
                                 </div>
                             ))}
