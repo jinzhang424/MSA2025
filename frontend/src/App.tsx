@@ -19,7 +19,7 @@ function App() {
           <Route path="/about-us" element={<AboutUsPage/>}/>
           <Route path="/login" element={<LoginPage/>}/>
           <Route path="/register" element={<RegisterationPage/>}/>
-          <Route path="/dashboard/home" element={<UserDashboard/>}/>
+          <Route path="/dashboard" element={<UserDashboard/>}/>
         </Routes>
       </BrowserRouter>
     )

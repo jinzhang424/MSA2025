@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiPlus, FiEdit, FiTrash2, FiEye, FiUsers, FiCalendar, FiFolder } from 'react-icons/fi';
+import { FiPlus, FiTrash2, FiEye, FiUsers, FiCalendar, FiFolder } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User, type Project } from '../../types/dashboard';
 
@@ -161,68 +161,68 @@ const MyProjects = ({ user }: MyProjectsProps) => {
                             </div>
 
                             {/* Project Content */}
-                            <div className="p-6">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-2">{project.title}</h3>
-                                <p className="text-gray-600 text-sm mb-4 line-clamp-2">{project.description}</p>
+                            <div className="flex flex-col p-6 min-h-64 justify-between">
+                                {/* Header and description */}
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{project.title}</h3>
+                                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{project.description}</p>
+                                </div>
 
-                                {/* Project Stats */}
-                                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                                    <div className="flex items-center">
-                                        <FiUsers size={16} className="mr-1" />
-                                        {project.totalSpots - project.availableSpots}/{project.totalSpots} filled
-                                    </div>
-                                    {project.deadline && (
+                                {/* Project Info */}
+                                <div>
+                                    {/* Project Stats */}
+                                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                                         <div className="flex items-center">
-                                            <FiCalendar size={16} className="mr-1" />
-                                            {new Date(project.deadline).toLocaleDateString()}
+                                            <FiUsers size={16} className="mr-1" />
+                                            {project.totalSpots - project.availableSpots}/{project.totalSpots} filled
                                         </div>
-                                    )}
-                                </div>
-
-                                {/* Skills */}
-                                <div className="flex flex-wrap gap-1 mb-4">
-                                    {project.skills.slice(0, 3).map((skill) => (
-                                        <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                            {skill}
-                                        </span>
-                                    ))}
-                                    {project.skills.length > 3 && (
-                                        <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                            +{project.skills.length - 3} more
-                                        </span>
-                                    )}
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex space-x-2">
-                                        <Link
-                                            to={`/project/${project.id}`}
-                                            className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                                            title="View Project"
-                                        >
-                                            <FiEye size={16} />
-                                        </Link>
-                                        <button
-                                            className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                                            title="Edit Project"
-                                        >
-                                            <FiEdit size={16} />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDeleteProject(project.id)}
-                                            className="p-2 text-gray-500 hover:text-red-600 transition-colors"
-                                            title="Delete Project"
-                                        >
-                                            <FiTrash2 size={16} />
-                                        </button>
+                                        {project.deadline && (
+                                            <div className="flex items-center">
+                                                <FiCalendar size={16} className="mr-1" />
+                                                {new Date(project.deadline).toLocaleDateString()}
+                                            </div>
+                                        )}
                                     </div>
-                                    <Link
-                                        to={`/project/${project.id}/applications`}
-                                        className="text-sm text-purple-950 hover:text-purple-800 font-medium"
-                                    >
-                                        View Applications
-                                    </Link>
+
+                                    {/* Skills */}
+                                    <div className="flex flex-wrap gap-1 mb-4">
+                                        {project.skills.slice(0, 3).map((skill) => (
+                                            <span key={skill} className="px-2 py-1 bg-purple-200 text-purple-700 rounded text-xs">
+                                                {skill}
+                                            </span>
+                                        ))}
+                                        {project.skills.length > 3 && (
+                                            <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                +{project.skills.length - 3} more
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex space-x-2">
+                                            <Link
+                                                to={`/project/${project.id}`}
+                                                className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                                                title="View Project"
+                                            >
+                                                <FiEye size={16} />
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDeleteProject(project.id)}
+                                                className="p-2 text-gray-500 hover:text-red-600 transition-colors"
+                                                title="Delete Project"
+                                            >
+                                                <FiTrash2 size={16} />
+                                            </button>
+                                        </div>
+                                        <Link
+                                            to={`/project/${project.id}/applications`}
+                                            className="text-sm text-gray-50 hover:bg-purple-800 font-medium px-4 py-2 bg-purple-950 rounded-md duration-200"
+                                        >
+                                            View Applications
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>

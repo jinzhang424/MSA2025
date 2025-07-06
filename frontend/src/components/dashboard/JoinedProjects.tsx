@@ -14,9 +14,9 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
     const joinedProjects: ProjectMembership[] = [
         {
             id: '1',
-            projectId: 'p1',
+            projectId: '1',
             project: {
-                id: 'p1',
+                id: '1',
                 title: 'AI Chatbot Development',
                 description: 'Building an intelligent chatbot using natural language processing',
                 image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=400',
@@ -35,9 +35,9 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
         },
         {
             id: '2',
-            projectId: 'p2',
+            projectId: '2',
             project: {
-                id: 'p2',
+                id: '2',
                 title: 'Data Analytics Dashboard',
                 description: 'Creating interactive dashboards for business intelligence',
                 image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400',
@@ -56,9 +56,9 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
         },
         {
             id: '3',
-            projectId: 'p3',
+            projectId: '3',
             project: {
-                id: 'p3',
+                id: '3',
                 title: 'Social Media App',
                 description: 'Cross-platform social media application',
                 image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400',
@@ -212,7 +212,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                                         {/* Skills */}
                                         <div className="flex flex-wrap gap-1 mb-4">
                                             {project.skills.slice(0, 3).map((skill) => (
-                                                <span key={skill} className="px-2 py-1 bg-purple-200 text-purple-700 rounded text-sm font-medium">
+                                                <span key={skill} className="px-2 py-1 bg-purple-200 text-purple-700 rounded text-sm">
                                                     {skill}
                                                 </span>
                                             ))}
