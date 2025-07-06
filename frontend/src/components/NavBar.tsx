@@ -32,7 +32,7 @@ export default function NavBar() {
         {
             icon: <AiOutlineTeam className="mr-4" size={20}/>,
             header: "About Us",
-            to: "/"
+            to: "/about-us"
         },
     ]
 

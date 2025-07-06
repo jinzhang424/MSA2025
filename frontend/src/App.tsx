@@ -3,6 +3,7 @@ import LandingPage from "./pages/LandingPage"
 import ProjectDiscovery from "./pages/ProjectDiscoveryPage"
 import ProjectCreationPage from "./pages/ProjectCreationPage"
 import ProjectPage from "./pages/ProjectPage"
+import AboutUsPage from "./pages/AboutUsPage"
 
 function App() {
     return (
@@ -12,6 +13,7 @@ function App() {
           <Route path="/discover-projects" element={<ProjectDiscovery/>}/>
           <Route path="/create-project" element={<ProjectCreationPage/>}/>
           <Route path="/project/:id" element={<ProjectPage/>}/>
+          <Route path="/about-us" element={<AboutUsPage/>}/>
         </Routes>
       </BrowserRouter>
     )
