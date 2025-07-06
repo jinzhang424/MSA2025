@@ -8,11 +8,11 @@ interface ButtonProps {
 }
 
 function BGFadeButton({bgFade = false, children, className, onClick}: ButtonProps) {
-    let buttonStyle = "rounded-md outline outline-white outline-2 hover:cursor-pointer font-semibold"
+    let buttonStyle = "rounded-md outline outline-gray-100 outline-2 hover:cursor-pointer font-semibold"
     if (bgFade) {
-        buttonStyle += " text-white hover:text-navy bg-white/0 hover:bg-white/100 duration-300 ease-in-out"
+        buttonStyle += " text-gray-100 hover:text-navy bg-gray-100/0 hover:bg-gray-100/100 duration-300 ease-in-out"
     } else {
-        buttonStyle += " text-navy bg-white"
+        buttonStyle += " text-navy bg-gray-100 hover:bg-gray-300"
     }
 
     buttonStyle += ` ${className}`
