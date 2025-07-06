@@ -3,6 +3,7 @@ import { IoClose } from "react-icons/io5";
 import ProjectCard from '../components/ProjectCard';
 import SimpleHero from '../components/SimpleHero';
 import { BsFilterRight } from "react-icons/bs";
+import Footer from '../components/Footer';
 
 const CATEGORIES = ['All', 'Software Development', 'Web Design', 'Mobile App', 'Graphic Design', 'UI/UX', 'Data Science', 'Game Development'];
 const SAMPLE_PROJECTS = [
@@ -168,6 +169,8 @@ const ProjectDiscoveryPage = () => {
                     </button>
                 </div>}
             </div>
+            
+            <Footer/>
         </div>
     )
 };

@@ -3,6 +3,7 @@ import { FaPlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
 import SimpleHero from '../components/SimpleHero';
 import { IoChevronDown } from 'react-icons/io5';
+import Footer from '../components/Footer';
 
 const ProjectCreationPage = () => {
     const [formData, setFormData] = useState({
@@ -206,7 +207,7 @@ const ProjectCreationPage = () => {
 
                                 <button 
                                     type="button" 
-                                    className="bg-navy text-white px-3 py-2 rounded-r-md hover:bg-purple-950" 
+                                    className="bg-purple-950 hover:purple-800 duration-200 text-white px-3 py-2 rounded-r-md hover:bg-purple-950" 
                                     onClick={addSkill}
                                 >
                                     <FaPlus className="h-5 w-5" />
@@ -232,13 +233,15 @@ const ProjectCreationPage = () => {
                             </div>
 
                             {/* Submit Button */}
-                            <button type="submit" className="w-full bg-navy text-white py-3 px-6 rounded-md hover:bg-gray-800 mt-4">
+                            <button type="submit" className="w-full duration-200 bg-purple-950 text-white py-3 px-6 rounded-md hover:bg-purple-800 mt-4">
                                     Create Project
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
+
+            <Footer/>
         </div>
     )
 };
