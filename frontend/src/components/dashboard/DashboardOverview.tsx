@@ -1,6 +1,5 @@
 import { FiFolder, FiUsers, FiFileText, FiTrendingUp } from 'react-icons/fi';
 import { type User } from '../../types/dashboard';
-import { FaCircle } from "react-icons/fa";
 
 interface DashboardOverviewProps {
     user: User;
@@ -154,7 +153,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                                             <h4 className="text-sm font-medium text-gray-900">
                                                 {application.applicantName}
                                             </h4>
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                            <span className={`px-2 py-1 rounded-md text-xs font-medium ${
                                                 application.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                                                 application.status === 'accepted' ? 'bg-green-100 text-green-800' :
                                                 'bg-red-100 text-red-800'

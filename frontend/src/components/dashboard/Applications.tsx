@@ -134,13 +134,13 @@ const Applications = ({ user }: ApplicationsProps) => {
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'pending':
-                return <FiClock className="text-yellow-500" size={16} />;
+                return <FiClock size={16} />;
             case 'accepted':
-                return <FiCheck className="text-green-500" size={16} />;
+                return <FiCheck size={16} />;
             case 'rejected':
-                return <FiX className="text-red-500" size={16} />;
+                return <FiX size={16} />;
             default:
-                return <FiClock className="text-gray-500" size={16} />;
+                return <FiClock size={16} />;
         }
     };
 
@@ -221,13 +221,15 @@ const Applications = ({ user }: ApplicationsProps) => {
                                         className="w-16 h-16 rounded-lg object-cover"
                                     />
                                     <div className="flex-1 min-w-0">
+                                        {/* Header and status */}
                                         <div className="flex items-center justify-between mb-2">
                                             <h3 className="text-lg font-semibold text-gray-900">
                                                 {application.project.title}
                                             </h3>
-                                            <div className="flex items-center space-x-2">
+
+                                            <div className={`flex items-center space-x-2 px-2 py-1 rounded-md ${getStatusColor(application.status)}`}>
                                                 {getStatusIcon(application.status)}
-                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(application.status)}`}>
+                                                <span className='text-xs font-medium'>
                                                     {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
                                                 </span>
                                             </div>
@@ -235,7 +237,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                                         <p className="text-gray-600 text-sm mb-3">{application.project.description}</p>
                                         <div className="flex flex-wrap gap-1 mb-3">
                                             {application.project.skills.map((skill) => (
-                                                <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                <span key={skill} className="px-2 py-1 bg-purple-200 text-purple-700 rounded-md text-xs">
                                                     {skill}
                                                 </span>
                                             ))}
@@ -245,13 +247,13 @@ const Applications = ({ user }: ApplicationsProps) => {
                                                 <p className="text-sm text-gray-700 italic">"{application.message}"</p>
                                             </div>
                                         )}
-                                        <div className="flex items-center justify-between text-sm text-gray-500">
+                                        <div className="flex items-center justify-between text-sm text-gray-100">
                                             <span>Applied {new Date(application.appliedAt).toLocaleDateString()}</span>
                                             <Link
                                                 to={`/project/${application.project.id}`}
-                                                className="inline-flex items-center text-purple-950 hover:text-purple-800"
+                                                className="flex items-center bg-purple-950 hover:bg-purple-800 font-semibold px-4 py-2 rounded-md"
                                             >
-                                                <FiEye size={14} className="mr-1" />
+                                                <FiEye size={16} className="mr-2 mt-0.5" />
                                                 View Project
                                             </Link>
                                         </div>
@@ -311,13 +313,13 @@ const Applications = ({ user }: ApplicationsProps) => {
                                                 <div className="flex space-x-2">
                                                     <button
                                                         onClick={() => handleApplicationAction(application.id, 'reject')}
-                                                        className="px-3 py-1 text-sm border border-red-300 text-red-700 rounded hover:bg-red-50 transition-colors"
+                                                        className="px-3 py-1 text-sm border-2 border-red-700 text-red-700 rounded hover:bg-red-700 hover:text-gray-50 transition-colors font-semibold"
                                                     >
                                                         Reject
                                                     </button>
                                                     <button
                                                         onClick={() => handleApplicationAction(application.id, 'accept')}
-                                                        className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                                                        className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
                                                     >
                                                         Accept
                                                     </button>
