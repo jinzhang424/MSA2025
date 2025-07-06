@@ -74,11 +74,11 @@ export default function NavBar() {
                         </div>
 
                         <div className="flex flex-col items-center font-semibold justify-end">
-                            <Link to="/sign-in" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
+                            <Link to="/login" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
                                 <RiLoginBoxLine className="mr-4" size={24}/>
                                 Login
                             </Link>
-                            <Link to="/" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
+                            <Link to="/register" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
                                 <MdOutlinePersonAddAlt1 className="mr-4" size={24}/>
                                 Join Us
                             </Link>
@@ -100,8 +100,19 @@ export default function NavBar() {
                 </div>
 
                 <div className="flex items-center space-x-4 font-semibold justify-end">
-                    <BGFadeButton className="p-2 pl-5 pr-5" onClick={() => navigate("/sign-in")}>Login</BGFadeButton>
-                    <BGFadeButton className="p-2 pl-5 pr-5" bgFade={true}>Join Us</BGFadeButton>
+                    <BGFadeButton 
+                        className="p-2 pl-5 pr-5" 
+                        onClick={() => navigate("/login")}
+                    >
+                        Login
+                    </BGFadeButton>
+                    <BGFadeButton 
+                        className="p-2 pl-5 pr-5" 
+                        bgFade={true}
+                        onClick={() => navigate("/register")}
+                    >
+                        Join Us
+                    </BGFadeButton>
                 </div>
             </nav>
          )
