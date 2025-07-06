@@ -1,5 +1,6 @@
 import SimpleHero from "../components/SimpleHero";
 import { LuUserRound, LuBriefcase, LuGlobe  } from "react-icons/lu";
+import Footer from "../components/Footer";
 
 const AboutUsPage = () => {
     return (
@@ -7,8 +8,8 @@ const AboutUsPage = () => {
             <SimpleHero heading="About CoCreate" subheading="Connecting talented individuals to collaborate on meaningful projects and build their future together."/>
 
             {/* Mission Section */}
-            <section className="py-20">
-                <div className="container mx-auto px-6">
+            <section className="sm:p-20 p-12">
+                <div className="container mx-auto">
                     <div className="max-w-3xl mx-auto text-center">
                         <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
 
@@ -23,8 +24,8 @@ const AboutUsPage = () => {
             </section>
 
             {/* Values Section */}
-            <section className="py-20 bg-gray-100">
-                <div className="container mx-auto px-20">
+            <section className="sm:p-20 p-12 bg-gray-100">
+                <div className="container mx-auto">
                     <h2 className="text-3xl font-bold mb-12 text-center">Our Values</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -67,8 +68,8 @@ const AboutUsPage = () => {
             </section>
             
             {/* Contact Section */}
-            <section className="py-20 bg-gray-100">
-                <div className="container mx-auto px-6 text-center">
+            <section className="sm:p-20 p-12 bg-gray-100">
+                <div className="container mx-auto text-center">
                     <h2 className="text-3xl font-bold mb-6">Get in Touch</h2>
 
                     <p className="text-lg max-w-2xl mx-auto mb-8">
@@ -79,6 +80,8 @@ const AboutUsPage = () => {
                     </a>
                 </div>
             </section>
+
+            <Footer/>
         </div>
     )
 };
