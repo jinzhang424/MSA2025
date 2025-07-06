@@ -149,12 +149,12 @@ const MyProjects = ({ user }: MyProjectsProps) => {
                                     className="w-full h-full object-cover"
                                 />
                                 <div className="absolute top-3 left-3">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                                    <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(project.status)}`}>
                                         {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
                                     </span>
                                 </div>
                                 <div className="absolute top-3 right-3">
-                                    <span className="px-2 py-1 bg-white/90 rounded-full text-xs font-medium text-gray-700">
+                                    <span className="px-2 py-1 bg-white/90 rounded-md text-xs font-medium text-gray-700">
                                         {project.category}
                                     </span>
                                 </div>

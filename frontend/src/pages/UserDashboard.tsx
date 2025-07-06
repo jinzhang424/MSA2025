@@ -89,7 +89,7 @@ function UserDashboard() {
                                         className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
                                             activeTab === item.id
                                                 ? 'bg-purple-950 text-white'
-                                                : 'text-gray-700 hover:bg-gray-100'
+                                                : 'text-gray-700 hover:bg-gray-300'
                                         }`}
                                     >
                                         <Icon size={20} />
