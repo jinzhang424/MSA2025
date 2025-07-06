@@ -7,10 +7,12 @@ import { AiOutlineTeam } from "react-icons/ai"
 import { RiLoginBoxLine } from "react-icons/ri";
 import { MdOutlinePersonAddAlt1 } from "react-icons/md";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function NavBar() {
     const [openMenu, setOpenMenu] = useState(false);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleResize = () => setWindowWidth(window.innerWidth);
@@ -72,7 +74,7 @@ export default function NavBar() {
                         </div>
 
                         <div className="flex flex-col items-center font-semibold justify-end">
-                            <Link to="/" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
+                            <Link to="/sign-in" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
                                 <RiLoginBoxLine className="mr-4" size={24}/>
                                 Login
                             </Link>
@@ -98,7 +100,7 @@ export default function NavBar() {
                 </div>
 
                 <div className="flex items-center space-x-4 font-semibold justify-end">
-                    <BGFadeButton className="p-2 pl-5 pr-5">Login</BGFadeButton>
+                    <BGFadeButton className="p-2 pl-5 pr-5" onClick={() => navigate("/sign-in")}>Login</BGFadeButton>
                     <BGFadeButton className="p-2 pl-5 pr-5" bgFade={true}>Join Us</BGFadeButton>
                 </div>
             </nav>
