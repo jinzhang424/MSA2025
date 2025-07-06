@@ -68,7 +68,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
     return (
         <div className="space-y-6">
             {/* Welcome Section */}
-            <div className="bg-gradient-to-r from-purple-950 to-purple-800 rounded-lg p-6 text-white">
+            <div className="bg-gradient-to-r from-purple-950 to-orange-400 rounded-lg p-6 text-white">
                 <h2 className="text-2xl font-bold mb-2">
                     Welcome back, {user.firstName}! 👋
                 </h2>
