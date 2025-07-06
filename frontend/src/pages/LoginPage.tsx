@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { IoIosArrowRoundBack } from 'react-icons/io';
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { RiLoginBoxLine } from 'react-icons/ri';
+import BackLink from '../components/BackLink';
 
 interface LoginFormData {
     email: string;
@@ -35,13 +35,9 @@ const LoginPage = () => {
     return (
         <div className="min-h-screen bg-purple-950 bg-gradient-to-br from-orange-300 flex items-center justify-center p-4">
             {/* Back to home button */}
-            <Link 
-                className="group flex gap-2 items-center absolute top-6 left-6 sm:left-12 font-semibold text-white text-md z-10" 
-                to="/"
-            >
-                <IoIosArrowRoundBack className="group-hover:-translate-x-2 duration-300 transition-transform" size={28}/>
+            <BackLink to="/">
                 Back to home
-            </Link>
+            </BackLink>
 
             <div className="w-full max-w-md">
                 <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
