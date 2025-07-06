@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiHome, FiFolder, FiUsers, FiFileText, FiSettings, FiBell } from 'react-icons/fi';
+import { FiHome, FiFolder, FiUsers, FiFileText, FiSettings } from 'react-icons/fi';
 import { HiOutlineLogout } from 'react-icons/hi';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
 import MyProjects from '../components/dashboard/MyProjects';
@@ -10,8 +10,7 @@ import { type DashboardTab } from '../types/dashboard';
 
 function UserDashboard() {
     const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+    
     // Mock user data - replace with actual user context/state
     const user = {
         id: '1',
@@ -57,18 +56,16 @@ function UserDashboard() {
     return (
         <div className="min-h-screen bg-gray-50 flex">
             {/* Sidebar */}
-            <div className={`bg-white shadow-lg transition-all duration-300 ${
-                isSidebarOpen ? 'w-64' : 'w-16'
-            } lg:w-64 flex flex-col`}>
+            <div className={`bg-white shadow-lg transition-all duration-300 w-18 lg:w-64 flex flex-col`}>
                 {/* Header */}
                 <div className="p-4 border-b border-gray-200">
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center gap-x-3">
                         <div className="w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
                             <span className="text-white font-semibold text-sm">
                                 {user.firstName[0]}{user.lastName[0]}
                             </span>
                         </div>
-                        <div className={`${isSidebarOpen ? 'block' : 'hidden'} lg:block`}>
+                        <div className='hidden lg:block'>
                             <h3 className="font-semibold text-gray-900">
                                 {user.firstName} {user.lastName}
                             </h3>
@@ -86,14 +83,14 @@ function UserDashboard() {
                                 <li key={item.id}>
                                     <button
                                         onClick={() => setActiveTab(item.id as DashboardTab)}
-                                        className={`w-full flex items-center px-3 py-2 rounded-lg text-left transition-colors ${
+                                        className={`w-full flex items-center lg:px-4 lg:justify-normal justify-center px-2 py-2 rounded-lg text-left transition-colors ${
                                             activeTab === item.id
                                                 ? 'bg-purple-950 text-white'
-                                                : 'text-gray-700 hover:bg-gray-300'
+                                                : 'text-gray-700 hover:bg-gray-200'
                                         }`}
                                     >
                                         <Icon size={20} />
-                                        <span className={`ml-3 ${isSidebarOpen ? 'block' : 'hidden'} lg:block`}>
+                                        <span className='ml-3 hidden lg:block font-semibold'>
                                             {item.label}
                                         </span>
                                     </button>
@@ -107,22 +104,14 @@ function UserDashboard() {
                 <div className="p-4 border-t border-gray-200">
                     <button
                         onClick={handleLogout}
-                        className="w-full flex items-center px-3 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+                        className="w-full flex items-center lg:px-4 lg:justify-normal justify-center px-2 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
                     >
                         <HiOutlineLogout size={20} />
-                        <span className={`ml-3 ${isSidebarOpen ? 'block' : 'hidden'} lg:block`}>
+                        <span className='ml-3 hidden lg:block'>
                             Logout
                         </span>
                     </button>
                 </div>
-
-                {/* Mobile toggle */}
-                <button
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    className="lg:hidden absolute top-4 right-4 p-2 rounded-md bg-gray-100 hover:bg-gray-200"
-                >
-                    <FiBell size={16} />
-                </button>
             </div>
 
             {/* Main Content */}
@@ -137,12 +126,6 @@ function UserDashboard() {
                             <p className="text-gray-600 mt-1">
                                 Manage your projects and collaborate with others
                             </p>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                            <button className="p-2 text-gray-400 hover:text-gray-600 relative">
-                                <FiBell size={20} />
-                                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-                            </button>
                         </div>
                     </div>
                 </header>
