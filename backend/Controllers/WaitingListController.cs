@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+namespace backend.Controllers;
+
 [Authorize]
 [ApiController]
-[Route("WaitingList")]
+[Route("api/WaitingList")]
 
 public class WaitingListController(ApplicationDbContext context) : ControllerBase
 {

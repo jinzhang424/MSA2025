@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using backend.Service;
 
+namespace backend.Controllers;
+
 [ApiController]
-[Route("Project")]
+[Route("api/Project")]
 
 public class ProjectController : ControllerBase
 {

@@ -28,11 +28,9 @@ const LoginPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        const token = await login(formData.email, formData.password)
-        if (token) {
-            console.log("Login in succes. Token: ", token)
-        } else {
-            console.error("Failed")
+        const req = await login(formData.email, formData.password)
+        if (req) {
+            console.log("Login in succes. Token: ", req.data)
         }
         
     };

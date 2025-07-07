@@ -8,7 +8,7 @@ namespace backend.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("Chatroom")]
+[Route("api/Chatroom")]
 
 public class ChatController : ControllerBase
 {

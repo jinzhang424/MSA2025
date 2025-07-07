@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md';
 import BackLink from '../components/BackLink';
+import { register } from '../api/Auth';
 
 interface RegisterFormData {
     firstName: string;
@@ -66,8 +67,6 @@ const RegisterationPage = () => {
             newErrors.password = 'Password is required';
         } else if (formData.password.length < 8) {
             newErrors.password = 'Password must be at least 8 characters';
-        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-            newErrors.password = 'Password must contain uppercase, lowercase, and number';
         }
 
         // Validate confirm password
@@ -106,21 +105,27 @@ const RegisterationPage = () => {
         e.preventDefault();
         
         if (!validateForm()) {
+            console.log("Invalid form")
             return;
         }
 
         setIsSubmitting(true);
         
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
+            await register({
+                fullName: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
+                email: formData.email.trim(),
+                password: formData.password
+            });
+
             console.log('Registration data:', {
                 firstName: formData.firstName.trim(),
                 lastName: formData.lastName.trim(),
                 email: formData.email.trim(),
                 password: formData.password
             });
+
+            console.log("Successfully registerd");
             
         } catch (error) {
             console.error('Registration failed:', error);
