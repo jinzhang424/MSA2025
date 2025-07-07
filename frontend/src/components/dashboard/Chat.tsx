@@ -1,0 +1,380 @@
+import { useState, useRef, useEffect } from 'react';
+import { FiSend, FiSearch, FiPaperclip, FiUsers, FiMessageCircle } from 'react-icons/fi';
+import { type User, type ChatRoom, type ChatMessage } from '../../types/dashboard';
+import { FaChevronLeft } from "react-icons/fa6";
+
+interface ChatProps {
+    user: User;
+}
+
+const Chat = ({ user }: ChatProps) => {
+    const [selectedChat, setSelectedChat] = useState<number | null>(null);
+    const [newMessage, setNewMessage] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [openChat, setOpenChat] = useState(false);
+
+    // Mock data - replace with actual API calls
+    const [chatRooms] = useState<ChatRoom[]>([
+        {
+            id: 1,
+            name: 'Sarah Johnson',
+            type: 'direct',
+            participants: [
+                { id: user.id, name: `${user.firstName} ${user.lastName}`, status: 'online' },
+                { id: '2', name: 'Sarah Johnson', status: 'online' }
+            ],
+            lastMessage: {
+                id: 'm1',
+                senderId: '2',
+                senderName: 'Sarah Johnson',
+                content: 'Hey! How\'s the e-commerce project coming along?',
+                timestamp: '2025-07-06T14:30:00Z',
+                type: 'text'
+            },
+            unreadCount: 2,
+            createdAt: '2025-07-01T10:00:00Z',
+            updatedAt: '2025-07-06T14:30:00Z'
+        },
+        {
+            id: 2,
+            name: 'E-commerce Team',
+            type: 'project',
+            participants: [
+                { id: user.id, name: `${user.firstName} ${user.lastName}`, status: 'online' },
+                { id: '2', name: 'Sarah Johnson', status: 'online' },
+                { id: '3', name: 'Mike Chen', status: 'away' },
+                { id: '4', name: 'Lisa Wang', status: 'offline', lastSeen: '2025-07-06T12:00:00Z' }
+            ],
+            lastMessage: {
+                id: 'm2',
+                senderId: '3',
+                senderName: 'Mike Chen',
+                content: 'I\'ve pushed the payment integration to the dev branch',
+                timestamp: '2025-07-06T13:45:00Z',
+                type: 'text'
+            },
+            unreadCount: 0,
+            projectId: 'p1',
+            createdAt: '2025-06-15T09:00:00Z',
+            updatedAt: '2025-07-06T13:45:00Z'
+        },
+        {
+            id: 3,
+            name: 'Alice Johnson',
+            type: 'direct',
+            participants: [
+                { id: user.id, name: `${user.firstName} ${user.lastName}`, status: 'online' },
+                { id: '5', name: 'Alice Johnson', status: 'offline', lastSeen: '2025-07-05T18:30:00Z' }
+            ],
+            lastMessage: {
+                id: 'm3',
+                senderId: user.id,
+                senderName: `${user.firstName} ${user.lastName}`,
+                content: 'Thanks for applying to the project! We\'ll review your application.',
+                timestamp: '2025-07-05T16:20:00Z',
+                type: 'text'
+            },
+            unreadCount: 0,
+            createdAt: '2025-07-03T14:00:00Z',
+            updatedAt: '2025-07-05T16:20:00Z'
+        }
+    ]);
+
+    const [messages, setMessages] = useState<ChatMessage[]>([
+        {
+            id: 'm1',
+            senderId: '2',
+            senderName: 'Sarah Johnson',
+            content: 'Hey John! How\'s the e-commerce project coming along?',
+            timestamp: '2025-07-06T14:25:00Z',
+            type: 'text'
+        },
+        {
+            id: 'm2',
+            senderId: '2',
+            senderName: 'Sarah Johnson',
+            content: 'I\'ve been working on the user authentication flow and wanted to sync up.',
+            timestamp: '2025-07-06T14:26:00Z',
+            type: 'text'
+        },
+        {
+            id: 'm3',
+            senderId: user.id,
+            senderName: `${user.firstName} ${user.lastName}`,
+            content: 'Hi Sarah! It\'s going well. I\'ve completed the product catalog and shopping cart features.',
+            timestamp: '2025-07-06T14:30:00Z',
+            type: 'text'
+        },
+        {
+            id: 'm4',
+            senderId: user.id,
+            senderName: `${user.firstName} ${user.lastName}`,
+            content: 'Great timing on the auth flow - we should definitely coordinate on that. Want to hop on a quick call?',
+            timestamp: '2025-07-06T14:31:00Z',
+            type: 'text'
+        }
+    ]);
+
+    const filteredChats = chatRooms.filter(chat =>
+        chat.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const selectedChatRoom = chatRooms.find(chat => chat.id === selectedChat);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSendMessage = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newMessage.trim() || !selectedChat) return;
+
+        const message: ChatMessage = {
+            id: `m${Date.now()}`,
+            senderId: user.id,
+            senderName: `${user.firstName} ${user.lastName}`,
+            content: newMessage,
+            timestamp: new Date().toISOString(),
+            type: 'text'
+        };
+
+        setMessages(prev => [...prev, message]);
+        setNewMessage('');
+    };
+
+    const formatTime = (timestamp: string) => {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const isToday = date.toDateString() === now.toDateString();
+        
+        if (isToday) {
+            return date.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        } else {
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+        }
+    };
+
+    const handleSelectChat = (chatId: number) => {
+        setOpenChat(true)
+        setSelectedChat(chatId)
+    }
+
+    return (
+        <div className="h-full relative flex bg-gray-100 shadow-sm border border-gray-200 overflow-hidden">
+            {/* Chat List Sidebar */}
+            <div className="sm:static absolute md:w-80 w-full border-r border-gray-200 flex flex-col">
+                {/* Search Header */}
+                <div className="p-4 border-b border-gray-200 relative">
+                    <FiSearch className="absolute left-7 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <input
+                        type="text"
+                        placeholder="Search conversations..."
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+
+                {/* Chat List */}
+                <div className="flex-1 overflow-y-auto">
+                    {filteredChats.map((chat) => (
+                        <div
+                            key={chat.id}
+                            onClick={() => handleSelectChat(chat.id)}
+                            className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
+                                selectedChat === chat.id ? 'bg-purple-50 border-r-2 border-r-purple-950' : ''
+                            }`}
+                        >
+                            <div className="flex items-center space-x-3">
+                                {/* Avatar or Group Icon */}
+                                <div className="relative">
+                                    {chat.type === 'direct' ? (
+                                        <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
+                                            <span className="text-white font-semibold text-sm">
+                                                {chat.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                                            <FiUsers className="text-white" size={20} />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Chat Info */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <h3 className="font-semibold text-gray-900 truncate">
+                                            {chat.name}
+                                        </h3>
+                                        <div className="flex items-center space-x-2">
+                                            {chat.lastMessage && (
+                                                <span className="text-xs text-gray-500">
+                                                    {formatTime(chat.lastMessage.timestamp)}
+                                                </span>
+                                            )}
+                                            {chat.unreadCount > 0 && (
+                                                <span className="bg-purple-950 text-white text-xs rounded-full px-1 py-0.5 min-w-[1.25rem] text-center">
+                                                    {chat.unreadCount}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {chat.lastMessage && (
+                                        <p className="text-sm text-gray-600 truncate">
+                                            {chat.lastMessage.senderId === user.id ? 'You: ' : ''}{chat.lastMessage.content}
+                                        </p>
+                                    )}
+                                    {chat.type === 'project' && (
+                                        <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-md">
+                                            Project Chat
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Chat Area */}
+            {selectedChatRoom ? (
+                <div className={`md:static absolute flex-1 flex flex-col bg-gray-50 w-full h-full ${!openChat && 'translate-x-full'} duration-300`}>
+                    {/* Chat Header */}
+                    <div className="p-4 border-b border-gray-200 bg-white">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                                <button 
+                                    className='sm:px-2 px-2 opacity-70 hover:opacity-100 cursor-pointer' 
+                                    onClick={() => setOpenChat(false)}
+                                >
+                                    <FaChevronLeft />
+                                </button>
+
+                                {/* Avatar */}
+                                <div className="relative">
+                                    {selectedChatRoom.type === 'direct' ? (
+                                        <div className="w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
+                                            <span className="text-white font-semibold text-sm">
+                                                {selectedChatRoom.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                            <FiUsers className="text-white" size={18} />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Chat Info */}
+                                <div>
+                                    <h2 className="font-semibold text-gray-900">{selectedChatRoom.name}</h2>
+                                    <p className="text-sm text-gray-600">
+                                        {selectedChatRoom.type === 'direct' 
+                                            ? selectedChatRoom.participants.find(p => p.id !== user.id)?.status 
+                                            : `${selectedChatRoom.participants.length} members`
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Messages Area */}
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                        {messages.map((message, index) => {
+                            const isOwn = message.senderId === user.id;
+                            const showAvatar = !isOwn && (index === 0 || messages[index - 1].senderId !== message.senderId);
+                            
+                            return (
+                                <div key={message.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`flex space-x-2 max-w-xs lg:max-w-md ${isOwn ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                                        {/* Avatar */}
+                                        {showAvatar && !isOwn && (
+                                            <div className="w-8 h-8 bg-purple-950 rounded-full flex items-center justify-center flex-shrink-0">
+                                                <span className="text-white font-semibold text-xs">
+                                                    {message.senderName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                                </span>
+                                            </div>
+                                        )}
+                                        {!showAvatar && !isOwn && <div className="w-8" />}
+
+                                        {/* Message Bubble */}
+                                        <div className={`rounded-md px-4 py-2 ${
+                                            isOwn 
+                                                ? 'bg-purple-950 text-white' 
+                                                : 'bg-gray-200 text-gray-900'
+                                        }`}>
+                                            {showAvatar && !isOwn && (
+                                                <p className="text-xs font-medium mb-1 text-gray-600">
+                                                    {message.senderName}
+                                                </p>
+                                            )}
+                                            <p className="text-sm">{message.content}</p>
+                                            <p className={`text-xs mt-1 ${
+                                                isOwn ? 'text-purple-200' : 'text-gray-500'
+                                            }`}>
+                                                {formatTime(message.timestamp)}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Message Input */}
+                    <div className="p-4 border-t border-gray-200 bg-white">
+                        <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
+                            <button type="button" className="p-2 text-gray-500 hover:text-gray-700 transition-colors">
+                                <FiPaperclip size={18} />
+                            </button>
+                            <div className="flex-1 relative">
+                                <input
+                                    type="text"
+                                    value={newMessage}
+                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    placeholder="Type a message..."
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={!newMessage.trim()}
+                                className="p-2 bg-purple-950 text-white rounded-full hover:bg-purple-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                <FiSend size={18} />
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            ) : (
+                /* No Chat Selected */
+                <div className="flex-1 items-center justify-center bg-gray-50 md:flex hidden">
+                    <div className="text-center">
+                        <FiMessageCircle size={64} className="mx-auto text-gray-400 mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
+                        <p className="text-gray-600">Choose from your existing conversations or start a new one</p>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default Chat;
