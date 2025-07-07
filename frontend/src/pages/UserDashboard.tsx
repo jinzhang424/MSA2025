@@ -119,26 +119,9 @@ function UserDashboard() {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col">
-                {/* Header */}
-                <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900">
-                                {sidebarItems.find(item => item.id === activeTab)?.label || 'Dashboard'}
-                            </h1>
-                            <p className="text-gray-600 mt-1">
-                                Manage your projects and collaborate with others
-                            </p>
-                        </div>
-                    </div>
-                </header>
-
-                {/* Content */}
-                <main className={`flex-1 ${activeTab != 'chat' && 'p-6'}`}>
-                    {renderContent()}
-                </main>
-            </div>
+            <main className={`flex-1 ${activeTab != 'chat' && 'p-6'}`}>
+                {renderContent()}
+            </main>
         </div>
     );
 }
