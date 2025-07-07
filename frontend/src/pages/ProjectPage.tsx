@@ -4,6 +4,7 @@ import { LuClock4 } from "react-icons/lu";
 import { FiUsers, FiCalendar } from "react-icons/fi";
 import { FaRegMessage } from "react-icons/fa6";
 import { BsArrowLeft } from "react-icons/bs";
+import ProjectApplicationDialog from '../components/ProjectApplicationDialog';
 
 const SAMPLE_PROJECTS = [{
     id: '1',
@@ -186,7 +187,7 @@ const ProjectPage = () => {
 
     // Project Detail
     return (
-        <div className="bg-gray-50 min-h-screen py-8 px-6">
+        <div className="relative bg-gray-50 min-h-screen py-8 px-6">
             <div className="max-w-5xl mx-auto">
                 {/* Breadcrumb */}
                 <div className="mb-6">
@@ -198,113 +199,112 @@ const ProjectPage = () => {
                 </div>
                 {/* Project Header */}
                 <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
-                <div className="h-64 relative">
-                    <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-                    <div className="absolute top-4 left-4 bg-navy/60 backdrop-blur-sm bg-opacity-70 text-white text-xs px-2 py-1 rounded">
-                        {project.category}
-                    </div>
-                </div>
-                
-                <div className="p-6 md:p-8">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-                        <h1 className="text-3xl font-bold mb-4 md:mb-0">
-                            {project.title}
-                        </h1>
-                    </div>
-
-                    {/* Project Stats */}
-                    <div className="flex flex-wrap gap-4 md:gap-8 mb-8 text-sm text-gray-600">
-                        <div className="flex items-center">
-                            <FiUsers className="h-5 w-5 mr-2 text-purple-600" />
-                            <span>
-                            {project.availableSpots} spot
-                            {project.availableSpots !== 1 ? 's' : ''} available
-                            </span>
-                        </div>
-                        {project.deadline && 
-                            <div className="flex items-center">
-                                <FiCalendar className="h-5 w-5 mr-2 text-purple-600" />
-                                <span>Due {project.deadline}</span>
-                            </div>
-                        }
-                        {project.timeline && 
-                            <div className="flex items-center">
-                                <LuClock4 className="h-5 w-5 mr-2 text-purple-600" />
-                                <span>Duration: {project.timeline}</span>
-                            </div>
-                        }
-                    </div>
-
-                    {/* Project Description */}
-                    <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4">
-                        Project Description
-                    </h2>
-                    <div className="text-gray-700 space-y-4">
-                        {project.description.split('\n\n').map((paragraph: string, index: number) => <p key={index}>{paragraph}</p>)}
-                    </div>
-                    </div>
-
-                    {/* Skills */}
-                    <div className="mb-8">
-                        <h2 className="text-xl font-semibold mb-4">Required Skills</h2>
-                        <div className="flex flex-wrap gap-2">
-                            {project.skills.map((skill: string, index: number) => <span key={index} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-md text-sm">
-                                {skill}
-                            </span>)}
-                        </div>
-                    </div>
-
-                    {/* Team */}
-                    <div className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4">Team</h2>
-
-                    {/* Team Lead */}
-                    <div className="mb-4">
-                        <div className="font-medium text-gray-500 mb-3">Team Lead</div>
-                        <div className="flex items-center p-4 border border-gray-100 rounded-lg">
-                        <img src={project.teamLead.image} alt={project.teamLead.name} className="w-12 h-12 rounded-full object-cover mr-4" />
-                        <div>
-                            <div className="font-medium">{project.teamLead.name}</div>
-                            <div className="text-sm text-gray-600">
-                            {project.teamLead.role}
-                            </div>
-                        </div>
+                    <div className="h-64 relative">
+                        <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                        <div className="absolute top-4 left-4 bg-navy/60 backdrop-blur-sm bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                            {project.category}
                         </div>
                     </div>
                     
-                    {/* Team Members */}
-                    {project.teamMembers.length > 0 && <div>
-                        <div className="font-medium text-gray-500 mb-3">
-                            Team Members
+                    <div className="p-6 md:p-8">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                            <h1 className="text-3xl font-bold mb-4 md:mb-0">
+                                {project.title}
+                            </h1>
                         </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {project.teamMembers.map((member: any, index: number) => <div key={index} className="flex items-center p-4 border border-gray-100 rounded-lg">
-                                    <img src={member.image} alt={member.name} className="w-10 h-10 rounded-full object-cover mr-4" />
-                                    <div>
-                                        <div className="font-medium">{member.name}</div>
-                                        <div className="text-sm text-gray-600">
-                                            {member.role}
-                                        </div>
-                                    </div>
-                                </div>)}
-                            </div>
-                        </div>}
-                    </div>
 
-                    {/* Call to Action */}
-                    <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row gap-4 justify-between items-center font-semibold">
-                        <button className="bg-navy text-white px-6 py-3 rounded-md hover:bg-purple-950 flex items-center justify-center cursor-pointer w-54 duration-150">
-                            Apply to Join
-                        </button>
-                        <button className="border border-gray-300 px-6 py-3 rounded-md hover:bg-gray-100 flex items-center justify-center cursor-pointer w-54 duration-150">
-                            <FaRegMessage className="h-5 w-5 mr-2" />
-                            Contact Team Lead
-                        </button>
+                        {/* Project Stats */}
+                        <div className="flex flex-wrap gap-4 md:gap-8 mb-8 text-sm text-gray-600">
+                            <div className="flex items-center">
+                                <FiUsers className="h-5 w-5 mr-2 text-purple-600" />
+                                <span>
+                                {project.availableSpots} spot
+                                {project.availableSpots !== 1 ? 's' : ''} available
+                                </span>
+                            </div>
+                            {project.deadline && 
+                                <div className="flex items-center">
+                                    <FiCalendar className="h-5 w-5 mr-2 text-purple-600" />
+                                    <span>Due {project.deadline}</span>
+                                </div>
+                            }
+                            {project.timeline && 
+                                <div className="flex items-center">
+                                    <LuClock4 className="h-5 w-5 mr-2 text-purple-600" />
+                                    <span>Duration: {project.timeline}</span>
+                                </div>
+                            }
+                        </div>
+
+                        {/* Project Description */}
+                        <div className="mb-8">
+                        <h2 className="text-xl font-semibold mb-4">
+                            Project Description
+                        </h2>
+                        <div className="text-gray-700 space-y-4">
+                            {project.description.split('\n\n').map((paragraph: string, index: number) => <p key={index}>{paragraph}</p>)}
+                        </div>
+                        </div>
+
+                        {/* Skills */}
+                        <div className="mb-8">
+                            <h2 className="text-xl font-semibold mb-4">Required Skills</h2>
+                            <div className="flex flex-wrap gap-2">
+                                {project.skills.map((skill: string, index: number) => <span key={index} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-md text-sm">
+                                    {skill}
+                                </span>)}
+                            </div>
+                        </div>
+
+                        {/* Team */}
+                        <div className="mb-8">
+                        <h2 className="text-xl font-semibold mb-4">Team</h2>
+
+                        {/* Team Lead */}
+                        <div className="mb-4">
+                            <div className="font-medium text-gray-500 mb-3">Team Lead</div>
+                            <div className="flex items-center p-4 border border-gray-100 rounded-lg">
+                            <img src={project.teamLead.image} alt={project.teamLead.name} className="w-12 h-12 rounded-full object-cover mr-4" />
+                            <div>
+                                <div className="font-medium">{project.teamLead.name}</div>
+                                <div className="text-sm text-gray-600">
+                                {project.teamLead.role}
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        
+                        {/* Team Members */}
+                        {project.teamMembers.length > 0 && <div>
+                            <div className="font-medium text-gray-500 mb-3">
+                                Team Members
+                            </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {project.teamMembers.map((member: any, index: number) => <div key={index} className="flex items-center p-4 border border-gray-100 rounded-lg">
+                                        <img src={member.image} alt={member.name} className="w-10 h-10 rounded-full object-cover mr-4" />
+                                        <div>
+                                            <div className="font-medium">{member.name}</div>
+                                            <div className="text-sm text-gray-600">
+                                                {member.role}
+                                            </div>
+                                        </div>
+                                    </div>)}
+                                </div>
+                            </div>}
+                        </div>
+
+                        {/* Call to Action */}
+                        <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row gap-4 justify-between items-center font-semibold">
+                            <ProjectApplicationDialog/>
+                            <button className="border border-gray-300 px-6 py-3 rounded-md hover:bg-gray-100 flex items-center justify-center cursor-pointer w-54 duration-150">
+                                <FaRegMessage className="h-5 w-5 mr-2" />
+                                Contact Team Lead
+                            </button>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
-        </div>)
+        </div>
+    )
 };
 export default ProjectPage;
