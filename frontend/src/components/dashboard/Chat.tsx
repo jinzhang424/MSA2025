@@ -1,21 +1,23 @@
 import { useState, useRef, useEffect } from 'react';
 import { FiSend, FiSearch, FiPaperclip, FiUsers, FiMessageCircle } from 'react-icons/fi';
 import { type User, type ChatRoom, type ChatMessage } from '../../types/dashboard';
+import { FaChevronLeft } from "react-icons/fa6";
 
 interface ChatProps {
     user: User;
 }
 
 const Chat = ({ user }: ChatProps) => {
-    const [selectedChat, setSelectedChat] = useState<string | null>(null);
+    const [selectedChat, setSelectedChat] = useState<number | null>(null);
     const [newMessage, setNewMessage] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [openChat, setOpenChat] = useState(false);
 
     // Mock data - replace with actual API calls
     const [chatRooms] = useState<ChatRoom[]>([
         {
-            id: '1',
+            id: 1,
             name: 'Sarah Johnson',
             type: 'direct',
             participants: [
@@ -35,7 +37,7 @@ const Chat = ({ user }: ChatProps) => {
             updatedAt: '2025-07-06T14:30:00Z'
         },
         {
-            id: '2',
+            id: 2,
             name: 'E-commerce Team',
             type: 'project',
             participants: [
@@ -58,7 +60,7 @@ const Chat = ({ user }: ChatProps) => {
             updatedAt: '2025-07-06T13:45:00Z'
         },
         {
-            id: '3',
+            id: 3,
             name: 'Alice Johnson',
             type: 'direct',
             participants: [
@@ -166,22 +168,25 @@ const Chat = ({ user }: ChatProps) => {
         }
     };
 
+    const handleSelectChat = (chatId: number) => {
+        setOpenChat(true)
+        setSelectedChat(chatId)
+    }
+
     return (
-        <div className="h-full flex bg-white shadow-sm border border-gray-200 overflow-hidden">
+        <div className="h-full relative flex bg-gray-100 shadow-sm border border-gray-200 overflow-hidden">
             {/* Chat List Sidebar */}
-            <div className="w-80 border-r border-gray-200 flex flex-col">
+            <div className="sm:static absolute md:w-80 w-full border-r border-gray-200 flex flex-col">
                 {/* Search Header */}
-                <div className="p-4 border-b border-gray-200">
-                    <div className="relative">
-                        <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Search conversations..."
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                    </div>
+                <div className="p-4 border-b border-gray-200 relative">
+                    <FiSearch className="absolute left-7 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <input
+                        type="text"
+                        placeholder="Search conversations..."
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
 
                 {/* Chat List */}
@@ -189,7 +194,7 @@ const Chat = ({ user }: ChatProps) => {
                     {filteredChats.map((chat) => (
                         <div
                             key={chat.id}
-                            onClick={() => setSelectedChat(chat.id)}
+                            onClick={() => handleSelectChat(chat.id)}
                             className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
                                 selectedChat === chat.id ? 'bg-purple-50 border-r-2 border-r-purple-950' : ''
                             }`}
@@ -223,7 +228,7 @@ const Chat = ({ user }: ChatProps) => {
                                                 </span>
                                             )}
                                             {chat.unreadCount > 0 && (
-                                                <span className="bg-purple-950 text-white text-xs rounded-full px-2 py-0.5 min-w-[1.25rem] text-center">
+                                                <span className="bg-purple-950 text-white text-xs rounded-full px-1 py-0.5 min-w-[1.25rem] text-center">
                                                     {chat.unreadCount}
                                                 </span>
                                             )}
@@ -235,7 +240,7 @@ const Chat = ({ user }: ChatProps) => {
                                         </p>
                                     )}
                                     {chat.type === 'project' && (
-                                        <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                        <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-md">
                                             Project Chat
                                         </span>
                                     )}
@@ -248,11 +253,18 @@ const Chat = ({ user }: ChatProps) => {
 
             {/* Chat Area */}
             {selectedChatRoom ? (
-                <div className="flex-1 flex flex-col">
+                <div className={`md:static absolute flex-1 flex flex-col bg-gray-50 w-full h-full ${!openChat && 'translate-x-full'} duration-300`}>
                     {/* Chat Header */}
                     <div className="p-4 border-b border-gray-200 bg-white">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
+                                <button 
+                                    className='sm:px-2 px-2 opacity-70 hover:opacity-100 cursor-pointer' 
+                                    onClick={() => setOpenChat(false)}
+                                >
+                                    <FaChevronLeft />
+                                </button>
+
                                 {/* Avatar */}
                                 <div className="relative">
                                     {selectedChatRoom.type === 'direct' ? (
@@ -290,7 +302,7 @@ const Chat = ({ user }: ChatProps) => {
                             
                             return (
                                 <div key={message.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                                    <div className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${isOwn ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                                    <div className={`flex space-x-2 max-w-xs lg:max-w-md ${isOwn ? 'flex-row-reverse space-x-reverse' : ''}`}>
                                         {/* Avatar */}
                                         {showAvatar && !isOwn && (
                                             <div className="w-8 h-8 bg-purple-950 rounded-full flex items-center justify-center flex-shrink-0">
@@ -302,10 +314,10 @@ const Chat = ({ user }: ChatProps) => {
                                         {!showAvatar && !isOwn && <div className="w-8" />}
 
                                         {/* Message Bubble */}
-                                        <div className={`rounded-2xl px-4 py-2 ${
+                                        <div className={`rounded-md px-4 py-2 ${
                                             isOwn 
                                                 ? 'bg-purple-950 text-white' 
-                                                : 'bg-gray-100 text-gray-900'
+                                                : 'bg-gray-200 text-gray-900'
                                         }`}>
                                             {showAvatar && !isOwn && (
                                                 <p className="text-xs font-medium mb-1 text-gray-600">
@@ -353,7 +365,7 @@ const Chat = ({ user }: ChatProps) => {
                 </div>
             ) : (
                 /* No Chat Selected */
-                <div className="flex-1 flex items-center justify-center bg-gray-50">
+                <div className="flex-1 items-center justify-center bg-gray-50 md:flex hidden">
                     <div className="text-center">
                         <FiMessageCircle size={64} className="mx-auto text-gray-400 mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>

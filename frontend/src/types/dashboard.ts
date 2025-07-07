@@ -75,7 +75,7 @@ export interface ChatMessage {
 }
 
 export interface ChatRoom {
-  id: string;
+  id: number;
   name: string;
   type: 'direct' | 'group' | 'project';
   participants: {
