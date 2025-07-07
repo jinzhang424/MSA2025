@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using backend.Service;
 var builder = WebApplication.CreateBuilder(args);
 
 // Allow CORS
@@ -9,9 +10,10 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+        policy
+            .WithOrigins("http://localhost:5173") // Add your frontend ports here
             .AllowAnyHeader()
-            .AllowAnyOrigin(); // For localhost only. Allow all
+            .AllowAnyMethod();
     });
 });
 
@@ -40,6 +42,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<JwtTokenService>();
 
 var app = builder.Build();
     

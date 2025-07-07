@@ -11,7 +11,7 @@ public class WaitingListController(ApplicationDbContext context) : ControllerBas
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async void RemoveUserFromWaitingList(int userId, int projectId)
+    private async void RemoveUserFromWaitingList(int userId, int projectId)
     {
         var waitingListUser = await _context.ProjectWaitingListUser
             .FirstOrDefaultAsync(pwu => pwu.UserId == userId && pwu.ProjectId == projectId)

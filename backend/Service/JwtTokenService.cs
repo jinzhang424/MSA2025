@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
+namespace backend.Service;
 public class JwtTokenService
 {
     private readonly IConfiguration _configuration;
