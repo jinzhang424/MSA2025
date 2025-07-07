@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { FiPlus, FiTrash2, FiEye, FiUsers, FiCalendar, FiFolder } from 'react-icons/fi';
+import { FiPlus, FiUsers, FiCalendar, FiFolder } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User, type Project } from '../../types/dashboard';
+import { HiOutlineCog6Tooth } from "react-icons/hi2";
+import ProjectManagementDialog from './ProjectManagementDialog';
 
 interface MyProjectsProps {
     user: User;
@@ -9,6 +11,8 @@ interface MyProjectsProps {
 
 const MyProjects = ({ user }: MyProjectsProps) => {
     const [filter, setFilter] = useState<'all' | 'active' | 'completed' | 'cancelled'>('all');
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
 
     // Mock data - replace with actual API calls
     const myProjects: Project[] = [
@@ -78,6 +82,16 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             // TODO: Implement delete functionality
             console.log('Delete project:', projectId);
         }
+    };
+
+    const handleManageProject = (project: Project) => {
+        setSelectedProject(project);
+        setIsManageDialogOpen(true);
+    };
+
+    const handleCloseDialog = () => {
+        setIsManageDialogOpen(false);
+        setSelectedProject(null);
     };
 
     return (
@@ -199,35 +213,27 @@ const MyProjects = ({ user }: MyProjectsProps) => {
                                     </div>
 
                                     {/* Actions */}
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex space-x-2">
-                                            <Link
-                                                to={`/project/${project.id}`}
-                                                className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                                                title="View Project"
-                                            >
-                                                <FiEye size={16} />
-                                            </Link>
-                                            <button
-                                                onClick={() => handleDeleteProject(project.id)}
-                                                className="p-2 text-gray-500 hover:text-red-600 transition-colors"
-                                                title="Delete Project"
-                                            >
-                                                <FiTrash2 size={16} />
-                                            </button>
-                                        </div>
-                                        <Link
-                                            to={`/project/${project.id}/applications`}
-                                            className="text-sm text-gray-50 hover:bg-purple-800 font-medium px-4 py-2 bg-purple-950 rounded-md duration-200"
-                                        >
-                                            View Applications
-                                        </Link>
-                                    </div>
+                                    <button
+                                        onClick={() => handleManageProject(project)}
+                                        className="flex justify-center items-center text-center text-sm text-gray-50 hover:bg-purple-800 font-medium px-4 py-2 bg-purple-950 rounded-md duration-200"
+                                    >
+                                        <HiOutlineCog6Tooth className='w-6 h-6'/>
+                                        <p className='pl-3'>Manage Project</p>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
+            )}
+
+            {/* Project Management Dialog */}
+            {selectedProject && (
+                <ProjectManagementDialog
+                    project={selectedProject}
+                    isOpen={isManageDialogOpen}
+                    onClose={handleCloseDialog}
+                />
             )}
         </div>
     );

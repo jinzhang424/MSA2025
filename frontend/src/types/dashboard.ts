@@ -60,6 +60,32 @@ export interface IncomingApplication {
   message?: string;
 }
 
+export interface ProjectMember {
+  id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  profilePicture?: string;
+  role: 'member' | 'lead' | 'creator';
+  skills: string[];
+  joinedAt: string;
+  status: 'active' | 'inactive';
+}
+
+export interface ProjectApplicant {
+  id: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  profilePicture?: string;
+  skills: string[];
+  appliedAt: string;
+  message?: string;
+  status: 'pending' | 'accepted' | 'rejected';
+}
+
 export type DashboardTab = 'overview' | 'my-projects' | 'joined-projects' | 'applications' | 'chat' | 'settings';
 
 export interface ChatMessage {
