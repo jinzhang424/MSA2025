@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { FiHome, FiFolder, FiUsers, FiFileText, FiSettings } from 'react-icons/fi';
+import { FiHome, FiFolder, FiUsers, FiFileText, FiSettings, FiMessageCircle } from 'react-icons/fi';
 import { HiOutlineLogout } from 'react-icons/hi';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
 import MyProjects from '../components/dashboard/MyProjects';
 import JoinedProjects from '../components/dashboard/JoinedProjects';
 import Applications from '../components/dashboard/Applications';
 import Settings from '../components/dashboard/Settings';
+import Chat from '../components/dashboard/Chat';
 import { type DashboardTab } from '../types/dashboard';
 
 function UserDashboard() {
@@ -28,6 +29,7 @@ function UserDashboard() {
         { id: 'my-projects', label: 'My Projects', icon: FiFolder },
         { id: 'joined-projects', label: 'Joined Projects', icon: FiUsers },
         { id: 'applications', label: 'Applications', icon: FiFileText },
+        { id: 'chat', label: 'Chat', icon: FiMessageCircle },
         { id: 'settings', label: 'Settings', icon: FiSettings },
     ];
 
@@ -41,6 +43,8 @@ function UserDashboard() {
                 return <JoinedProjects user={user} />;
             case 'applications':
                 return <Applications user={user} />;
+            case 'chat':
+                return <Chat user={user} />;
             case 'settings':
                 return <Settings user={user} />;
             default:
@@ -131,7 +135,7 @@ function UserDashboard() {
                 </header>
 
                 {/* Content */}
-                <main className="flex-1 p-6">
+                <main className={`flex-1 ${activeTab != 'chat' && 'p-6'}`}>
                     {renderContent()}
                 </main>
             </div>

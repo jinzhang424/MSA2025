@@ -60,4 +60,34 @@ export interface IncomingApplication {
   message?: string;
 }
 
-export type DashboardTab = 'overview' | 'my-projects' | 'joined-projects' | 'applications' | 'settings';
+export type DashboardTab = 'overview' | 'my-projects' | 'joined-projects' | 'applications' | 'chat' | 'settings';
+
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  senderAvatar?: string;
+  content: string;
+  timestamp: string;
+  type: 'text' | 'image' | 'file';
+  edited?: boolean;
+  reactions?: { emoji: string; users: string[] }[];
+}
+
+export interface ChatRoom {
+  id: string;
+  name: string;
+  type: 'direct' | 'group' | 'project';
+  participants: {
+    id: string;
+    name: string;
+    avatar?: string;
+    status: 'online' | 'away' | 'offline';
+    lastSeen?: string;
+  }[];
+  lastMessage?: ChatMessage;
+  unreadCount: number;
+  projectId?: string; // if it's a project chat
+  createdAt: string;
+  updatedAt: string;
+}
