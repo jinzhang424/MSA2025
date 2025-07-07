@@ -5,7 +5,7 @@ function HowItWorks() {
         <div className="flex flex-col space-y-4 w-full p-16">
             {/* Header and subheader */}
             <div className="flex flex-col justify-center items-center space-y-4 text-black">
-                <h1 className="text-4xl font-bold">How It Works</h1>
+                <h1 className="text-4xl font-bold text-center">How It Works</h1>
                 <h2 className="flex flex-col justify-center items-center text-center text-gray-700">
                     <p>Whether you're looking to gain experience or build your portfolio, Marketeam connects you</p>
                     <p>with the right people for your projects.</p>
