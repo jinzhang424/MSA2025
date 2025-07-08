@@ -49,7 +49,7 @@ public class ProjectController : ControllerBase
             ProjectId = project.ProjectId
         };
 
-        await _context.ProjectMmembers.AddAsync(projectMember);
+        await _context.ProjectMembers.AddAsync(projectMember);
         await _context.SaveChangesAsync();
 
         return Ok("Project successfully created.");
@@ -84,7 +84,7 @@ public class ProjectController : ControllerBase
             return Unauthorized("Invalid token.");
         }
 
-        var projectMember = await _context.ProjectMmembers
+        var projectMember = await _context.ProjectMembers
             .FirstOrDefaultAsync(pm => pm.UserId == int.Parse(userId));
         if (projectMember == null)
         {
@@ -117,7 +117,7 @@ public class ProjectController : ControllerBase
             return Unauthorized("Invalid Token");
         }
 
-        var projectMember = await _context.ProjectMmembers
+        var projectMember = await _context.ProjectMembers
             .FirstOrDefaultAsync(pm => pm.ProjectId == projectId && pm.UserId == int.Parse(userId));
         if (projectMember == null)
         {
@@ -153,7 +153,7 @@ public class ProjectController : ControllerBase
             return Unauthorized("Invalid Token");
         }
 
-        var projects = await _context.ProjectMmembers
+        var projects = await _context.ProjectMembers
             .Where(pm => pm.UserId.ToString() == userId)
             .Select(pm => pm.Project)
             .ToListAsync();
