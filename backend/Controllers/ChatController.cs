@@ -54,7 +54,8 @@ public class ChatController : ControllerBase
             .Select(cu => new
             {
                 cu.User.UserId,
-                cu.User.Name,
+                cu.User.FirstName,
+                cu.User.LastName,
                 cu.User.Email,
             })
             .ToList();

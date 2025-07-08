@@ -27,7 +27,8 @@ public class UserController(ApplicationDbContext context) : ControllerBase
             .Where(u => u.UserId == int.Parse(userId))
             .Select(u => new UserInfoDto
             {
-                Name = u.Name,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
                 Email = u.Email
             })
             .FirstOrDefaultAsync();

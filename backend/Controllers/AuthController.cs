@@ -31,8 +31,6 @@ public class AuthController : ControllerBase
             FirstName = userDto.FirstName,
             LastName = userDto.LastName,
             Email = userDto.Email,
-            Bio = userDto.Bio,
-            Skills = userDto.Skills ?? new List<string>(),
         };
 
         var hasher = new PasswordHasher<User>();

@@ -114,18 +114,11 @@ const RegisterationPage = () => {
         
         try {
             await register({
-                fullName: `${formData.firstName.trim()} ${formData.lastName.trim()}`,
-                email: formData.email.trim(),
-                password: formData.password
+                FirstName: formData.firstName,
+                LastName: formData.lastName,
+                Email: formData.email,
+                Password: formData.password
             });
-
-            console.log('Registration data:', {
-                firstName: formData.firstName.trim(),
-                lastName: formData.lastName.trim(),
-                email: formData.email.trim(),
-                password: formData.password
-            });
-
             alert("Successfully registerd");
         } catch (error) {
             console.error('Registration failed:', error);

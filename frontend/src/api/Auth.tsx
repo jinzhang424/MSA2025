@@ -3,17 +3,17 @@ import type { User } from "../types/user";
 import type { AxiosResponse } from "axios";
 
 export interface UserModel {
-    fullName: string,
-    email: string,
-    password: string
+    FirstName: string,
+    LastName: string,
+    Email: string,
+    Password: string
 }
 
 export const register = async (user: UserModel) => {
+    console.log(user)
     try {
         await axios.post("/api/Auth/RegisterUser", {
-            Name: user.fullName,
-            Email: user.email,
-            Password: user.password
+            ...user
         });
     } catch (e) {
         if (e instanceof Error) {
