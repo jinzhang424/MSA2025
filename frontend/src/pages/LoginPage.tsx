@@ -4,10 +4,11 @@ import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { RiLoginBoxLine } from 'react-icons/ri';
 import BackLink from '../components/BackLink';
 import { login } from '../api/Auth';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setCredentials } from '../store/userSlice';
 import type { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router';
+import Spinner from '../components/animation/Spinner';
 
 interface LoginFormData {
     email: string;
@@ -20,6 +21,7 @@ const LoginPage = () => {
         password: '',
     });
     const [showPassword, setShowPassword] = useState(false);
+    const [isSigningIn, setIsSigningIn] = useState(false);
     const dispatch = useDispatch()
     const navigate = useNavigate();
 
@@ -33,6 +35,8 @@ const LoginPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        setIsSigningIn(true)
         try {
             const user: AxiosResponse | null = await login(formData.email, formData.password)
             if (user) {
@@ -46,6 +50,9 @@ const LoginPage = () => {
             navigate("/dashboard")
         } catch (e) {
             console.error("Error occured while signing in")
+            alert("Error occurred while signing please try again")
+        } finally {
+            setIsSigningIn(false)
         }
     };
 
@@ -126,7 +133,14 @@ const LoginPage = () => {
                             type="submit"
                             className="w-full bg-purple-950 text-white py-3 px-4 rounded-md font-semibold hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-950 focus:ring-offset-2 transition-all duration-200 transform active:scale-105 cursor-pointer"
                         >
-                            Sign In
+                            {isSigningIn ? (
+                                <span className="flex items-center justify-center">
+                                    <Spinner/>
+                                    Signing In...
+                                </span>
+                            ) : (
+                                'Sign In'
+                            )}
                         </button>
                     </form>
 
