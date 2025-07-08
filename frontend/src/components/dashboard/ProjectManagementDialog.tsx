@@ -14,8 +14,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
     // Mock data - replace with actual API calls
     const [members] = useState<ProjectMember[]>([
         {
-            id: '1',
-            userId: '1',
+            id: 1,
+            userId: 1,
             firstName: 'John',
             lastName: 'Doe',
             email: 'john.doe@example.com',
@@ -25,8 +25,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
             status: 'active'
         },
         {
-            id: '2',
-            userId: '2',
+            id: 2,
+            userId: 2,
             firstName: 'Sarah',
             lastName: 'Johnson',
             email: 'sarah.johnson@example.com',
@@ -36,8 +36,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
             status: 'active'
         },
         {
-            id: '3',
-            userId: '3',
+            id: 3,
+            userId: 2,
             firstName: 'Mike',
             lastName: 'Chen',
             email: 'mike.chen@example.com',
@@ -83,7 +83,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
         // TODO: Implement reject logic
     };
 
-    const handleRemoveMember = (memberId: string) => {
+    const handleRemoveMember = (memberId: number) => {
         if (window.confirm('Are you sure you want to remove this member from the project?')) {
             console.log('Remove member:', memberId);
             // TODO: Implement remove logic
@@ -171,10 +171,6 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                     <div className="flex items-center">
                                         <FiUsers size={14} className="mr-1" />
                                         {project.totalSpots - project.availableSpots}/{project.totalSpots} members
-                                    </div>
-                                    <div className="flex items-center">
-                                        <FiCalendar size={14} className="mr-1" />
-                                        Due {formatDate(project.deadline || '')}
                                     </div>
                                 </div>
                             </div>

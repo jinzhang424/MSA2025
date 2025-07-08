@@ -7,7 +7,7 @@ namespace backend.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/WaitingList")]
+[Route("api/ProjectApplication")]
 
 public class ApplicationController(ApplicationDbContext context) : ControllerBase
 {
@@ -23,8 +23,8 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         await _context.SaveChangesAsync();
     }
 
-    [HttpGet("GetMostRecentApplications/{limit}")]
-    public async Task<IActionResult> GetMostRecentApplications(int limit)
+    [HttpGet("GetMostRecentIncomingApplications/{limit}")]
+    public async Task<IActionResult> GetMostRecentIncomingApplications(int limit)
     {
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdString == null)
@@ -40,8 +40,28 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
             .ToListAsync();
 
         var applications = await _context.ProjectApplication
-            .Where(pa => pa.UserId == userId || userProjectIds.Contains(pa.ProjectId))
-            .OrderByDescending(pa => pa.dateApplied)
+            .Where(pa => userProjectIds.Contains(pa.ProjectId))
+            .OrderByDescending(pa => pa.DateApplied)
+            .Take(limit)
+            .ToListAsync();
+
+        return Ok(applications);
+    }
+
+    [HttpGet("GetMostRecentOutgoingApplications/{limit}")]
+    public async Task<IActionResult> GetMostRecentOutgoingApplications(int limit)
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+        {
+            return Unauthorized("Invalid Token");
+        }
+
+        var userId = int.Parse(userIdString);
+
+        var applications = await _context.ProjectApplication
+            .Where(pa => pa.UserId == userId)
+            .OrderByDescending(pa => pa.DateApplied)
             .Take(limit)
             .ToListAsync();
 

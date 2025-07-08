@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { FiPlus, FiUsers, FiCalendar, FiFolder } from 'react-icons/fi';
 import { Link } from 'react-router';
-import { type Project } from '../../types/dashboard';
-import { type User } from '../../types/user';
+import { type User, type Project } from '../../types/dashboard';
 import { HiOutlineCog6Tooth } from "react-icons/hi2";
 import ProjectManagementDialog from './ProjectManagementDialog';
 
@@ -24,7 +23,6 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             category: 'Web Development',
             availableSpots: 2,
             totalSpots: 5,
-            deadline: '2025-07-15',
             skills: ['React', 'Node.js', 'MongoDB'],
             createdBy: user.id,
             createdAt: '2025-06-01',
@@ -38,7 +36,6 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             category: 'Mobile Development',
             availableSpots: 0,
             totalSpots: 4,
-            deadline: '2025-08-01',
             skills: ['React Native', 'Firebase'],
             createdBy: user.id,
             createdAt: '2025-05-15',
@@ -52,7 +49,6 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             category: 'Web Design',
             availableSpots: 0,
             totalSpots: 2,
-            deadline: '2025-06-30',
             skills: ['HTML', 'CSS', 'JavaScript'],
             createdBy: user.id,
             createdAt: '2025-05-01',
@@ -190,12 +186,6 @@ const MyProjects = ({ user }: MyProjectsProps) => {
                                             <FiUsers size={16} className="mr-1" />
                                             {project.totalSpots - project.availableSpots}/{project.totalSpots} filled
                                         </div>
-                                        {project.deadline && (
-                                            <div className="flex items-center">
-                                                <FiCalendar size={16} className="mr-1" />
-                                                {new Date(project.deadline).toLocaleDateString()}
-                                            </div>
-                                        )}
                                     </div>
 
                                     {/* Skills */}

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { FiClock, FiCheck, FiX, FiEye, FiUser } from 'react-icons/fi';
 import { Link } from 'react-router';
-import { type ProjectApplication, type IncomingApplication } from '../../types/dashboard';
-import type { User } from '../../types/user';
+import { type User, type ProjectApplication, type IncomingApplication } from '../../types/dashboard';
 
 interface ApplicationsProps {
     user: User;
@@ -24,7 +23,6 @@ const Applications = ({ user }: ApplicationsProps) => {
                 category: 'Blockchain',
                 availableSpots: 2,
                 totalSpots: 4,
-                deadline: '2025-08-30',
                 skills: ['React Native', 'Blockchain', 'Security'],
                 createdBy: 1,
                 createdAt: '2025-06-15',
@@ -46,7 +44,6 @@ const Applications = ({ user }: ApplicationsProps) => {
                 category: 'IoT',
                 availableSpots: 1,
                 totalSpots: 3,
-                deadline: '2025-09-15',
                 skills: ['Arduino', 'Python', 'IoT'],
                 createdBy: 2,
                 createdAt: '2025-06-20',
@@ -68,7 +65,6 @@ const Applications = ({ user }: ApplicationsProps) => {
                 category: 'Gaming',
                 availableSpots: 0,
                 totalSpots: 5,
-                deadline: '2025-08-01',
                 skills: ['Unity', 'C#', 'Networking'],
                 createdBy: 3,
                 createdAt: '2025-06-10',

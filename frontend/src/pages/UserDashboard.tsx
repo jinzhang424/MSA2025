@@ -59,7 +59,7 @@ function UserDashboard() {
                         {/* Profile picture */}
                         <div className="flex-shrink-0 w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
                             <span className="text-white font-semibold text-sm">
-                                {user.firstName[0].toUpperCase()}{user.lastName[0].toUpperCase()}
+                                {user?.firstName[0]?.toUpperCase()}{user?.lastName[0]?.toUpperCase()}
                             </span>
                         </div>
 

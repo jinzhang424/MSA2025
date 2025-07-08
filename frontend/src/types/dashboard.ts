@@ -1,3 +1,13 @@
+export interface User {
+    id: number,
+    firstName: string,
+    lastName: string,
+    email: string,
+    bio: string,
+    token: string,
+    skills: []
+}
+
 export interface Project {
   id: number;
   title: string;
@@ -6,7 +16,6 @@ export interface Project {
   category: string;
   availableSpots: number;
   totalSpots: number;
-  deadline?: string;
   skills: string[];
   createdBy: number;
   createdAt: string;
@@ -50,7 +59,7 @@ export interface IncomingApplication {
 }
 
 export interface ProjectMember {
-  id: string;
+  id: number;
   userId: number;
   firstName: string;
   lastName: string;

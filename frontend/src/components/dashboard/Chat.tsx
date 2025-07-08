@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { FiSend, FiSearch, FiPaperclip, FiUsers, FiMessageCircle } from 'react-icons/fi';
-import { type ChatRoom, type ChatMessage } from '../../types/dashboard';
+import { type User, type ChatRoom, type ChatMessage } from '../../types/dashboard';
 import { FaChevronLeft } from "react-icons/fa6";
-import type { User } from '../../types/user';
 
 interface ChatProps {
     user: User;

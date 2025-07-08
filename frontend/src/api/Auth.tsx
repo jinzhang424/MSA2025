@@ -1,5 +1,5 @@
 import axios from "axios"
-import type { User } from "../types/user";
+import type { User } from "../types/dashboard";
 import type { AxiosResponse } from "axios";
 
 export interface UserModel {
