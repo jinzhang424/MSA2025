@@ -1,10 +1,13 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using backend.Service;
+
+namespace backend.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("Message")]
+[Route("api/Message")]
 public class MessageController : ControllerBase
 {
     private readonly ApplicationDbContext _context;

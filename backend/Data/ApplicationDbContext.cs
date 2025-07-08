@@ -9,9 +9,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<ChatroomUser> ChatroomUser { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Project> Projects { get; set; }
-    public DbSet<ProjectMember> ProjectMmembers { get; set; }
-    public DbSet<ProjectWaitingList> ProjectWaitingList { get; set; }
-    public DbSet<ProjectWaitingListUser> ProjectWaitingListUser { get; set; }
+    public DbSet<ProjectMember> ProjectMembers { get; set; }
+    public DbSet<ProjectApplication> ProjectApplication { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,11 +32,8 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ProjectMember>()
             .HasKey(pm => new { pm.UserId, pm.ProjectId });
 
-        modelBuilder.Entity<ProjectWaitingList>()
-            .HasKey(pwl => pwl.ProjectId);
-
-        modelBuilder.Entity<ProjectWaitingListUser>()
-            .HasKey(pwu => new { pwu.ProjectId, pwu.UserId });
+        modelBuilder.Entity<ProjectApplication>()
+            .HasKey(pa => new { pa.ProjectId, pa.UserId });
 
         // Creating the many to many relationship between User and Chatroom
         modelBuilder.Entity<ChatroomUser>()
@@ -73,21 +69,15 @@ public class ApplicationDbContext : DbContext
             .WithMany(p => p.ProjectMembers)
             .HasForeignKey(pm => pm.ProjectId);
 
-        // Creating a one-to-one relationship between a project and a project waiting list
-        modelBuilder.Entity<Project>()
-        .HasOne(p => p.ProjectWaitingList)
-        .WithOne(pwl => pwl.Project)
-        .HasForeignKey<ProjectWaitingList>(pwl => pwl.ProjectId);
-
         // Creating a many-to-many relationship between a project waiting list and user
-        modelBuilder.Entity<ProjectWaitingListUser>()
-            .HasOne(pwl => pwl.User)
-            .WithMany(u => u.WaitingListUsers)
+        modelBuilder.Entity<ProjectApplication>()
+            .HasOne(pa => pa.User)
+            .WithMany(u => u.ProjectApplicantions)
             .HasForeignKey(pwl => pwl.UserId);
 
-        modelBuilder.Entity<ProjectWaitingListUser>()
-            .HasOne(pwl => pwl.ProjectWaitingList)
-            .WithMany(p => p.WaitingListUsers)
+        modelBuilder.Entity<ProjectApplication>()
+            .HasOne(pa => pa.Project)
+            .WithMany(p => p.ProjectApplications)
             .HasForeignKey(pwl => pwl.ProjectId);
     }
 }

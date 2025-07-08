@@ -8,21 +8,13 @@ import Applications from '../components/dashboard/Applications';
 import Settings from '../components/dashboard/Settings';
 import Chat from '../components/dashboard/Chat';
 import { type DashboardTab } from '../types/dashboard';
+import { useSelector } from 'react-redux';
+import { type RootState } from '../store/store';
 
 function UserDashboard() {
     const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
     
-    // Mock user data - replace with actual user context/state
-    const user = {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        profilePicture: undefined,
-        bio: 'Full-stack developer passionate about creating innovative solutions',
-        skills: ['React', 'TypeScript', 'Node.js', 'Python'],
-        joinedDate: '2024-01-15'
-    };
+    const user = useSelector((state: RootState) => state.user);
 
     const sidebarItems = [
         { id: 'overview', label: 'Overview', icon: FiHome },
@@ -62,14 +54,17 @@ function UserDashboard() {
             {/* Sidebar */}
             <div className={`bg-white shadow-lg transition-all duration-300 w-18 lg:w-64 flex flex-col`}>
                 {/* Header */}
-                <div className="p-4 border-b border-gray-200">
-                    <div className="flex items-center gap-x-3">
-                        <div className="w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
+                <div className="flex p-4 border-b border-gray-200">
+                    <div className="flex items-center gap-x-3 w-full">
+                        {/* Profile picture */}
+                        <div className="flex-shrink-0 w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
                             <span className="text-white font-semibold text-sm">
-                                {user.firstName[0]}{user.lastName[0]}
+                                {user.firstName[0].toUpperCase()}{user.lastName[0].toUpperCase()}
                             </span>
                         </div>
-                        <div className='hidden lg:block'>
+
+                        {/* Name and email */}
+                        <div className='hidden lg:block flex-1 min-w-0'>
                             <h3 className="font-semibold text-gray-900">
                                 {user.firstName} {user.lastName}
                             </h3>

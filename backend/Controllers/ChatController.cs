@@ -2,12 +2,13 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using backend.Service;
 
 namespace backend.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("Chatroom")]
+[Route("api/Chatroom")]
 
 public class ChatController : ControllerBase
 {
@@ -53,7 +54,8 @@ public class ChatController : ControllerBase
             .Select(cu => new
             {
                 cu.User.UserId,
-                cu.User.Name,
+                cu.User.FirstName,
+                cu.User.LastName,
                 cu.User.Email,
             })
             .ToList();

@@ -3,6 +3,8 @@ import { Link } from 'react-router';
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md';
 import BackLink from '../components/BackLink';
+import { register } from '../api/Auth';
+import Spinner from '../components/animation/Spinner';
 
 interface RegisterFormData {
     firstName: string;
@@ -66,8 +68,6 @@ const RegisterationPage = () => {
             newErrors.password = 'Password is required';
         } else if (formData.password.length < 8) {
             newErrors.password = 'Password must be at least 8 characters';
-        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-            newErrors.password = 'Password must contain uppercase, lowercase, and number';
         }
 
         // Validate confirm password
@@ -106,22 +106,20 @@ const RegisterationPage = () => {
         e.preventDefault();
         
         if (!validateForm()) {
+            console.log("Invalid form")
             return;
         }
 
         setIsSubmitting(true);
         
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            console.log('Registration data:', {
-                firstName: formData.firstName.trim(),
-                lastName: formData.lastName.trim(),
-                email: formData.email.trim(),
-                password: formData.password
+            await register({
+                FirstName: formData.firstName,
+                LastName: formData.lastName,
+                Email: formData.email,
+                Password: formData.password
             });
-            
+            alert("Successfully registerd");
         } catch (error) {
             console.error('Registration failed:', error);
             alert('Registration failed. Please try again.');
@@ -325,10 +323,7 @@ const RegisterationPage = () => {
                         >
                             {isSubmitting ? (
                                 <span className="flex items-center justify-center">
-                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
+                                    <Spinner/>
                                     Creating Account...
                                 </span>
                             ) : (

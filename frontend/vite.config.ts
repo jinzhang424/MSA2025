@@ -34,5 +34,10 @@ export default defineConfig({
         setupFiles: ['.storybook/vitest.setup.ts']
       }
     }]
+  },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:5152',
+    }
   }
 });

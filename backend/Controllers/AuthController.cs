@@ -1,10 +1,11 @@
+using backend.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
 
 [ApiController]
-[Route("Auth")]
+[Route("api/Auth")]
 
 public class AuthController : ControllerBase
 {
@@ -20,14 +21,15 @@ public class AuthController : ControllerBase
     [HttpPost("RegisterUser")]
     public IActionResult RegisterUser([FromBody] UserRegisterDto userDto)
     {
-        if (string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
+        if (string.IsNullOrEmpty(userDto.FirstName) || string.IsNullOrEmpty(userDto.LastName) || string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
         {
             return BadRequest("All fields are required.");
         }
 
         var user = new User
         {
-            Name = userDto.Name,
+            FirstName = userDto.FirstName,
+            LastName = userDto.LastName,
             Email = userDto.Email,
         };
 
@@ -63,6 +65,14 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid email or password");
         }
 
-        return Ok(_jwtService.GenerateJwtToken(user.UserId.ToString()));
+        return Ok(new {
+            id = user.UserId,
+            firstName = user.FirstName,
+            lastName = user.LastName,
+            email = user.Email,
+            bio = user.Bio,
+            token = _jwtService.GenerateJwtToken(user.UserId.ToString()),
+            skills = user.Skills
+        });
     }
 }

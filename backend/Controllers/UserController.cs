@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using backend.Service;
+
+namespace backend.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("User")]
+[Route("api/User")]
 public class UserController(ApplicationDbContext context) : ControllerBase
 {
     private readonly ApplicationDbContext _context = context;
@@ -24,7 +27,8 @@ public class UserController(ApplicationDbContext context) : ControllerBase
             .Where(u => u.UserId == int.Parse(userId))
             .Select(u => new UserInfoDto
             {
-                Name = u.Name,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
                 Email = u.Email
             })
             .FirstOrDefaultAsync();

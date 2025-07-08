@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250708024042_UpdateUserModel2")]
+    partial class UpdateUserModel2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,25 +122,6 @@ namespace backend.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("ProjectApplication", b =>
-                {
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ProjectId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ProjectApplication");
-                });
-
             modelBuilder.Entity("ProjectMember", b =>
                 {
                     b.Property<int>("UserId")
@@ -154,7 +138,32 @@ namespace backend.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectMembers");
+                    b.ToTable("ProjectMmembers");
+                });
+
+            modelBuilder.Entity("ProjectWaitingList", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ProjectId");
+
+                    b.ToTable("ProjectWaitingList");
+                });
+
+            modelBuilder.Entity("ProjectWaitingListUser", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ProjectId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProjectWaitingListUser");
                 });
 
             modelBuilder.Entity("User", b =>
@@ -232,25 +241,6 @@ namespace backend.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("ProjectApplication", b =>
-                {
-                    b.HasOne("Project", "Project")
-                        .WithMany("ProjectApplications")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("User", "User")
-                        .WithMany("ProjectApplicantions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ProjectMember", b =>
                 {
                     b.HasOne("Project", "Project")
@@ -270,6 +260,36 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ProjectWaitingList", b =>
+                {
+                    b.HasOne("Project", "Project")
+                        .WithOne("ProjectWaitingList")
+                        .HasForeignKey("ProjectWaitingList", "ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("ProjectWaitingListUser", b =>
+                {
+                    b.HasOne("ProjectWaitingList", "ProjectWaitingList")
+                        .WithMany("WaitingListUsers")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("User", "User")
+                        .WithMany("WaitingListUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectWaitingList");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Chatroom", b =>
                 {
                     b.Navigation("ChatroomUsers");
@@ -279,9 +299,15 @@ namespace backend.Migrations
 
             modelBuilder.Entity("Project", b =>
                 {
-                    b.Navigation("ProjectApplications");
-
                     b.Navigation("ProjectMembers");
+
+                    b.Navigation("ProjectWaitingList")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProjectWaitingList", b =>
+                {
+                    b.Navigation("WaitingListUsers");
                 });
 
             modelBuilder.Entity("User", b =>
@@ -290,9 +316,9 @@ namespace backend.Migrations
 
                     b.Navigation("Messages");
 
-                    b.Navigation("ProjectApplicantions");
-
                     b.Navigation("ProjectMembers");
+
+                    b.Navigation("WaitingListUsers");
                 });
 #pragma warning restore 612, 618
         }
