@@ -1,7 +1,10 @@
 public class ProjectApplication
 {
     public DateTime dateApplied = DateTime.UtcNow;
-    public String Status { get; set; } = "Pending";
+    public string Status { get; set; } = "Pending";
+    public string CoverMessage = "";
+    public string Availablity = "";
+
     public int ProjectId { get; set; }
     public Project Project { get; set; } = null!;
 
