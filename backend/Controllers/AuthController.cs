@@ -64,6 +64,10 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid email or password");
         }
 
-        return Ok(_jwtService.GenerateJwtToken(user.UserId.ToString()));
+        return Ok(new {
+            name = user.Name,
+            email = user.Email,
+            token = _jwtService.GenerateJwtToken(user.UserId.ToString())
+        });
     }
 }
