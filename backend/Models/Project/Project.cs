@@ -7,6 +7,6 @@ public class Project
     public int? NumOfPositions { get; set; }
 
     public ICollection<ProjectMember> ProjectMembers { get; set; } = [];
-    public ProjectWaitingList ProjectWaitingList { get; set; } = null!;
+    public ICollection<ProjectApplication> ProjectApplications { get; set; } = null!;
 
 }

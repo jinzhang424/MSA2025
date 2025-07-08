@@ -11,5 +11,5 @@ public class User
     public ICollection<ChatroomUser> ChatroomUsers { get; set; } = [];
     public ICollection<Message> Messages { get; set; } = [];
     public ICollection<ProjectMember> ProjectMembers { get; set; } = [];
-    public ICollection<ProjectWaitingListUser> WaitingListUsers { get; set; } = [];
+    public ICollection<ProjectApplication> ProjectApplicantions { get; set; } = [];
 }
