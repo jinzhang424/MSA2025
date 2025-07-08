@@ -2,9 +2,13 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { type User } from '../types/user';
 
 const initialState: User = {
-  name: null,
-  email: null,
-  token: null,
+  id: 0,
+  firstName: '',
+  lastName: '',
+  email: '',
+  bio: '',
+  token: '',
+  skills: [],
 };
 
 const userSlice = createSlice({
@@ -15,15 +19,23 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<User>
     ) => {
-      state.name = action.payload.name;
-      state.email = action.payload.email
+      state.id = action.payload.id;
+      state.firstName = action.payload.firstName;
+      state.lastName = action.payload.lastName;
+      state.email = action.payload.email;
+      state.bio = action.payload.bio;
       state.token = action.payload.token;
+      state.skills = action.payload.skills;
     },
 
     logout: (state) => {
-      state.name = null;
-      state.email = null;
-      state.token = null;
+      state.id = 0;
+      state.firstName = '';
+      state.lastName = '';
+      state.email = '';
+      state.bio = '';
+      state.token = '';
+      state.skills = [];
     },
   },
 });

@@ -1,5 +1,5 @@
 import { FiFolder, FiUsers, FiFileText, FiTrendingUp } from 'react-icons/fi';
-import { type User } from '../../types/dashboard';
+import { type User } from '../../types/user';
 
 interface DashboardOverviewProps {
     user: User;

@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { FiSend, FiSearch, FiPaperclip, FiUsers, FiMessageCircle } from 'react-icons/fi';
-import { type User, type ChatRoom, type ChatMessage } from '../../types/dashboard';
+import { type ChatRoom, type ChatMessage } from '../../types/dashboard';
 import { FaChevronLeft } from "react-icons/fa6";
+import type { User } from '../../types/user';
 
 interface ChatProps {
     user: User;
@@ -22,11 +23,11 @@ const Chat = ({ user }: ChatProps) => {
             type: 'direct',
             participants: [
                 { id: user.id, name: `${user.firstName} ${user.lastName}`, status: 'online' },
-                { id: '2', name: 'Sarah Johnson', status: 'online' }
+                { id: 2, name: 'Sarah Johnson', status: 'online' }
             ],
             lastMessage: {
-                id: 'm1',
-                senderId: '2',
+                id: 1,
+                senderId: 2,
                 senderName: 'Sarah Johnson',
                 content: 'Hey! How\'s the e-commerce project coming along?',
                 timestamp: '2025-07-06T14:30:00Z',
@@ -42,13 +43,13 @@ const Chat = ({ user }: ChatProps) => {
             type: 'project',
             participants: [
                 { id: user.id, name: `${user.firstName} ${user.lastName}`, status: 'online' },
-                { id: '2', name: 'Sarah Johnson', status: 'online' },
-                { id: '3', name: 'Mike Chen', status: 'away' },
-                { id: '4', name: 'Lisa Wang', status: 'offline', lastSeen: '2025-07-06T12:00:00Z' }
+                { id: 2, name: 'Sarah Johnson', status: 'online' },
+                { id: 3, name: 'Mike Chen', status: 'away' },
+                { id: 3, name: 'Lisa Wang', status: 'offline', lastSeen: '2025-07-06T12:00:00Z' }
             ],
             lastMessage: {
-                id: 'm2',
-                senderId: '3',
+                id: 2,
+                senderId: 3,
                 senderName: 'Mike Chen',
                 content: 'I\'ve pushed the payment integration to the dev branch',
                 timestamp: '2025-07-06T13:45:00Z',
@@ -65,10 +66,10 @@ const Chat = ({ user }: ChatProps) => {
             type: 'direct',
             participants: [
                 { id: user.id, name: `${user.firstName} ${user.lastName}`, status: 'online' },
-                { id: '5', name: 'Alice Johnson', status: 'offline', lastSeen: '2025-07-05T18:30:00Z' }
+                { id: 5, name: 'Alice Johnson', status: 'offline', lastSeen: '2025-07-05T18:30:00Z' }
             ],
             lastMessage: {
-                id: 'm3',
+                id: 3,
                 senderId: user.id,
                 senderName: `${user.firstName} ${user.lastName}`,
                 content: 'Thanks for applying to the project! We\'ll review your application.',
@@ -83,23 +84,23 @@ const Chat = ({ user }: ChatProps) => {
 
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
-            id: 'm1',
-            senderId: '2',
+            id: 1,
+            senderId: 2,
             senderName: 'Sarah Johnson',
             content: 'Hey John! How\'s the e-commerce project coming along?',
             timestamp: '2025-07-06T14:25:00Z',
             type: 'text'
         },
         {
-            id: 'm2',
-            senderId: '2',
+            id: 2,
+            senderId: 2,
             senderName: 'Sarah Johnson',
             content: 'I\'ve been working on the user authentication flow and wanted to sync up.',
             timestamp: '2025-07-06T14:26:00Z',
             type: 'text'
         },
         {
-            id: 'm3',
+            id: 3,
             senderId: user.id,
             senderName: `${user.firstName} ${user.lastName}`,
             content: 'Hi Sarah! It\'s going well. I\'ve completed the product catalog and shopping cart features.',
@@ -107,7 +108,7 @@ const Chat = ({ user }: ChatProps) => {
             type: 'text'
         },
         {
-            id: 'm4',
+            id: 4,
             senderId: user.id,
             senderName: `${user.firstName} ${user.lastName}`,
             content: 'Great timing on the auth flow - we should definitely coordinate on that. Want to hop on a quick call?',
@@ -135,7 +136,7 @@ const Chat = ({ user }: ChatProps) => {
         if (!newMessage.trim() || !selectedChat) return;
 
         const message: ChatMessage = {
-            id: `m${Date.now()}`,
+            id: 1,
             senderId: user.id,
             senderName: `${user.firstName} ${user.lastName}`,
             content: newMessage,

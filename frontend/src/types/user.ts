@@ -1,5 +1,9 @@
 export interface User {
-    name: string | null,
-    email: string | null,
-    token: string | null,
+    id: number,
+    firstName: string,
+    lastName: string,
+    email: string,
+    bio: string,
+    token: string,
+    skills: []
 }

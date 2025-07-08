@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { FiClock, FiCheck, FiX, FiEye, FiUser } from 'react-icons/fi';
 import { Link } from 'react-router';
-import { type User, type ProjectApplication, type IncomingApplication } from '../../types/dashboard';
+import { type ProjectApplication, type IncomingApplication } from '../../types/dashboard';
+import type { User } from '../../types/user';
 
 interface ApplicationsProps {
     user: User;
@@ -13,10 +14,10 @@ const Applications = ({ user }: ApplicationsProps) => {
     // Mock data - replace with actual API calls
     const outgoingApplications: ProjectApplication[] = [
         {
-            id: '1',
-            projectId: 'p1',
+            id: 1,
+            projectId: 1,
             project: {
-                id: 'p1',
+                id: 1,
                 title: 'Blockchain Wallet App',
                 description: 'Secure cryptocurrency wallet with multi-chain support',
                 image: 'https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=400',
@@ -25,7 +26,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                 totalSpots: 4,
                 deadline: '2025-08-30',
                 skills: ['React Native', 'Blockchain', 'Security'],
-                createdBy: 'other-user-1',
+                createdBy: 1,
                 createdAt: '2025-06-15',
                 status: 'active'
             },
@@ -35,10 +36,10 @@ const Applications = ({ user }: ApplicationsProps) => {
             message: 'I have 3+ years of experience in React Native and blockchain development. I\'ve worked on similar wallet applications and would love to contribute to this project.'
         },
         {
-            id: '2',
-            projectId: 'p2',
+            id: 2,
+            projectId: 2,
             project: {
-                id: 'p2',
+                id: 2,
                 title: 'IoT Smart Home System',
                 description: 'Complete smart home automation system',
                 image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400',
@@ -47,7 +48,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                 totalSpots: 3,
                 deadline: '2025-09-15',
                 skills: ['Arduino', 'Python', 'IoT'],
-                createdBy: 'other-user-2',
+                createdBy: 2,
                 createdAt: '2025-06-20',
                 status: 'active'
             },
@@ -57,10 +58,10 @@ const Applications = ({ user }: ApplicationsProps) => {
             message: 'Excited to work on IoT projects. I have experience with Arduino and sensor integration.'
         },
         {
-            id: '3',
-            projectId: 'p3',
+            id: 3,
+            projectId: 3,
             project: {
-                id: 'p3',
+                id: 3,
                 title: 'Gaming Platform',
                 description: 'Multiplayer gaming platform with real-time features',
                 image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400',
@@ -69,7 +70,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                 totalSpots: 5,
                 deadline: '2025-08-01',
                 skills: ['Unity', 'C#', 'Networking'],
-                createdBy: 'other-user-3',
+                createdBy: 3,
                 createdAt: '2025-06-10',
                 status: 'active'
             },

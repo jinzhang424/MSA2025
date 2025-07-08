@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { FiPlus, FiUsers, FiCalendar, FiFolder } from 'react-icons/fi';
 import { Link } from 'react-router';
-import { type User, type Project } from '../../types/dashboard';
+import { type Project } from '../../types/dashboard';
+import { type User } from '../../types/user';
 import { HiOutlineCog6Tooth } from "react-icons/hi2";
 import ProjectManagementDialog from './ProjectManagementDialog';
 
@@ -14,10 +15,9 @@ const MyProjects = ({ user }: MyProjectsProps) => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
 
-    // Mock data - replace with actual API calls
     const myProjects: Project[] = [
         {
-            id: '1',
+            id: 1,
             title: 'E-commerce Platform',
             description: 'Building a modern e-commerce platform with React and Node.js',
             image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400',
@@ -31,7 +31,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             status: 'active'
         },
         {
-            id: '2',
+            id: 2,
             title: 'Mobile Learning App',
             description: 'Educational mobile app for language learning',
             image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400',
@@ -45,7 +45,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             status: 'active'
         },
         {
-            id: '3',
+            id: 3,
             title: 'Portfolio Website',
             description: 'Personal portfolio website with modern design',
             image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400',

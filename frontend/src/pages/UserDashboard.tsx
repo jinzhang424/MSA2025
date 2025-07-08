@@ -8,21 +8,13 @@ import Applications from '../components/dashboard/Applications';
 import Settings from '../components/dashboard/Settings';
 import Chat from '../components/dashboard/Chat';
 import { type DashboardTab } from '../types/dashboard';
+import { useSelector } from 'react-redux';
+import { type RootState } from '../store/store';
 
 function UserDashboard() {
     const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
     
-    // Mock user data - replace with actual user context/state
-    const user = {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@example.com',
-        profilePicture: undefined,
-        bio: 'Full-stack developer passionate about creating innovative solutions',
-        skills: ['React', 'TypeScript', 'Node.js', 'Python'],
-        joinedDate: '2024-01-15'
-    };
+    const user = useSelector((state: RootState) => state.user);
 
     const sidebarItems = [
         { id: 'overview', label: 'Overview', icon: FiHome },

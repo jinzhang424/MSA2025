@@ -1,16 +1,5 @@
-export interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  profilePicture?: string;
-  bio?: string;
-  skills: string[];
-  joinedDate: string;
-}
-
 export interface Project {
-  id: string;
+  id: number;
   title: string;
   description: string;
   image: string;
@@ -19,26 +8,26 @@ export interface Project {
   totalSpots: number;
   deadline?: string;
   skills: string[];
-  createdBy: string;
+  createdBy: number;
   createdAt: string;
   status: 'active' | 'completed' | 'cancelled';
 }
 
 export interface ProjectApplication {
-  id: string;
-  projectId: string;
+  id: number;
+  projectId: number;
   project: Project;
-  userId: string;
+  userId: number;
   status: 'pending' | 'accepted' | 'rejected';
   appliedAt: string;
   message?: string;
 }
 
 export interface ProjectMembership {
-  id: string;
-  projectId: string;
+  id: number;
+  projectId: number;
   project: Project;
-  userId: string;
+  userId: number;
   role: 'member' | 'lead' | 'creator';
   joinedAt: string;
 }
@@ -62,7 +51,7 @@ export interface IncomingApplication {
 
 export interface ProjectMember {
   id: string;
-  userId: string;
+  userId: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -89,8 +78,8 @@ export interface ProjectApplicant {
 export type DashboardTab = 'overview' | 'my-projects' | 'joined-projects' | 'applications' | 'chat' | 'settings';
 
 export interface ChatMessage {
-  id: string;
-  senderId: string;
+  id: number;
+  senderId: number;
   senderName: string;
   senderAvatar?: string;
   content: string;
@@ -105,7 +94,7 @@ export interface ChatRoom {
   name: string;
   type: 'direct' | 'group' | 'project';
   participants: {
-    id: string;
+    id: number;
     name: string;
     avatar?: string;
     status: 'online' | 'away' | 'offline';

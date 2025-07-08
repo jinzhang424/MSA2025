@@ -41,9 +41,13 @@ const LoginPage = () => {
             const user: AxiosResponse | null = await login(formData.email, formData.password)
             if (user) {
                 dispatch(setCredentials({
-                    name: user.data.name, 
+                    id: user.data.id,
+                    firstName: user.data.firstName, 
+                    lastName: user.data.lastName,
+                    bio: user.data.bio,
                     email: user.data.email,
-                    token: user.data.token
+                    token: user.data.token,
+                    skills: user.data.skills
                 }));
             }
 

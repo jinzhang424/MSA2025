@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { FiUsers, FiCalendar, FiEye, FiLogOut } from 'react-icons/fi';
 import { Link } from 'react-router';
-import { type User, type ProjectMembership } from '../../types/dashboard';
+import { type ProjectMembership } from '../../types/dashboard';
+import type { User } from '../../types/user';
 
 interface JoinedProjectsProps {
     user: User;
@@ -13,10 +14,10 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
     // Mock data - replace with actual API calls
     const joinedProjects: ProjectMembership[] = [
         {
-            id: '1',
-            projectId: '1',
+            id: 1,
+            projectId: 1,
             project: {
-                id: '1',
+                id: 1,
                 title: 'AI Chatbot Development',
                 description: 'Building an intelligent chatbot using natural language processing',
                 image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=400',
@@ -25,7 +26,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                 totalSpots: 4,
                 deadline: '2025-08-15',
                 skills: ['Python', 'TensorFlow', 'NLP'],
-                createdBy: 'other-user-1',
+                createdBy: 3,
                 createdAt: '2025-05-20',
                 status: 'active'
             },
@@ -34,10 +35,10 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
             joinedAt: '2025-06-10'
         },
         {
-            id: '2',
-            projectId: '2',
+            id: 2,
+            projectId: 2,
             project: {
-                id: '2',
+                id: 2,
                 title: 'Data Analytics Dashboard',
                 description: 'Creating interactive dashboards for business intelligence',
                 image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400',
@@ -46,7 +47,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                 totalSpots: 3,
                 deadline: '2025-07-25',
                 skills: ['Python', 'Pandas', 'D3.js'],
-                createdBy: 'other-user-2',
+                createdBy: 2,
                 createdAt: '2025-05-10',
                 status: 'active'
             },
@@ -55,10 +56,10 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
             joinedAt: '2025-05-15'
         },
         {
-            id: '3',
-            projectId: '3',
+            id: 3,
+            projectId: 3,
             project: {
-                id: '3',
+                id: 3,
                 title: 'Social Media App',
                 description: 'Cross-platform social media application',
                 image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400',
@@ -67,7 +68,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                 totalSpots: 5,
                 deadline: '2025-06-30',
                 skills: ['React Native', 'Firebase', 'GraphQL'],
-                createdBy: 'other-user-3',
+                createdBy: 3,
                 createdAt: '2025-04-01',
                 status: 'completed'
             },
@@ -105,7 +106,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
         }
     };
 
-    const handleLeaveProject = (membershipId: string, projectTitle: string) => {
+    const handleLeaveProject = (membershipId: number, projectTitle: string) => {
         if (window.confirm(`Are you sure you want to leave "${projectTitle}"?`)) {
             // TODO: Implement leave project functionality
             console.log('Leave project:', membershipId);

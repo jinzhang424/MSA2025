@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FiCamera, FiSave, FiEye, FiEyeOff } from 'react-icons/fi';
-import { type User } from '../../types/dashboard';
+import type { User } from '../../types/user';
 
 interface SettingsProps {
     user: User;
@@ -39,7 +39,7 @@ const Settings = ({ user }: SettingsProps) => {
         new: false,
         confirm: false
     });
-    const [profilePicture, setProfilePicture] = useState<string | undefined>(user.profilePicture);
+    const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined);
     const [newSkill, setNewSkill] = useState('');
 
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

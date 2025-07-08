@@ -21,15 +21,18 @@ public class AuthController : ControllerBase
     [HttpPost("RegisterUser")]
     public IActionResult RegisterUser([FromBody] UserRegisterDto userDto)
     {
-        if (string.IsNullOrEmpty(userDto.Name) || string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
+        if (string.IsNullOrEmpty(userDto.FirstName) || string.IsNullOrEmpty(userDto.LastName) || string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
         {
             return BadRequest("All fields are required.");
         }
 
         var user = new User
         {
-            Name = userDto.Name,
+            FirstName = userDto.FirstName,
+            LastName = userDto.LastName,
             Email = userDto.Email,
+            Bio = userDto.Bio,
+            Skills = userDto.Skills ?? new List<string>(),
         };
 
         var hasher = new PasswordHasher<User>();
@@ -65,9 +68,13 @@ public class AuthController : ControllerBase
         }
 
         return Ok(new {
-            name = user.Name,
+            id = user.UserId,
+            firstName = user.FirstName,
+            lastName = user.LastName,
             email = user.Email,
-            token = _jwtService.GenerateJwtToken(user.UserId.ToString())
+            bio = user.Bio,
+            token = _jwtService.GenerateJwtToken(user.UserId.ToString()),
+            skills = user.Skills
         });
     }
 }
