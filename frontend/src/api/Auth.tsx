@@ -1,4 +1,6 @@
 import axios from "axios"
+import type { User } from "../types/user";
+import type { AxiosResponse } from "axios";
 
 export interface UserModel {
     fullName: string,
@@ -22,7 +24,7 @@ export const register = async (user: UserModel) => {
     }
 }
 
-export const login = async (email: String, password: String) => {
+export const login = async (email: String, password: String) : Promise<AxiosResponse<User> | null> => {
     try {
         return await axios.post("/api/Auth/Login", {
             Email: email,

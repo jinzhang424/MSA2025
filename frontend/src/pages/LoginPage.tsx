@@ -4,6 +4,10 @@ import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { RiLoginBoxLine } from 'react-icons/ri';
 import BackLink from '../components/BackLink';
 import { login } from '../api/Auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCredentials } from '../store/userSlice';
+import type { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router';
 
 interface LoginFormData {
     email: string;
@@ -16,6 +20,8 @@ const LoginPage = () => {
         password: '',
     });
     const [showPassword, setShowPassword] = useState(false);
+    const dispatch = useDispatch()
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -27,12 +33,20 @@ const LoginPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        const req = await login(formData.email, formData.password)
-        if (req) {
-            console.log("Login in succes. Token: ", req.data)
+        try {
+            const user: AxiosResponse | null = await login(formData.email, formData.password)
+            if (user) {
+                dispatch(setCredentials({
+                    name: user.data.name, 
+                    email: user.data.email,
+                    token: user.data.token
+                }));
+            }
+
+            navigate("/dashboard")
+        } catch (e) {
+            console.error("Error occured while signing in")
         }
-        
     };
 
     return (
