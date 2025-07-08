@@ -23,6 +23,31 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         await _context.SaveChangesAsync();
     }
 
+    [HttpGet("GetMostRecentApplications/{limit}")]
+    public async Task<IActionResult> GetMostRecentApplications(int limit)
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+        {
+            return Unauthorized("Invalid Token");
+        }
+
+        var userId = int.Parse(userIdString);
+
+        var userProjectIds = await _context.ProjectMembers
+            .Where(pm => pm.UserId == userId && pm.Role == "Owner")
+            .Select(pm => pm.ProjectId)
+            .ToListAsync();
+
+        var applications = await _context.ProjectApplication
+            .Where(pa => pa.UserId == userId || userProjectIds.Contains(pa.ProjectId))
+            .OrderByDescending(pa => pa.dateApplied)
+            .Take(limit)
+            .ToListAsync();
+
+        return Ok(applications);
+    }
+
     [HttpPut("ApplyForProject/{projectId}")]
     public async Task<IActionResult> ApplyForProject(int projectId)
     {
