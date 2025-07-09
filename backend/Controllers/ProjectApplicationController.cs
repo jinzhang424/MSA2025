@@ -196,5 +196,5 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         }).ToList();
 
         return Ok(result);
-}
+    }
 }

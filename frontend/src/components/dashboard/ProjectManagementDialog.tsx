@@ -96,6 +96,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
     if (!isOpen) return null;
 
+    console.log(applicants.length === 0)
+
     return (
         <div className="fixed inset-0 z-50 overflow-hidden">
             {/* Backdrop */}
@@ -119,7 +121,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-md transition-colors"
                         >
                             <FiX size={20} />
                         </button>
@@ -131,7 +133,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                             <img
                                 src={project.image || "./project-img-replacement.png"}
                                 alt={project.title}
-                                className="w-16 h-16 rounded-lg object-cover"
+                                className="w-16 h-16 rounded-md object-cover"
                             />
                             <div className="flex-1">
                                 <h3 className="font-semibold text-gray-900">{project.title}</h3>
@@ -171,7 +173,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                         >
                             <div className="flex items-center justify-center space-x-2">
                                 <FiUserCheck size={16} />
-                                <span>Applicants ({applicants.filter(a => a.status === 'pending').length})</span>
+                                <span>Applicants ({applicants.length})</span>
                             </div>
                         </button>
                     </div>
@@ -181,7 +183,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                         {activeTab === 'members' && (
                             <div className="space-y-4">
                                 {members.map((member) => (
-                                    <div key={member.userId} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <div key={member.userId} className="bg-white border border-gray-200 rounded-md p-4">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-4">
                                                 {/* Avatar */}
@@ -238,15 +240,15 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
                         {activeTab === 'applicants' && (
                             <div className="space-y-4">
-                                {applicants.filter(a => a.status === 'pending').length === 0 ? (
+                                {applicants.length === 0 ? (
                                     <div className="text-center py-12">
                                         <FiUsers size={48} className="mx-auto text-gray-400 mb-4" />
                                         <h3 className="text-lg font-medium text-gray-900 mb-2">No pending applicants</h3>
                                         <p className="text-gray-600">All applications have been reviewed.</p>
                                     </div>
                                 ) : (
-                                    applicants.filter(a => a.status === 'pending').map((applicant) => (
-                                        <div key={applicant.userId} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    applicants.map((applicant) => (
+                                        <div key={applicant.userId} className="bg-white border border-gray-200 rounded-md p-4">
                                             <div className="flex items-start justify-between">
                                                 <div className="flex items-start space-x-4 flex-1">
                                                     {/* Avatar */}
@@ -273,7 +275,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                             ))}
                                                         </div>
                                                         {applicant.message && (
-                                                            <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                                                            <div className="mt-3 p-3 bg-gray-50 rounded-md">
                                                                 <p className="text-sm text-gray-700">{applicant.message}</p>
                                                             </div>
                                                         )}

@@ -64,6 +64,8 @@ export const getProjectApplications = async (projectId: number, token: string): 
                 Authorization: `Bearer ${token}`
             }
         });
+
+        console.log("Get Project Applications data:", res);
         return res.data as ProjectApplication[];
     } catch (e) {
         console.error(e);
