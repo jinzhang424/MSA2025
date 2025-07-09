@@ -114,3 +114,31 @@ export const getProjectCardData = async (): Promise<ProjectCardProps[]> => {
         return [];
     }
 };
+
+export interface UserStats {
+    myProjects: number,
+    joinedProjects: number,
+    pendingApplications: number,
+    completedProjects: number
+}
+
+export const getUserStats = async (token: string): Promise<UserStats> => {
+    try {
+        const res = await axios.get('/api/Project/GetUserStats', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        console.log("User stats data", res)
+        return res.data as UserStats;
+    } catch (e) {
+        console.error(e);
+        // Return -1 if error
+        return {
+            myProjects: -1,
+            joinedProjects: -1,
+            pendingApplications: -1,
+            completedProjects: -1
+        };
+    }
+};

@@ -1,18 +1,39 @@
+import { useEffect, useState } from 'react';
 import { FiFolder, FiUsers, FiFileText, FiTrendingUp } from 'react-icons/fi';
 import type { User } from '../../types/dashboard';
+import { getUserStats, type UserStats } from '../../api/Project';
 
 interface DashboardOverviewProps {
     user: User;
 }
 
 const DashboardOverview = ({ user }: DashboardOverviewProps) => {
-    // Mock data - replace with actual API calls
-    const stats = {
-        myProjects: 5,
-        joinedProjects: 8,
-        pendingApplications: 3,
-        completedProjects: 12
-    };
+    const [stats, setStats] = useState<UserStats | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            setLoading(true);
+            try {
+                const data = await getUserStats(user.token);
+                setStats(data);
+            } catch (error) {
+                console.error('Error fetching user stats:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
+    }, [user.token]);
+
+    if (loading) {
+        return <div className="p-8 text-center text-gray-500">Loading dashboard...</div>;
+    }
+
+    if (!stats) {
+        return <div className="p-8 text-center text-gray-500">No stats available</div>;
+    }
 
     const recentApplications = [
         {

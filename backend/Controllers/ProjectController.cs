@@ -68,11 +68,11 @@ public class ProjectController : ControllerBase
 
     [HttpGet("GetProjectPageData/{projectId}")]
     public async Task<IActionResult> GetProjectPageData(int projectId)
-{
-    var project = await _context.Projects
-        .Include(p => p.ProjectMembers)
-            .ThenInclude(pm => pm.User)
-        .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+    {
+        var project = await _context.Projects
+            .Include(p => p.ProjectMembers)
+                .ThenInclude(pm => pm.User)
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
 
         if (project == null)
         {
@@ -81,7 +81,8 @@ public class ProjectController : ControllerBase
 
         // Find the team lead (owner)
         var teamLeadMember = project.ProjectMembers.FirstOrDefault(pm => pm.Role == "Owner");
-        var teamLead = teamLeadMember != null ? new {
+        var teamLead = teamLeadMember != null ? new
+        {
             firstName = teamLeadMember.User.FirstName,
             lastName = teamLeadMember.User.LastName,
             image = teamLeadMember.User.ProfileImage ?? null,
@@ -91,14 +92,16 @@ public class ProjectController : ControllerBase
         // Find team members (exclude owner)
         var teamMembers = project.ProjectMembers
             .Where(pm => pm.Role != "Owner")
-            .Select(pm => new {
+            .Select(pm => new
+            {
                 firstName = pm.User.FirstName,
                 lastName = pm.User.LastName,
                 image = pm.User.ProfileImage ?? null,
                 role = pm.Role
             }).ToList();
 
-        var result = new {
+        var result = new
+        {
             title = project.Title,
             description = project.Description,
             imageUrl = project.ImageUrl ?? "",
@@ -129,7 +132,8 @@ public class ProjectController : ControllerBase
             return NotFound("Project not found.");
         }
 
-        if (project.OwnerId != int.Parse(userId)) {
+        if (project.OwnerId != int.Parse(userId))
+        {
             return Unauthorized("Insufficient Permissions. Need to be role: Owner");
         }
 
@@ -198,7 +202,8 @@ public class ProjectController : ControllerBase
     public async Task<IActionResult> GetAllProjectsCardData()
     {
         var projects = await _context.Projects.ToListAsync();
-        var result = projects.Select(project => new {
+        var result = projects.Select(project => new
+        {
             projectId = project.ProjectId,
             title = project.Title,
             description = project.Description,
@@ -209,5 +214,35 @@ public class ProjectController : ControllerBase
             skills = project.Skills ?? new List<string>()
         }).ToList();
         return Ok(result);
+    }
+
+    [HttpGet("GetUserStats")]
+    public async Task<IActionResult> GetUserStats()
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+        {
+            return Unauthorized("Invalid token");
+        }
+        int userId = int.Parse(userIdString);
+
+        // My projects (owned)
+        var myProjects = await _context.Projects.CountAsync(p => p.OwnerId == userId);
+
+        // Joined projects (not owner, but member)
+        var joinedProjects = await _context.ProjectMembers.CountAsync(pm => pm.UserId == userId && pm.Role != "Owner");
+
+        // Pending applications (applications with status 'Pending')
+        var pendingApplications = await _context.ProjectApplication.CountAsync(pa => pa.UserId == userId && pa.Status == "Pending");
+
+        // Completed projects (owned or joined, with status 'Completed')
+        var completedProjects = await _context.Projects.CountAsync(p => (p.OwnerId == userId || p.ProjectMembers.Any(pm => pm.UserId == userId)) && p.Status == "Completed");
+
+        return Ok(new {
+            myProjects,
+            joinedProjects,
+            pendingApplications,
+            completedProjects
+        });
     }
 }
