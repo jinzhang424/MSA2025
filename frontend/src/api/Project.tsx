@@ -7,6 +7,7 @@ export interface ProjectCreationProps {
     skills: string[],
     totalSpots: number,
     imageUrl?: string,
+    duration: string;
 }
 
 export const createProject = async (projectData: ProjectCreationProps, token: string): Promise<Error | void> => {
@@ -17,6 +18,7 @@ export const createProject = async (projectData: ProjectCreationProps, token: st
             Skills: projectData.skills,
             Category: projectData.category,
             TotalSpots: projectData.totalSpots,
+            Duration: projectData.duration,
             imageUrl: projectData.imageUrl
         }, {
             headers: {

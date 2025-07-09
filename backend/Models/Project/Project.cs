@@ -7,6 +7,7 @@ public class Project
     public string Category { get; set; } = string.Empty;
     public int TotalSpots { get; set; }
     public List<string> Skills { get; set; } = [];
+    public string Duration { get; set; } = string.Empty;
     public int OwnerId { get; set; }
     public string Status { get; set; } = "In Progress";
 

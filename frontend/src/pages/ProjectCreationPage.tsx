@@ -16,7 +16,8 @@ const ProjectCreationPage = () => {
         category: '',
         imageUrl: '',
         totalSpots: 1,
-        skills: [] as string[]
+        skills: [] as string[],
+        duration: '' // Add duration to form state
     });
 
   const [skillInput, setSkillInput] = useState('');
@@ -79,7 +80,7 @@ const ProjectCreationPage = () => {
             alert('Project created successfully!');
         } catch (e) {
             console.log(e);
-            alert('Project created successfully! (This is a demo)');
+            alert('Error occurred while creating project');
         }     
     };
 
@@ -183,34 +184,47 @@ const ProjectCreationPage = () => {
                             </div>
 
                             <div>
-                                <label htmlFor="skills" className="block text-md font-semibold text-gray-700 mb-1">
-                                    Required Skills
+                                <label htmlFor="duration" className="block text-md font-semibold text-gray-700 mb-1">
+                                    Duration*
                                 </label>
-
-                                <div className="flex">
-                                    <input 
-                                        type="text" 
-                                        id="skills" 
-                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent" 
-                                        placeholder="Add skills needed (e.g., React, Figma, Python)" 
-                                        value={skillInput} 
-                                        onChange={e => setSkillInput(e.target.value)} 
-                                        onKeyDown={handleSkillInputKeyDown} 
-                                    />
-
-                                    <button 
-                                        type="button" 
-                                        className="bg-purple-950 hover:purple-800 duration-200 text-white px-3 py-2 rounded-r-md hover:bg-purple-950" 
-                                        onClick={addSkill}
-                                    >
-                                        <FaPlus className="h-5 w-5" />
-                                    </button>
-                                </div>
+                                <input
+                                    type="text"
+                                    id="duration"
+                                    name="duration"
+                                    required
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent"
+                                    placeholder="e.g. 1 - 2 months, 8 weeks, etc."
+                                    value={formData.duration}
+                                    onChange={handleChange}
+                                />
                             </div>
                         </div>
 
                         {/* Required Skills */}
                         <div>
+                            <label htmlFor="skills" className="block text-md font-semibold text-gray-700 mb-1">
+                                Required Skills
+                            </label>
+
+                            <div className="flex">
+                                <input 
+                                    type="text" 
+                                    id="skills" 
+                                    className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent" 
+                                    placeholder="Add skills needed (e.g., React, Figma, Python)" 
+                                    value={skillInput} 
+                                    onChange={e => setSkillInput(e.target.value)} 
+                                    onKeyDown={handleSkillInputKeyDown} 
+                                />
+
+                                <button 
+                                    type="button" 
+                                    className="bg-purple-950 hover:purple-800 duration-200 text-white px-3 py-2 rounded-r-md hover:bg-purple-950" 
+                                    onClick={addSkill}
+                                >
+                                    <FaPlus className="h-5 w-5" />
+                                </button>
+                            </div>
 
                             {/* Skills Tags */}
                             <div className="flex flex-wrap gap-2 mt-2">

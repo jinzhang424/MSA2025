@@ -37,7 +37,9 @@ public class ProjectController : ControllerBase
             Description = projectDto.Description,
             Skills = projectDto.Skills,
             TotalSpots = projectDto.TotalSpots,
+            Category = projectDto.Category,
             ImageUrl = projectDto.Imageurl,
+            Duration = projectDto.Duration,
             OwnerId = int.Parse(userId)
         };
 
@@ -133,6 +135,7 @@ public class ProjectController : ControllerBase
         project.Description = projectDto.Description ?? project.Description;
         project.Skills = projectDto.Skills ?? project.Skills;
         project.TotalSpots = projectDto.TotalSpots;
+        project.Duration = projectDto.Duration;
 
         await _context.SaveChangesAsync();
         return Ok("Successfully updated project details.");
