@@ -170,8 +170,8 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                                                 {application.applicantName}
                                             </h4>
                                             <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-                                                application.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                application.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                                                application.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                application.status === 'Accepted' ? 'bg-green-100 text-green-800' :
                                                 'bg-red-100 text-red-800'
                                             }`}>
                                                 {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
