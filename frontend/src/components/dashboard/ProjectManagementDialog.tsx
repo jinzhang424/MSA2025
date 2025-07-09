@@ -222,7 +222,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                             </div>
 
                                             {/* Actions */}
-                                            {member.role !== 'creator' && (
+                                            {member.role !== 'Owner' && (
                                                 <div className="flex items-center space-x-2">
                                                     <button
                                                         onClick={() => handleRemoveMember(member.userId)}
