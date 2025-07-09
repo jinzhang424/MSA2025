@@ -90,8 +90,8 @@ export const getProject = async (projectId: string, token: string): Promise<Proj
     }
 };
 
-interface ProjectCardProps {
-    id: number,
+export interface ProjectCardProps {
+    projectId: number,
     title: string,
     description: string,
     image: string | undefined,
@@ -108,7 +108,7 @@ export const getProjectCardData = async (): Promise<ProjectCardProps[]> => {
 
         console.log("Project card data: ", data)
         // Map backend projects to ProjectCardProps[]
-        return data;
+        return data as ProjectCardProps[];
     } catch (e) {
         console.error(e);
         return [];

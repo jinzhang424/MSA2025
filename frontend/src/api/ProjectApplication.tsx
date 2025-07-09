@@ -1,7 +1,17 @@
 import axios from "axios";
 
-export const getMostRecentProjectApplications = async (limit: number, token:string) => {
-    const res = axios.get(`/api/GetMostRecentApplications/${limit}`, {
+export interface RecentApplications {
+    id: 0,
+    applicantName: string,
+    applicantImageUrl: string,
+    projectName: string,
+    time: string,
+    status: string,
+    skills: string[]
+}
+
+export const getRecentApplications = async (limit: number, token:string) => {
+    const res = axios.get(`/api/getRecentApplications/${limit}`, {
         headers: {
             Authorization: `Bearer ${token}`
         }

@@ -23,8 +23,8 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         await _context.SaveChangesAsync();
     }
 
-    [HttpGet("GetMostRecentIncomingApplications/{limit}")]
-    public async Task<IActionResult> GetMostRecentIncomingApplications(int limit)
+    [HttpGet("GetRecentApplications/{limit}")]
+    public async Task<IActionResult> GetRecentApplications(int limit)
     {
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdString == null)
@@ -40,30 +40,22 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
             .ToListAsync();
 
         var applications = await _context.ProjectApplication
+            .Include(pa => pa.User)
+            .Include(pa => pa.Project)
             .Where(pa => userProjectIds.Contains(pa.ProjectId))
             .OrderByDescending(pa => pa.DateApplied)
             .Take(limit)
             .ToListAsync();
 
-        return Ok(applications);
-    }
-
-    [HttpGet("GetMostRecentOutgoingApplications/{limit}")]
-    public async Task<IActionResult> GetMostRecentOutgoingApplications(int limit)
-    {
-        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdString == null)
-        {
-            return Unauthorized("Invalid Token");
-        }
-
-        var userId = int.Parse(userIdString);
-
-        var applications = await _context.ProjectApplication
-            .Where(pa => pa.UserId == userId)
-            .OrderByDescending(pa => pa.DateApplied)
-            .Take(limit)
-            .ToListAsync();
+        var result = applications.Select(pa => new {
+            id = pa.ProjectId,
+            applicantName = pa.User.FirstName + " " + pa.User.LastName,
+            applicantImageUrl = pa.User.ProfileImage,
+            projectName = pa.Project.Title,
+            time = pa.DateApplied.ToString("yyyy-MM-dd HH:mm"),
+            status = pa.Status,
+            skills = pa.User.Skills ?? new List<string>()
+        });
 
         return Ok(applications);
     }

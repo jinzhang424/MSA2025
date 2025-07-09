@@ -5,6 +5,7 @@ import SimpleHero from '../components/SimpleHero';
 import { BsFilterRight } from "react-icons/bs";
 import Footer from '../components/Footer';
 import { getProjectCardData } from '../api/Project';
+import { type ProjectCardProps } from '../api/Project';
 
 const CATEGORIES = ['All', 'Software Development', 'Web Design', 'Mobile App', 'Graphic Design', 'UI/UX', 'Data Science', 'Game Development'];
 
@@ -12,7 +13,7 @@ const ProjectDiscoveryPage = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(false);
-    const [projects, setProjects] = useState<any[]>([]);
+    const [projects, setProjects] = useState<ProjectCardProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -103,7 +104,7 @@ const ProjectDiscoveryPage = () => {
                         <div className="col-span-full text-center py-12 text-gray-500">Loading projects...</div>
                     ) : (
                         filteredProjects.map(project => 
-                            <ProjectCard key={project.id} {...project} />
+                            <ProjectCard key={project.projectId} {...project} />
                         )
                     )}
                 </div>
