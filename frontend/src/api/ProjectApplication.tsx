@@ -1,5 +1,26 @@
 import axios from "axios";
 
+export interface ApplicationFormData {
+    coverMessage: string,
+    availability: string,
+}
+
+export const sendApplication = async (application: ApplicationFormData, projectId: number, token: string) => {
+    try {
+        const res = await axios.post(`/api/ProjectApplication/ApplyForProject/${projectId}`, {
+            CoverMessage: application.coverMessage,
+            Availability: application.availability
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return res.data;
+    } catch (e) {
+        throw Error("Failed to send project application");
+    }
+}
+
 export interface RecentApplications {
     id: number,
     applicantName: string,

@@ -56,11 +56,11 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
             skills = pa.User.Skills ?? new List<string>()
         });
 
-        return Ok(applications);
+        return Ok(result);
     }
 
-    [HttpPut("ApplyForProject/{projectId}")]
-    public async Task<IActionResult> ApplyForProject(int projectId)
+    [HttpPost("ApplyForProject/{projectId}")]
+    public async Task<IActionResult> ApplyForProject([FromBody] ProjectApplicationDto projectApplicationDto, int projectId)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userId == null)
@@ -68,7 +68,7 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
             return Unauthorized("Invalid token");
         }
 
-        var projectExists = await _context.ProjectApplication.AnyAsync(p => p.ProjectId == projectId);
+        var projectExists = await _context.Projects.AnyAsync(p => p.ProjectId == projectId);
         if (!projectExists)
         {
             return NotFound("Project not found");
@@ -76,6 +76,8 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
 
         var waitingListUser = new ProjectApplication
         {
+            CoverMessage = projectApplicationDto.CoverMessage,
+            Availablity = projectApplicationDto.Availability,
             ProjectId = projectId,
             UserId = int.Parse(userId)
         };

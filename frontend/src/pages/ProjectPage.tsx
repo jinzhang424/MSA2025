@@ -40,7 +40,7 @@ const ProjectPage = () => {
     }
 
     // Project not found
-    if (!project) {
+    if (!project || !id) {
         return (
             <div className="bg-gray-50 min-h-screen py-12 px-6">
                 <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-sm p-8 text-center">
@@ -173,7 +173,7 @@ const ProjectPage = () => {
 
                         {/* Call to Action */}
                         <div className="border-t border-gray-200 pt-6 flex flex-col md:flex-row gap-4 justify-between items-center font-semibold">
-                            <ProjectApplicationDialog/>
+                            <ProjectApplicationDialog projectId={parseInt(id)} projectTitle={project.title}/>
                             <button className="border border-gray-300 px-6 py-3 rounded-md hover:bg-gray-100 flex items-center justify-center cursor-pointer w-54 duration-150">
                                 <FaRegMessage className="h-5 w-5 mr-2" />
                                 Contact Team Lead
