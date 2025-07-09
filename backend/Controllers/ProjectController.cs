@@ -193,4 +193,21 @@ public class ProjectController : ControllerBase
 
         return Ok(projects);
     }
+
+    [HttpGet("GetAllProjectsCardData")]
+    public async Task<IActionResult> GetAllProjectsCardData()
+    {
+        var projects = await _context.Projects.ToListAsync();
+        var result = projects.Select(project => new {
+            projectId = project.ProjectId,
+            title = project.Title,
+            description = project.Description,
+            image = project.ImageUrl,
+            category = project.Category,
+            availableSpots = project.TotalSpots, // Assuming availableSpots = TotalSpots
+            duration = project.Duration,
+            skills = project.Skills ?? new List<string>()
+        }).ToList();
+        return Ok(result);
+    }
 }

@@ -28,7 +28,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
     <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full">
       {/* Image and category */}
       <div className="relative h-48 overflow-hidden">
-        <img src={image} alt={title} className="w-full h-full object-cover" />
+        <img src={image || '/project-img-replacement.png'} alt={title} className="w-full h-full object-cover" />
         <div className="absolute top-4 left-4 bg-purple-950/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
           {category}
         </div>

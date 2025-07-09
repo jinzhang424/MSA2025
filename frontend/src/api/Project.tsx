@@ -89,3 +89,28 @@ export const getProject = async (projectId: string, token: string): Promise<Proj
         throw Error("Error while getting project.");
     }
 };
+
+interface ProjectCardProps {
+    id: number,
+    title: string,
+    description: string,
+    image: string | undefined,
+    category: string,
+    availableSpots: number,
+    duration: string,
+    skills: string[]
+}
+
+export const getProjectCardData = async (): Promise<ProjectCardProps[]> => {
+    try {
+        const res = await axios.get('/api/Project/GetAllProjectsCardData');
+        const data = res.data;
+
+        console.log("Project card data: ", data)
+        // Map backend projects to ProjectCardProps[]
+        return data;
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+};
