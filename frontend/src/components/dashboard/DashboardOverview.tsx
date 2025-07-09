@@ -178,7 +178,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                                             </span>
                                         </div>
                                         <p className="text-sm text-gray-600 mt-1">Applied to: {application.projectName}</p>
-                                        <div className="flex flex-wrap gap-1 mt-2">
+                                        <div className={`flex flex-wrap gap-1 mt-2 ${application.skills.length === 0 && "hidden"}`}>
                                             {application.skills.slice(0, 2).map((skill) => (
                                                 <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
                                                     {skill}
