@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export interface RecentApplications {
-    id: 0,
+    id: number,
     applicantName: string,
     applicantImageUrl: string,
     projectName: string,
@@ -10,13 +10,17 @@ export interface RecentApplications {
     skills: string[]
 }
 
-export const getRecentApplications = async (limit: number, token:string) => {
-    const res = axios.get(`/api/getRecentApplications/${limit}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
+export const getRecentApplications = async (limit: number, token:string) : Promise<RecentApplications[]>  => {
+    try {
+        const res = await axios.get(`/api/ProjectApplication/GetRecentApplications/${limit}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
 
-    console.log(res);
-    return res;
+        console.log(res);
+        return res.data as RecentApplications[];
+    } catch (e) {
+        return [];
+    }
 }

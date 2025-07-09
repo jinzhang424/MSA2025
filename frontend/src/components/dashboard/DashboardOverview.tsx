@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { FiFolder, FiUsers, FiFileText, FiTrendingUp } from 'react-icons/fi';
 import type { User } from '../../types/dashboard';
 import { getUserStats, type UserStats } from '../../api/Project';
+import { getRecentApplications, type RecentApplications } from '../../api/ProjectApplication';
 
 interface DashboardOverviewProps {
     user: User;
@@ -10,6 +11,8 @@ interface DashboardOverviewProps {
 const DashboardOverview = ({ user }: DashboardOverviewProps) => {
     const [stats, setStats] = useState<UserStats | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [recentApplications, setRecentApplications] = useState<RecentApplications[]>([]);
+    const [recentLoading, setRecentLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -27,6 +30,21 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
         fetchStats();
     }, [user.token]);
 
+    useEffect(() => {
+        const fetchRecentApplications = async () => {
+            setRecentLoading(true);
+            try {
+                const data = await getRecentApplications(3, user.token);
+                setRecentApplications(data);
+            } catch (error) {
+                console.error('Error fetching recent applications:', error);
+            } finally {
+                setRecentLoading(false);
+            }
+        };
+        fetchRecentApplications();
+    }, [user.token]);
+
     if (loading) {
         return <div className="p-8 text-center text-gray-500">Loading dashboard...</div>;
     }
@@ -34,33 +52,6 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
     if (!stats) {
         return <div className="p-8 text-center text-gray-500">No stats available</div>;
     }
-
-    const recentApplications = [
-        {
-            id: 1,
-            applicantName: 'Alice Johnson',
-            projectName: 'E-commerce Platform',
-            time: '2 hours ago',
-            status: 'pending',
-            skills: ['React', 'Node.js', 'PostgreSQL']
-        },
-        {
-            id: 2,
-            applicantName: 'Bob Smith',
-            projectName: 'E-commerce Platform',
-            time: '5 hours ago',
-            status: 'pending',
-            skills: ['Vue.js', 'Python', 'MongoDB']
-        },
-        {
-            id: 3,
-            applicantName: 'Carol Davis',
-            projectName: 'Mobile Learning App',
-            time: '1 day ago',
-            status: 'accepted',
-            skills: ['React Native', 'Firebase', 'UI/UX']
-        },
-    ];
 
     let upcomingDeadlines = [
         {
@@ -161,7 +152,11 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     </div>
                     <div className="p-6">
                         <div className="space-y-4">
-                            {recentApplications.map((application) => (
+                            {recentLoading ? (
+                                <div className="text-center text-gray-400">Loading recent applications...</div>
+                            ) : recentApplications.length === 0 ? (
+                                <div className="text-center text-gray-400">No recent applications found.</div>
+                            ) : recentApplications.map((application) => (
                                 <div key={application.id} className="flex items-start space-x-3">
                                     <div className="w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
                                         <span className="text-white font-semibold text-sm">

@@ -34,8 +34,8 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
 
         var userId = int.Parse(userIdString);
 
-        var userProjectIds = await _context.ProjectMembers
-            .Where(pm => pm.UserId == userId && pm.Role == "Owner")
+        var userProjectIds = await _context.Projects
+            .Where(p => p.OwnerId == userId)
             .Select(pm => pm.ProjectId)
             .ToListAsync();
 
@@ -48,7 +48,6 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
             .ToListAsync();
 
         var result = applications.Select(pa => new {
-            id = pa.ProjectId,
             applicantName = pa.User.FirstName + " " + pa.User.LastName,
             applicantImageUrl = pa.User.ProfileImage,
             projectName = pa.Project.Title,
