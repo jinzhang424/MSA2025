@@ -47,7 +47,8 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
             .Take(limit)
             .ToListAsync();
 
-        var result = applications.Select(pa => new {
+        var result = applications.Select(pa => new
+        {
             applicantName = pa.User.FirstName + " " + pa.User.LastName,
             applicantImageUrl = pa.User.ProfileImage,
             projectName = pa.Project.Title,
@@ -165,7 +166,35 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
 
         projectApplication.Status = "Rejected";
         await _context.SaveChangesAsync();
-        
+
         return Ok("Successfully rejected user");
     }
+    
+    [Authorize]
+    [HttpGet("GetProjectApplications/{projectId}")]
+    public async Task<IActionResult> GetProjectApplications(int projectId)
+    {
+        var project = await _context.Projects
+            .Include(p => p.ProjectApplications)
+            .ThenInclude(pa => pa.User)
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+        if (project == null)
+        {
+            return NotFound("Project not found");
+        }
+
+        var result = project.ProjectApplications.Select(pa => new {
+            userId = pa.User.UserId,
+            firstName = pa.User.FirstName,
+            lastName = pa.User.LastName,
+            email = pa.User.Email,
+            skills = pa.User.Skills ?? new List<string>(),
+            dateApplied = pa.DateApplied.ToString("yyyy-MM-dd HH:mm"),
+            message = pa.CoverMessage,
+            status = pa.Status
+        }).ToList();
+
+        return Ok(result);
+}
 }

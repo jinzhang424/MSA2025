@@ -10,7 +10,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
   description,
   image,
   category,
-  spotsAvailable,
+  spotsTaken,
   totalSpots,
   duration,
   skills
@@ -51,7 +51,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
           <div className="flex items-center">
             <LuUsers className="h-4 w-4 mr-1" />
             <span>
-              {`${spotsAvailable}/${totalSpots}`}
+              {`${spotsTaken}/${totalSpots}`}
             </span>
           </div>
 

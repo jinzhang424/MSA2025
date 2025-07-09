@@ -96,7 +96,7 @@ export interface ProjectCardProps {
     description: string,
     image: string | undefined,
     category: string,
-    spotsAvailable: number,
+    spotsTaken: number,
     totalSpots: number,
     duration: string,
     skills: string[]
@@ -108,8 +108,37 @@ export const getProjectCardData = async (): Promise<ProjectCardProps[]> => {
         const data = res.data;
 
         console.log("Project card data: ", data)
-        // Map backend projects to ProjectCardProps[]
         return data as ProjectCardProps[];
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+};
+
+export interface UserProjectCardProps {
+    projectId: number,
+    title: string,
+    description: string,
+    image: string | undefined,
+    category: string,
+    spotsAvailable: number,
+    totalSpots: number,
+    duration: string,
+    skills: string[],
+    status: 'All' | 'Active' | 'Completed' | 'cancelled'
+}
+
+export const getUserProjectCardData = async (token: string): Promise<UserProjectCardProps[]> => {
+    try {
+        const res = await axios.get('/api/Project/GetAllProjectsCardData', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = res.data;
+
+        console.log("Project card data: ", data)
+        return data as UserProjectCardProps[];
     } catch (e) {
         console.error(e);
         return [];
@@ -143,3 +172,33 @@ export const getUserStats = async (token: string): Promise<UserStats> => {
         };
     }
 };
+
+export interface ProjectMemberData {
+    projectId: number,
+    userId: number,
+    user: {
+        id: number,
+        firstName: string,
+        lastName: string,
+        email: string,
+        bio: string,
+        skills: string[],
+    },
+    role: string,
+    joinedAt: string
+}
+
+export const getProjectMembers = async (projectId: number, token: string): Promise<ProjectMemberData[]> => {
+    try {
+        const res = await axios.get(`/api/Project/GetProjectMembers/${projectId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        return res.data as ProjectMemberData[];
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+}

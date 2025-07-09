@@ -45,3 +45,28 @@ export const getRecentApplications = async (limit: number, token:string) : Promi
         return [];
     }
 }
+
+export interface ProjectApplication {
+    userId: number,
+    firstName: string,
+    lastName: string,
+    email: string,
+    skills: string[],
+    dateApplied: string,
+    message: string,
+    status: string
+}
+
+export const getProjectApplications = async (projectId: number, token: string): Promise<ProjectApplication[]> => {
+    try {
+        const res = await axios.get(`/api/ProjectApplication/GetProjectApplications/${projectId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return res.data as ProjectApplication[];
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+};

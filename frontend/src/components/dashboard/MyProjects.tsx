@@ -1,63 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiPlus, FiUsers, FiFolder } from 'react-icons/fi';
 import { Link } from 'react-router';
-import { type User, type Project } from '../../types/dashboard';
+import { type User } from '../../types/dashboard';
 import { HiOutlineCog6Tooth } from "react-icons/hi2";
 import ProjectManagementDialog from './ProjectManagementDialog';
+import { getUserProjectCardData, type UserProjectCardProps } from '../../api/Project';
 
 interface MyProjectsProps {
     user: User;
 }
 
 const MyProjects = ({ user }: MyProjectsProps) => {
-    const [filter, setFilter] = useState<'all' | 'active' | 'completed' | 'cancelled'>('all');
-    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+    const [filter, setFilter] = useState<'All' | 'Active' | 'Completed' | 'cancelled'>('All');
+    const [selectedProject, setSelectedProject] = useState<UserProjectCardProps | null>(null);
     const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
+    const [myProjects, setMyProjects] = useState<UserProjectCardProps[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const myProjects: Project[] = [
-        {
-            id: 1,
-            title: 'E-commerce Platform',
-            description: 'Building a modern e-commerce platform with React and Node.js',
-            image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400',
-            category: 'Web Development',
-            availableSpots: 2,
-            totalSpots: 5,
-            skills: ['React', 'Node.js', 'MongoDB'],
-            ownerId: user.id,
-            createdAt: '2025-06-01',
-            status: 'active'
-        },
-        {
-            id: 2,
-            title: 'Mobile Learning App',
-            description: 'Educational mobile app for language learning',
-            image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400',
-            category: 'Mobile Development',
-            availableSpots: 0,
-            totalSpots: 4,
-            skills: ['React Native', 'Firebase'],
-            ownerId: user.id,
-            createdAt: '2025-05-15',
-            status: 'active'
-        },
-        {
-            id: 3,
-            title: 'Portfolio Website',
-            description: 'Personal portfolio website with modern design',
-            image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400',
-            category: 'Web Design',
-            availableSpots: 0,
-            totalSpots: 2,
-            skills: ['HTML', 'CSS', 'JavaScript'],
-            ownerId: user.id,
-            createdAt: '2025-05-01',
-            status: 'completed'
-        }
-    ];
+    useEffect(() => {
+        const fetchProjects = async () => {
+            setIsLoading(true);
+            const projects = await getUserProjectCardData(user.token);
+            setMyProjects(projects);
+            setIsLoading(false);
+        };
+        fetchProjects();
+    }, [user.token]);
 
     const filteredProjects = myProjects.filter(project => 
-        filter === 'all' || project.status === filter
+        filter === 'All' || project.status === filter
     );
 
     const getStatusColor = (status: string) => {
@@ -66,14 +37,14 @@ const MyProjects = ({ user }: MyProjectsProps) => {
                 return 'bg-green-100 text-green-800';
             case 'Completed':
                 return 'bg-blue-100 text-blue-800';
-            case 'Cancelled':
+            case 'cancelled':
                 return 'bg-red-100 text-red-800';
             default:
                 return 'bg-gray-100 text-gray-800';
         }
     };
 
-    const handleManageProject = (project: Project) => {
+    const handleManageProject = (project: UserProjectCardProps) => {
         setSelectedProject(project);
         setIsManageDialogOpen(true);
     };
@@ -102,35 +73,37 @@ const MyProjects = ({ user }: MyProjectsProps) => {
 
             {/* Filters */}
             <div className="flex flex-wrap gap-2">
-                {(['all', 'active', 'completed', 'cancelled'] as const).map((status) => (
+                {(['All', 'Active', 'Completed', 'cancelled'] as const).map((f) => (
                     <button
-                        key={status}
-                        onClick={() => setFilter(status)}
+                        key={f}
+                        onClick={() => setFilter(f)}
                         className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
-                            filter === status
+                            filter === f
                                 ? 'bg-purple-950 text-white'
                                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                     >
-                        {status.charAt(0).toUpperCase() + status.slice(1)}
-                        {status === 'all' && ` (${myProjects.length})`}
-                        {status !== 'all' && ` (${myProjects.filter(p => p.status === status).length})`}
+                        {f.charAt(0).toUpperCase() + f.slice(1)}
+                        {f === 'All' && ` (${myProjects.length})`}
+                        {f !== 'All' && ` (${myProjects.filter(p => p.status === f).length})`}
                     </button>
                 ))}
             </div>
 
             {/* Projects Grid */}
-            {filteredProjects.length === 0 ? (
+            {isLoading ? (
+                <div className="text-center py-12 text-gray-500">Loading projects...</div>
+            ) : filteredProjects.length === 0 ? (
                 <div className="text-center py-12">
                     <FiFolder size={48} className="mx-auto text-gray-400 mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No projects found</h3>
                     <p className="text-gray-600 mb-6">
-                        {filter === 'all' 
+                        {filter === 'All' 
                             ? "You haven't created any projects yet." 
                             : `You don't have any ${filter} projects.`
                         }
                     </p>
-                    {filter === 'all' && (
+                    {filter === 'All' && (
                         <Link
                             to="/create-project"
                             className="inline-flex items-center px-4 py-2 bg-purple-950 text-white rounded-lg hover:bg-purple-900 transition-colors"
@@ -143,17 +116,17 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredProjects.map((project) => (
-                        <div key={project.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div key={project.projectId} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             {/* Project Image */}
                             <div className="relative h-48 overflow-hidden">
                                 <img
-                                    src={project.image}
+                                    src={project.image || '/project-img-replacement.png'}
                                     alt={project.title}
                                     className="w-full h-full object-cover"
                                 />
                                 <div className="absolute top-3 left-3">
                                     <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(project.status)}`}>
-                                        {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                                        {project.status ?? 'Active'}
                                     </span>
                                 </div>
                                 <div className="absolute top-3 right-3">
@@ -177,7 +150,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
                                     <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                                         <div className="flex items-center">
                                             <FiUsers size={16} className="mr-1" />
-                                            {project.totalSpots - project.availableSpots}/{project.totalSpots} filled
+                                            {project.totalSpots - project.spotsAvailable}/{project.totalSpots} filled
                                         </div>
                                     </div>
 

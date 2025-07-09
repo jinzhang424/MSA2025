@@ -1,102 +1,58 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiX, FiUsers, FiUserCheck, FiMail, FiUser, FiStar } from 'react-icons/fi';
-import { type Project, type ProjectMember, type ProjectApplicant } from '../../types/dashboard';
+import { type UserProjectCardProps } from '../../api/Project';
+import { getProjectMembers, type ProjectMemberData } from '../../api/Project';
+import { getProjectApplications, type ProjectApplication } from '../../api/ProjectApplication';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 
 interface ProjectManagementDialogProps {
-    project: Project;
+    project: UserProjectCardProps;
     isOpen: boolean;
     onClose: () => void;
 }
 
 const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagementDialogProps) => {
     const [activeTab, setActiveTab] = useState<'members' | 'applicants'>('members');
+    const [members, setMembers] = useState<ProjectMemberData[]>([]);
+    const [isLoadingMembers, setIsLoadingMembers] = useState(false);
+    const [applicants, setApplicants] = useState<ProjectApplication[]>([]);
+    const [isLoadingApplicants, setIsLoadingApplicants] = useState(false);
 
-    // Mock data - replace with actual API calls
-    const [members] = useState<ProjectMember[]>([
-        {
-            id: 1,
-            projectId: 1,
-            project,
-            userId: 1,
-            user: {
-                id: 1,
-                firstName: 'John',
-                lastName: 'Doe',
-                email: 'john.doe@example.com',
-                bio: '',
-                token: '',
-                skills: ['React', 'TypeScript', 'Node.js'],
-            },
-            role: 'creator',
-            joinedAt: '2025-06-01T10:00:00Z'
-        },
-        {
-            id: 2,
-            projectId: 1,
-            project,
-            userId: 2,
-            user: {
-                id: 2,
-                firstName: 'Sarah',
-                lastName: 'Johnson',
-                email: 'sarah.johnson@example.com',
-                bio: '',
-                token: '',
-                skills: ['UI/UX', 'Figma', 'React'],
-            },
-            role: 'lead',
-            joinedAt: '2025-06-05T14:30:00Z'
-        },
-        {
-            id: 3,
-            projectId: 1,
-            project,
-            userId: 3,
-            user: {
-                id: 3,
-                firstName: 'Mike',
-                lastName: 'Chen',
-                email: 'mike.chen@example.com',
-                bio: '',
-                token: '',
-                skills: ['Node.js', 'MongoDB', 'AWS'],
-            },
-            role: 'member',
-            joinedAt: '2025-06-10T09:15:00Z'
-        }
-    ]);
+    const user = useSelector((state: RootState) => state.user);
 
-    const [applicants] = useState<ProjectApplicant[]>([
-        {
-            id: '1',
-            userId: '4',
-            firstName: 'Alice',
-            lastName: 'Williams',
-            email: 'alice.williams@example.com',
-            skills: ['Python', 'Django', 'PostgreSQL'],
-            appliedAt: '2025-07-01T16:20:00Z',
-            message: 'I\'m excited to contribute to this e-commerce platform. I have 3 years of experience with Python and Django.',
-            status: 'pending'
-        },
-        {
-            id: '2',
-            userId: '5',
-            firstName: 'David',
-            lastName: 'Brown',
-            email: 'david.brown@example.com',
-            skills: ['React', 'JavaScript', 'CSS'],
-            appliedAt: '2025-07-02T11:45:00Z',
-            message: 'I would love to help with the frontend development. I have experience building responsive e-commerce interfaces.',
-            status: 'pending'
-        }
-    ]);
+    console.log(project)
 
-    const handleAcceptApplicant = (applicantId: string) => {
+    useEffect(() => {
+        const fetchMembers = async () => {
+            if (isOpen) {
+                setIsLoadingMembers(true);
+                const data = await getProjectMembers(project.projectId, user.token);
+                setMembers(data);
+                setIsLoadingMembers(false);
+            }
+        };
+        fetchMembers();
+    }, [isOpen, project.projectId]);
+
+    useEffect(() => {
+        const fetchApplicants = async () => {
+            if (isOpen) {
+                setIsLoadingApplicants(true);
+                const data = await getProjectApplications(project.projectId, user.token);
+                setApplicants(data);
+                setIsLoadingApplicants(false);
+            }
+        };
+        fetchApplicants();
+    }, [isOpen, project.projectId]);
+
+    const handleAcceptApplicant = (applicantId: number) => {
         console.log('Accept applicant:', applicantId);
         // TODO: Implement accept logic
     };
 
-    const handleRejectApplicant = (applicantId: string) => {
+    const handleRejectApplicant = (applicantId: number) => {
         console.log('Reject applicant:', applicantId);
         // TODO: Implement reject logic
     };
@@ -173,7 +129,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                     <div className="p-6 border-b border-gray-200 bg-white">
                         <div className="flex items-center space-x-6">
                             <img
-                                src={project.image}
+                                src={project.image || "./project-img-replacement.png"}
                                 alt={project.title}
                                 className="w-16 h-16 rounded-lg object-cover"
                             />
@@ -183,7 +139,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                 <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
                                     <div className="flex items-center">
                                         <FiUsers size={14} className="mr-1" />
-                                        {project.totalSpots - project.availableSpots}/{project.totalSpots} members
+                                        {project.totalSpots - project.spotsAvailable}/{project.totalSpots} members
                                     </div>
                                 </div>
                             </div>
@@ -225,7 +181,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                         {activeTab === 'members' && (
                             <div className="space-y-4">
                                 {members.map((member) => (
-                                    <div key={member.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <div key={member.userId} className="bg-white border border-gray-200 rounded-lg p-4">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-4">
                                                 {/* Avatar */}
@@ -267,7 +223,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                             {member.role !== 'creator' && (
                                                 <div className="flex items-center space-x-2">
                                                     <button
-                                                        onClick={() => handleRemoveMember(member.id)}
+                                                        onClick={() => handleRemoveMember(member.userId)}
                                                         className="text-sm text-gray-100 font-semibold bg-red-600 px-4 py-2 hover:bg-red-500 rounded-md transition-colors cursor-pointer"
                                                     >
                                                         Remove
@@ -290,7 +246,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                     </div>
                                 ) : (
                                     applicants.filter(a => a.status === 'pending').map((applicant) => (
-                                        <div key={applicant.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                                        <div key={applicant.userId} className="bg-white border border-gray-200 rounded-lg p-4">
                                             <div className="flex items-start justify-between">
                                                 <div className="flex items-start space-x-4 flex-1">
                                                     {/* Avatar */}
@@ -322,7 +278,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                             </div>
                                                         )}
                                                         <p className="text-xs text-gray-500 mt-2">
-                                                            Applied {formatDate(applicant.appliedAt)}
+                                                            Applied {formatDate(applicant.dateApplied)}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -330,13 +286,13 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                 {/* Actions */}
                                                 <div className="flex items-center space-x-2 ml-4 font-semibold">
                                                     <button
-                                                        onClick={() => handleAcceptApplicant(applicant.id)}
+                                                        onClick={() => handleAcceptApplicant(applicant.userId)}
                                                         className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors"
                                                     >
                                                         Accept
                                                     </button>
                                                     <button
-                                                        onClick={() => handleRejectApplicant(applicant.id)}
+                                                        onClick={() => handleRejectApplicant(applicant.userId)}
                                                         className="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors"
                                                     >
                                                         Reject

@@ -184,24 +184,46 @@ public class ProjectController : ControllerBase
     [HttpGet("GetAllUserProjects")]
     public async Task<IActionResult> GetAllUserProjects()
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId != null)
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
         {
             return Unauthorized("Invalid Token");
         }
 
-        var projects = await _context.ProjectMembers
-            .Where(pm => pm.UserId.ToString() == userId)
-            .Select(pm => pm.Project)
+        var userId = int.Parse(userIdString);
+        var projects = await _context.Projects
+            .Where(p => p.OwnerId == userId)
+            .Include(p => p.ProjectMembers)
             .ToListAsync();
 
-        return Ok(projects);
+        var result = projects.Select(project => new
+        {
+            projectId = project.ProjectId,
+            title = project.Title,
+            description = project.Description,
+            image = project.ImageUrl,
+            category = project.Category,
+            spotsTaken = project.ProjectMembers?.Count ?? 0,
+            totalSpots = project.TotalSpots,
+            duration = project.Duration,
+            skills = project.Skills ?? new List<string>(),
+            status = project.Status
+        }).ToList();
+        return Ok(result);
     }
 
     [HttpGet("GetAllProjectsCardData")]
     public async Task<IActionResult> GetAllProjectsCardData()
     {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+        {
+            return Unauthorized("Invalid Token");
+        }
+
+        var userId = int.Parse(userIdString);
         var projects = await _context.Projects
+            .Where(p => p.OwnerId == userId)
             .Include(p => p.ProjectMembers)
             .ToListAsync();
             
@@ -248,5 +270,37 @@ public class ProjectController : ControllerBase
             pendingApplications,
             completedProjects
         });
+    }
+
+    [Authorize]
+    [HttpGet("GetProjectMembers/{projectId}")]
+    public async Task<IActionResult> GetProjectMembers(int projectId)
+    {
+        var project = await _context.Projects
+            .Include(p => p.ProjectMembers)
+                .ThenInclude(pm => pm.User)
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+        if (project == null)
+        {
+            return NotFound("Project not found");
+        }
+
+        var result = project.ProjectMembers.Select(pm => new {
+            projectId = project.ProjectId,
+            userId = pm.UserId,
+            user = new {
+                id = pm.User.UserId,
+                firstName = pm.User.FirstName,
+                lastName = pm.User.LastName,
+                email = pm.User.Email,
+                bio = pm.User.Bio,
+                skills = pm.User.Skills ?? new List<string>()
+            },
+            role = pm.Role,
+            joinedAt = pm.JoinedAt.ToString("yyyy-MM-dd HH:mm")
+        }).ToList();
+
+        return Ok(result);
     }
 }
