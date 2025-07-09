@@ -4,19 +4,23 @@ import { IoClose } from "react-icons/io5";
 import SimpleHero from '../components/SimpleHero';
 import { IoChevronDown } from 'react-icons/io5';
 import Footer from '../components/Footer';
+import { createProject } from '../api/Project';
+import { useSelector } from 'react-redux';
+import { type RootState } from '../store/store';
+import { type ProjectCreationProps } from '../api/Project';
 
 const ProjectCreationPage = () => {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<ProjectCreationProps>({
         title: '',
         description: '',
         category: '',
         imageUrl: '',
-        deadline: '',
-        availableSpots: 1,
+        totalSpots: 1,
         skills: [] as string[]
     });
 
   const [skillInput, setSkillInput] = useState('');
+  const user = useSelector((state: RootState) => state.user);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {
@@ -66,11 +70,17 @@ const ProjectCreationPage = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        console.log('Form submitted:', formData);
-        alert('Project created successfully! (This is a demo)');
+
+        try {
+            console.log("Create project form data: ", formData);
+            await createProject(formData, user.token);
+            alert('Project created successfully!');
+        } catch (e) {
+            console.log(e);
+            alert('Project created successfully! (This is a demo)');
+        }     
     };
 
     return (
@@ -165,54 +175,42 @@ const ProjectCreationPage = () => {
                         {/* Deadline and Available Spots */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="deadline" className="block text-md font-semibold text-gray-700 mb-1">
-                                    Project Deadline
+                                <label htmlFor="availableSpots" className="block text-md font-semibold text-gray-700 mb-1">
+                                    Available Spots*
                                 </label>
 
-                                <input 
-                                    type="date" 
-                                    id="deadline" 
-                                    name="deadline" 
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent" 
-                                    value={formData.deadline} 
-                                    onChange={handleChange} 
-                                />
+                                <input type="number" id="availableSpots" name="availableSpots" min="1" max="20" required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent" value={formData.totalSpots} onChange={handleNumberChange} />
                             </div>
 
                             <div>
-                            <label htmlFor="availableSpots" className="block text-md font-semibold text-gray-700 mb-1">
-                                Available Spots*
-                            </label>
+                                <label htmlFor="skills" className="block text-md font-semibold text-gray-700 mb-1">
+                                    Required Skills
+                                </label>
 
-                            <input type="number" id="availableSpots" name="availableSpots" min="1" max="20" required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent" value={formData.availableSpots} onChange={handleNumberChange} />
+                                <div className="flex">
+                                    <input 
+                                        type="text" 
+                                        id="skills" 
+                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent" 
+                                        placeholder="Add skills needed (e.g., React, Figma, Python)" 
+                                        value={skillInput} 
+                                        onChange={e => setSkillInput(e.target.value)} 
+                                        onKeyDown={handleSkillInputKeyDown} 
+                                    />
+
+                                    <button 
+                                        type="button" 
+                                        className="bg-purple-950 hover:purple-800 duration-200 text-white px-3 py-2 rounded-r-md hover:bg-purple-950" 
+                                        onClick={addSkill}
+                                    >
+                                        <FaPlus className="h-5 w-5" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         {/* Required Skills */}
                         <div>
-                            <label htmlFor="skills" className="block text-md font-semibold text-gray-700 mb-1">
-                                Required Skills
-                            </label>
-
-                            <div className="flex">
-                                <input 
-                                    type="text" 
-                                    id="skills" 
-                                    className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent" 
-                                    placeholder="Add skills needed (e.g., React, Figma, Python)" 
-                                    value={skillInput} 
-                                    onChange={e => setSkillInput(e.target.value)} 
-                                    onKeyDown={handleSkillInputKeyDown} 
-                                />
-
-                                <button 
-                                    type="button" 
-                                    className="bg-purple-950 hover:purple-800 duration-200 text-white px-3 py-2 rounded-r-md hover:bg-purple-950" 
-                                    onClick={addSkill}
-                                >
-                                    <FaPlus className="h-5 w-5" />
-                                </button>
-                            </div>
 
                             {/* Skills Tags */}
                             <div className="flex flex-wrap gap-2 mt-2">

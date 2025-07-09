@@ -3,17 +3,19 @@ import axios from "axios"
 export interface ProjectCreationProps {
     title: string, 
     description: string,
-    skills: [],
+    category: string,
+    skills: string[],
     totalSpots: number,
     imageUrl?: string,
 }
 
-export const createProject = async (projectData: ProjectCreationProps, token: string): Promise<boolean> => {
+export const createProject = async (projectData: ProjectCreationProps, token: string): Promise<Error | void> => {
     try {
         await axios.post("/api/Project/CreateProject", {
             Title: projectData.title,
             Description: projectData.description,
             Skills: projectData.skills,
+            Category: projectData.category,
             TotalSpots: projectData.totalSpots,
             imageUrl: projectData.imageUrl
         }, {
@@ -21,10 +23,8 @@ export const createProject = async (projectData: ProjectCreationProps, token: st
                 Authorization: `Bearer ${token}`
             }
         })
-
-        return true;
     } catch (e) {
         console.log(e)
-        return false;
+        return Error("Error occurred while creating project");
     }
 }

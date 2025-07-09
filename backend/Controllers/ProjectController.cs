@@ -132,7 +132,7 @@ public class ProjectController : ControllerBase
         project.Title = projectDto.Title ?? project.Title;
         project.Description = projectDto.Description ?? project.Description;
         project.Skills = projectDto.Skills ?? project.Skills;
-        project.TotalSpots = projectDto.TotalSpots ?? project.TotalSpots;
+        project.TotalSpots = projectDto.TotalSpots;
 
         await _context.SaveChangesAsync();
         return Ok("Successfully updated project details.");
