@@ -10,7 +10,7 @@ export interface ProjectCreationProps {
     duration: string;
 }
 
-export const createProject = async (projectData: ProjectCreationProps, token: string): Promise<Error | void> => {
+export const createProject = async (projectData: ProjectCreationProps, token: string): Promise<void> => {
     try {
         await axios.post("/api/Project/CreateProject", {
             Title: projectData.title,
@@ -27,6 +27,65 @@ export const createProject = async (projectData: ProjectCreationProps, token: st
         })
     } catch (e) {
         console.log(e)
-        return Error("Error occurred while creating project");
+        throw Error("Error occurred while creating project");
     }
 }
+
+export interface ProjectPageProps {
+    title: string,
+    description: string,
+    image: string,
+    category: string,
+    totalSpots: number,
+    skills: string[],
+    teamLead: {
+        firstName: string,
+        lastName: string,
+        image: string | undefined,
+        role: string,
+
+    },
+    teamMembers: [{
+        firstName: string,
+        lastName: string,
+        image: string | undefined,
+        role: string
+    }],
+    duration: string,
+}
+
+export const getProject = async (projectId: string, token: string): Promise<ProjectPageProps> => {
+    try {
+        const res = await axios.get(`/api/Project/GetProjectPageData/${projectId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        console.log("res: ", res)
+
+        // Map backend response to ProjectPageProps
+        const data = res.data;
+        const project: ProjectPageProps = {
+            title: data.title,
+            description: data.description,
+            image: data.imageUrl || '',
+            category: data.category,
+            totalSpots: data.totalSpots,
+            skills: data.skills || [],
+            teamLead: {
+                firstName: data.teamLead?.firstName || '',
+                lastName: data.teamLead?.lastName,
+                image: data.teamLead?.image || undefined,
+                role: data.teamLead?.role || ''
+            },
+            teamMembers: data.teamMembers || [],
+            duration: data.duration || ''
+        };
+        console.log("Project page data: ", project)
+        return project;
+    } catch (e) {
+        console.error(e);
+        throw Error("Error while getting project.");
+    }
+};

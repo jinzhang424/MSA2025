@@ -66,16 +66,51 @@ public class ProjectController : ControllerBase
         return Ok(projects);
     }
 
-    [HttpGet("GetProject/{projectId}")]
-    public async Task<IActionResult> GetProject(int projectId)
-    {
-        var project = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
+    [HttpGet("GetProjectPageData/{projectId}")]
+    public async Task<IActionResult> GetProjectPageData(int projectId)
+{
+    var project = await _context.Projects
+        .Include(p => p.ProjectMembers)
+            .ThenInclude(pm => pm.User)
+        .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
         if (project == null)
         {
             return NotFound("Project not found");
         }
 
-        return Ok(project);
+        // Find the team lead (owner)
+        var teamLeadMember = project.ProjectMembers.FirstOrDefault(pm => pm.Role == "Owner");
+        var teamLead = teamLeadMember != null ? new {
+            firstName = teamLeadMember.User.FirstName,
+            lastName = teamLeadMember.User.LastName,
+            image = teamLeadMember.User.ProfileImage ?? null,
+            role = "Owner"
+        } : null;
+
+        // Find team members (exclude owner)
+        var teamMembers = project.ProjectMembers
+            .Where(pm => pm.Role != "Owner")
+            .Select(pm => new {
+                firstName = pm.User.FirstName,
+                lastName = pm.User.LastName,
+                image = pm.User.ProfileImage ?? null,
+                role = pm.Role
+            }).ToList();
+
+        var result = new {
+            title = project.Title,
+            description = project.Description,
+            imageUrl = project.ImageUrl ?? "",
+            category = project.Category,
+            totalSpots = project.TotalSpots,
+            skills = project.Skills ?? new List<string>(),
+            teamLead = teamLead,
+            teamMembers = teamMembers,
+            duration = project.Duration ?? ""
+        };
+
+        return Ok(result);
     }
 
     [Authorize]
