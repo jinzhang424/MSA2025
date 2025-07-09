@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
 import { Link } from 'react-router';
-import { type ProjectMembership } from '../../types/dashboard';
-import type { User } from '../../types/dashboard';
+import { type User, type ProjectMember } from '../../types/dashboard';
 
 interface JoinedProjectsProps {
     user: User;
@@ -12,7 +11,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
     const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
 
     // Mock data - replace with actual API calls
-    const joinedProjects: ProjectMembership[] = [
+    const joinedProjects: ProjectMember[] = [
         {
             id: 1,
             projectId: 1,
@@ -25,11 +24,12 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                 availableSpots: 1,
                 totalSpots: 4,
                 skills: ['Python', 'TensorFlow', 'NLP'],
-                createdBy: 3,
+                ownerId: 3,
                 createdAt: '2025-05-20',
                 status: 'active'
             },
             userId: user.id,
+            user: user,
             role: 'member',
             joinedAt: '2025-06-10'
         },
@@ -45,11 +45,12 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                 availableSpots: 0,
                 totalSpots: 3,
                 skills: ['Python', 'Pandas', 'D3.js'],
-                createdBy: 2,
+                ownerId: 2,
                 createdAt: '2025-05-10',
                 status: 'active'
             },
             userId: user.id,
+            user: user,
             role: 'lead',
             joinedAt: '2025-05-15'
         },
@@ -65,11 +66,12 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                 availableSpots: 0,
                 totalSpots: 5,
                 skills: ['React Native', 'Firebase', 'GraphQL'],
-                createdBy: 3,
+                ownerId: 3,
                 createdAt: '2025-04-01',
                 status: 'completed'
             },
             userId: user.id,
+            user: user,
             role: 'member',
             joinedAt: '2025-04-15'
         }

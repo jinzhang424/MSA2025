@@ -1,12 +1,30 @@
-import axios from "axios";
+import axios from "axios"
 
-export const getMostRecentProjectApplications = async (limit: number, token:string) => {
-    const res = axios.get(`/api/GetMostRecentApplications/${limit}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
+export interface ProjectCreationProps {
+    title: string, 
+    description: string,
+    skills: [],
+    totalSpots: number,
+    imageUrl?: string,
+}
 
-    console.log(res);
-    return res;
+export const createProject = async (projectData: ProjectCreationProps, token: string): Promise<boolean> => {
+    try {
+        await axios.post("/api/Project/CreateProject", {
+            Title: projectData.title,
+            Description: projectData.description,
+            Skills: projectData.skills,
+            TotalSpots: projectData.totalSpots,
+            imageUrl: projectData.imageUrl
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+
+        return true;
+    } catch (e) {
+        console.log(e)
+        return false;
+    }
 }

@@ -24,7 +24,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                 availableSpots: 2,
                 totalSpots: 4,
                 skills: ['React Native', 'Blockchain', 'Security'],
-                createdBy: 1,
+                ownerId: 1,
                 createdAt: '2025-06-15',
                 status: 'active'
             },
@@ -45,7 +45,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                 availableSpots: 1,
                 totalSpots: 3,
                 skills: ['Arduino', 'Python', 'IoT'],
-                createdBy: 2,
+                ownerId: 2,
                 createdAt: '2025-06-20',
                 status: 'active'
             },
@@ -66,7 +66,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                 availableSpots: 0,
                 totalSpots: 5,
                 skills: ['Unity', 'C#', 'Networking'],
-                createdBy: 3,
+                ownerId: 3,
                 createdAt: '2025-06-10',
                 status: 'active'
             },

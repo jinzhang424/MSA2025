@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiX, FiUsers, FiUserCheck, FiMail, FiCalendar, FiUser, FiStar } from 'react-icons/fi';
+import { FiX, FiUsers, FiUserCheck, FiMail, FiUser, FiStar } from 'react-icons/fi';
 import { type Project, type ProjectMember, type ProjectApplicant } from '../../types/dashboard';
 
 interface ProjectManagementDialogProps {
@@ -15,36 +15,54 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
     const [members] = useState<ProjectMember[]>([
         {
             id: 1,
+            projectId: 1,
+            project,
             userId: 1,
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@example.com',
+            user: {
+                id: 1,
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john.doe@example.com',
+                bio: '',
+                token: '',
+                skills: ['React', 'TypeScript', 'Node.js'],
+            },
             role: 'creator',
-            skills: ['React', 'TypeScript', 'Node.js'],
-            joinedAt: '2025-06-01T10:00:00Z',
-            status: 'active'
+            joinedAt: '2025-06-01T10:00:00Z'
         },
         {
             id: 2,
+            projectId: 1,
+            project,
             userId: 2,
-            firstName: 'Sarah',
-            lastName: 'Johnson',
-            email: 'sarah.johnson@example.com',
+            user: {
+                id: 2,
+                firstName: 'Sarah',
+                lastName: 'Johnson',
+                email: 'sarah.johnson@example.com',
+                bio: '',
+                token: '',
+                skills: ['UI/UX', 'Figma', 'React'],
+            },
             role: 'lead',
-            skills: ['UI/UX', 'Figma', 'React'],
-            joinedAt: '2025-06-05T14:30:00Z',
-            status: 'active'
+            joinedAt: '2025-06-05T14:30:00Z'
         },
         {
             id: 3,
-            userId: 2,
-            firstName: 'Mike',
-            lastName: 'Chen',
-            email: 'mike.chen@example.com',
+            projectId: 1,
+            project,
+            userId: 3,
+            user: {
+                id: 3,
+                firstName: 'Mike',
+                lastName: 'Chen',
+                email: 'mike.chen@example.com',
+                bio: '',
+                token: '',
+                skills: ['Node.js', 'MongoDB', 'AWS'],
+            },
             role: 'member',
-            skills: ['Node.js', 'MongoDB', 'AWS'],
-            joinedAt: '2025-06-10T09:15:00Z',
-            status: 'active'
+            joinedAt: '2025-06-10T09:15:00Z'
         }
     ]);
 
@@ -88,11 +106,6 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
             console.log('Remove member:', memberId);
             // TODO: Implement remove logic
         }
-    };
-
-    const handleChangeRole = (memberId: string, newRole: 'member' | 'lead') => {
-        console.log('Change role:', memberId, newRole);
-        // TODO: Implement role change logic
     };
 
     const getRoleIcon = (role: string) => {
@@ -218,7 +231,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                 {/* Avatar */}
                                                 <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
                                                     <span className="text-white font-semibold text-sm">
-                                                        {member.firstName[0]}{member.lastName[0]}
+                                                        {member.user.firstName[0]}{member.user.lastName[0]}
                                                     </span>
                                                 </div>
                                                 
@@ -226,7 +239,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                 <div className="flex-1">
                                                     <div className="flex items-center space-x-2">
                                                         <h3 className="font-semibold text-gray-900">
-                                                            {member.firstName} {member.lastName}
+                                                            {member.user.firstName} {member.user.lastName}
                                                         </h3>
                                                         {getRoleIcon(member.role)}
                                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(member.role)}`}>
@@ -235,10 +248,10 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                     </div>
                                                     <p className="text-sm text-gray-600 flex items-center mt-1">
                                                         <FiMail size={14} className="mr-1" />
-                                                        {member.email}
+                                                        {member.user.email}
                                                     </p>
                                                     <div className="flex flex-wrap gap-1 mt-2">
-                                                        {member.skills.map((skill) => (
+                                                        {member.user.skills.map((skill) => (
                                                             <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
                                                                 {skill}
                                                             </span>

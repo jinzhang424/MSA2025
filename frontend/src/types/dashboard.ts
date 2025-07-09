@@ -5,7 +5,7 @@ export interface User {
     email: string,
     bio: string,
     token: string,
-    skills: []
+    skills: string[]
 }
 
 export interface Project {
@@ -17,7 +17,7 @@ export interface Project {
   availableSpots: number;
   totalSpots: number;
   skills: string[];
-  createdBy: number;
+  ownerId: number;
   createdAt: string;
   status: 'active' | 'completed' | 'cancelled';
 }
@@ -32,11 +32,12 @@ export interface ProjectApplication {
   message?: string;
 }
 
-export interface ProjectMembership {
+export interface ProjectMember {
   id: number;
   projectId: number;
   project: Project;
   userId: number;
+  user: User;
   role: 'member' | 'lead' | 'creator';
   joinedAt: string;
 }
@@ -56,19 +57,6 @@ export interface IncomingApplication {
   status: 'pending' | 'accepted' | 'rejected';
   appliedAt: string;
   message?: string;
-}
-
-export interface ProjectMember {
-  id: number;
-  userId: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  profilePicture?: string;
-  role: 'member' | 'lead' | 'creator';
-  skills: string[];
-  joinedAt: string;
-  status: 'active' | 'inactive';
 }
 
 export interface ProjectApplicant {

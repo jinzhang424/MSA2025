@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiPlus, FiUsers, FiCalendar, FiFolder } from 'react-icons/fi';
+import { FiPlus, FiUsers, FiFolder } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User, type Project } from '../../types/dashboard';
 import { HiOutlineCog6Tooth } from "react-icons/hi2";
@@ -24,7 +24,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             availableSpots: 2,
             totalSpots: 5,
             skills: ['React', 'Node.js', 'MongoDB'],
-            createdBy: user.id,
+            ownerId: user.id,
             createdAt: '2025-06-01',
             status: 'active'
         },
@@ -37,7 +37,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             availableSpots: 0,
             totalSpots: 4,
             skills: ['React Native', 'Firebase'],
-            createdBy: user.id,
+            ownerId: user.id,
             createdAt: '2025-05-15',
             status: 'active'
         },
@@ -50,7 +50,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
             availableSpots: 0,
             totalSpots: 2,
             skills: ['HTML', 'CSS', 'JavaScript'],
-            createdBy: user.id,
+            ownerId: user.id,
             createdAt: '2025-05-01',
             status: 'completed'
         }
@@ -70,13 +70,6 @@ const MyProjects = ({ user }: MyProjectsProps) => {
                 return 'bg-red-100 text-red-800';
             default:
                 return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const handleDeleteProject = (projectId: string) => {
-        if (window.confirm('Are you sure you want to delete this project?')) {
-            // TODO: Implement delete functionality
-            console.log('Delete project:', projectId);
         }
     };
 

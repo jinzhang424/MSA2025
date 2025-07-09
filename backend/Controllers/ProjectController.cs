@@ -33,10 +33,12 @@ public class ProjectController : ControllerBase
 
         var project = new Project
         {
-            ProjectTitle = projectDto.ProjectTitle,
+            Title = projectDto.Title,
             Description = projectDto.Description,
-            Tags = projectDto.Tags,
-            NumOfPositions = projectDto.NumOfPositions,
+            Skills = projectDto.Skills,
+            TotalSpots = projectDto.TotalSpots,
+            ImageUrl = projectDto.Imageurl,
+            OwnerId = int.Parse(userId)
         };
 
         await _context.Projects.AddAsync(project);
@@ -84,21 +86,14 @@ public class ProjectController : ControllerBase
             return Unauthorized("Invalid token.");
         }
 
-        var projectMember = await _context.ProjectMembers
-            .FirstOrDefaultAsync(pm => pm.UserId == int.Parse(userId));
-        if (projectMember == null)
-        {
-            return NotFound("User not found");
-        }
-        else if (projectMember.Role != "Owner")
-        {
-            return Unauthorized("Only project owners can delete a project");
-        }
-
         var project = await _context.Projects.FirstOrDefaultAsync();
         if (project == null)
         {
             return NotFound("Project not found.");
+        }
+
+        if (project.OwnerId != int.Parse(userId)) {
+            return Unauthorized("Insufficient Permissions. Need to be role: Owner");
         }
 
         _context.Projects.Remove(project);
@@ -134,10 +129,10 @@ public class ProjectController : ControllerBase
             return NotFound("Project not found");
         }
 
-        project.ProjectTitle = projectDto.ProjectTitle ?? project.ProjectTitle;
+        project.Title = projectDto.Title ?? project.Title;
         project.Description = projectDto.Description ?? project.Description;
-        project.Tags = projectDto.Tags ?? project.Tags;
-        project.NumOfPositions = projectDto.NumOfPositions ?? project.NumOfPositions;
+        project.Skills = projectDto.Skills ?? project.Skills;
+        project.TotalSpots = projectDto.TotalSpots ?? project.TotalSpots;
 
         await _context.SaveChangesAsync();
         return Ok("Successfully updated project details.");
