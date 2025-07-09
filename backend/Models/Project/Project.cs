@@ -9,7 +9,7 @@ public class Project
     public List<string> Skills { get; set; } = [];
     public string Duration { get; set; } = string.Empty;
     public int OwnerId { get; set; }
-    public string Status { get; set; } = "In Progress";
+    public string Status { get; set; } = "Active";
 
     public ICollection<ProjectMember> ProjectMembers { get; set; } = [];
     public ICollection<ProjectApplication> ProjectApplications { get; set; } = null!;

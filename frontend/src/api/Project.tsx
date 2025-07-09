@@ -96,7 +96,8 @@ export interface ProjectCardProps {
     description: string,
     image: string | undefined,
     category: string,
-    availableSpots: number,
+    spotsAvailable: number,
+    totalSpots: number,
     duration: string,
     skills: string[]
 }

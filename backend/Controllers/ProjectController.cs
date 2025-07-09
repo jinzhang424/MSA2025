@@ -201,7 +201,10 @@ public class ProjectController : ControllerBase
     [HttpGet("GetAllProjectsCardData")]
     public async Task<IActionResult> GetAllProjectsCardData()
     {
-        var projects = await _context.Projects.ToListAsync();
+        var projects = await _context.Projects
+            .Include(p => p.ProjectMembers)
+            .ToListAsync();
+            
         var result = projects.Select(project => new
         {
             projectId = project.ProjectId,
@@ -209,7 +212,8 @@ public class ProjectController : ControllerBase
             description = project.Description,
             image = project.ImageUrl,
             category = project.Category,
-            availableSpots = project.TotalSpots, // Assuming availableSpots = TotalSpots
+            spotsAvailable = project.ProjectMembers?.Count ?? 0,
+            totalSpots = project.TotalSpots,
             duration = project.Duration,
             skills = project.Skills ?? new List<string>()
         }).ToList();
