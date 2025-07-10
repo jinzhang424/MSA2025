@@ -49,10 +49,32 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
     const handleAcceptApplicant = async (applicantId: number) => {
         console.log('Accept applicant:', applicantId);
-        console.log('Reject applicant:', applicantId);
         const success = await acceptUserApplication(applicantId, project.projectId, user.token);
         if (success) {
             alert("Successfully accepted user");
+            const acceptedApplicant = applicants.find(a => a.userId === applicantId);
+            if (acceptedApplicant) {
+                // Remove from applicants
+                setApplicants(prev => prev.filter(a => a.userId !== applicantId));
+                // Add to members
+                setMembers(prev => [
+                    ...prev,
+                    {
+                        projectId: project.projectId,
+                        userId: acceptedApplicant.userId,
+                        user: {
+                            id: acceptedApplicant.userId,
+                            firstName: acceptedApplicant.firstName,
+                            lastName: acceptedApplicant.lastName,
+                            email: acceptedApplicant.email,
+                            bio: "", // If you have bio, add it here
+                            skills: acceptedApplicant.skills,
+                        },
+                        role: "Member", // Or whatever role is appropriate
+                        joinedAt: new Date().toISOString(),
+                    }
+                ]);
+            }
         } else {
             alert("Error occurred while accepting user");
         }
@@ -62,6 +84,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
         console.log('Reject applicant:', applicantId);
         const success = await rejectUserApplication(applicantId, project.projectId, user.token);
         if (success) {
+            setApplicants(prev => prev.filter(a => a.userId !== applicantId));
             alert("Successfully rejected user");
         } else {
             alert("Error occurred while rejecting user");
