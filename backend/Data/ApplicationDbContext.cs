@@ -79,5 +79,12 @@ public class ApplicationDbContext : DbContext
             .HasOne(pa => pa.Project)
             .WithMany(p => p.ProjectApplications)
             .HasForeignKey(pwl => pwl.ProjectId);
+
+        // Creating a one-to-one relationship between a chatroom and a project
+        modelBuilder.Entity<Project>()
+            .HasOne(p => p.Chatroom)
+            .WithOne(c => c.Project)
+            .HasForeignKey<Chatroom>(c => c.ProjectId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

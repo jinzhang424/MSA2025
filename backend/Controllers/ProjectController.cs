@@ -25,11 +25,12 @@ public class ProjectController : ControllerBase
     public async Task<IActionResult> CreateProject([FromBody] ProjectDto projectDto)
     {
         // Prevent unauthorized users from creating a project
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
         {
             return Unauthorized("Invalid token.");
         }
+        var userId = int.Parse(userIdString);
 
         var project = new Project
         {
@@ -40,7 +41,7 @@ public class ProjectController : ControllerBase
             Category = projectDto.Category,
             ImageUrl = projectDto.Imageurl,
             Duration = projectDto.Duration,
-            OwnerId = int.Parse(userId)
+            OwnerId = userId
         };
 
         await _context.Projects.AddAsync(project);
@@ -49,11 +50,30 @@ public class ProjectController : ControllerBase
         var projectMember = new ProjectMember
         {
             Role = "Owner",
-            UserId = int.Parse(userId),
+            UserId = userId,
             ProjectId = project.ProjectId
         };
 
         await _context.ProjectMembers.AddAsync(projectMember);
+        await _context.SaveChangesAsync();
+
+        var chatroom = new Chatroom
+        {
+            Name = projectDto.Title,
+            ProjectId = project.ProjectId,
+            OwnerId = userId
+        };
+
+        await _context.Chatrooms.AddAsync(chatroom);
+        await _context.SaveChangesAsync();
+
+        var chatroomUser = new ChatroomUser
+        {
+            UserId = userId,
+            ChatroomId = chatroom.ChatroomId
+        };
+
+        await _context.ChatroomUser.AddAsync(chatroomUser);
         await _context.SaveChangesAsync();
 
         return Ok("Project successfully created.");

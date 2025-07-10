@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { FiSend, FiSearch, FiPaperclip, FiUsers, FiMessageCircle } from 'react-icons/fi';
-import { type User, type ChatRoom, type ChatMessage } from '../../types/dashboard';
+import { type User, type ChatMessage } from '../../types/dashboard';
 import { FaChevronLeft } from "react-icons/fa6";
+import { getChatroomListings, type ChatRoomListing } from '../../api/Messages';
 
 interface ChatProps {
     user: User;
@@ -14,72 +15,18 @@ const Chat = ({ user }: ChatProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [openChat, setOpenChat] = useState(false);
 
-    // Mock data - replace with actual API calls
-    const [chatRooms] = useState<ChatRoom[]>([
-        {
-            id: 1,
-            name: 'Sarah Johnson',
-            type: 'direct',
-            participants: [
-                { id: user.id, name: `${user.firstName} ${user.lastName}`, status: 'online' },
-                { id: 2, name: 'Sarah Johnson', status: 'online' }
-            ],
-            lastMessage: {
-                id: 1,
-                senderId: 2,
-                senderName: 'Sarah Johnson',
-                content: 'Hey! How\'s the e-commerce project coming along?',
-                timestamp: '2025-07-06T14:30:00Z',
-                type: 'text'
-            },
-            unreadCount: 2,
-            createdAt: '2025-07-01T10:00:00Z',
-            updatedAt: '2025-07-06T14:30:00Z'
-        },
-        {
-            id: 2,
-            name: 'E-commerce Team',
-            type: 'project',
-            participants: [
-                { id: user.id, name: `${user.firstName} ${user.lastName}`, status: 'online' },
-                { id: 2, name: 'Sarah Johnson', status: 'online' },
-                { id: 3, name: 'Mike Chen', status: 'away' },
-                { id: 3, name: 'Lisa Wang', status: 'offline', lastSeen: '2025-07-06T12:00:00Z' }
-            ],
-            lastMessage: {
-                id: 2,
-                senderId: 3,
-                senderName: 'Mike Chen',
-                content: 'I\'ve pushed the payment integration to the dev branch',
-                timestamp: '2025-07-06T13:45:00Z',
-                type: 'text'
-            },
-            unreadCount: 0,
-            projectId: 'p1',
-            createdAt: '2025-06-15T09:00:00Z',
-            updatedAt: '2025-07-06T13:45:00Z'
-        },
-        {
-            id: 3,
-            name: 'Alice Johnson',
-            type: 'direct',
-            participants: [
-                { id: user.id, name: `${user.firstName} ${user.lastName}`, status: 'online' },
-                { id: 5, name: 'Alice Johnson', status: 'offline', lastSeen: '2025-07-05T18:30:00Z' }
-            ],
-            lastMessage: {
-                id: 3,
-                senderId: user.id,
-                senderName: `${user.firstName} ${user.lastName}`,
-                content: 'Thanks for applying to the project! We\'ll review your application.',
-                timestamp: '2025-07-05T16:20:00Z',
-                type: 'text'
-            },
-            unreadCount: 0,
-            createdAt: '2025-07-03T14:00:00Z',
-            updatedAt: '2025-07-05T16:20:00Z'
-        }
-    ]);
+    const [chatRooms, setChatRooms] = useState<ChatRoomListing[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchChatRooms = async () => {
+            setIsLoading(true);
+            const data = await getChatroomListings(user.token);
+            setChatRooms(data);
+            setIsLoading(false);
+        };
+        fetchChatRooms();
+    }, [user.token]);
 
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
@@ -120,7 +67,7 @@ const Chat = ({ user }: ChatProps) => {
         chat.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const selectedChatRoom = chatRooms.find(chat => chat.id === selectedChat);
+    const selectedChatRoom = chatRooms.find(chatroom => chatroom.chatroomId === selectedChat);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -174,7 +121,7 @@ const Chat = ({ user }: ChatProps) => {
     }
 
     return (
-        <div className="h-full relative flex bg-gray-100 shadow-sm border border-gray-200 overflow-hidden">
+        <div className="h-screen relative flex bg-gray-100 shadow-sm border border-gray-200 overflow-hidden">
             {/* Chat List Sidebar */}
             <div className="sm:static absolute md:w-80 w-full border-r border-gray-200 flex flex-col">
                 {/* Search Header */}
@@ -193,26 +140,18 @@ const Chat = ({ user }: ChatProps) => {
                 <div className="flex-1 overflow-y-auto">
                     {filteredChats.map((chat) => (
                         <div
-                            key={chat.id}
-                            onClick={() => handleSelectChat(chat.id)}
+                            key={chat.chatroomId}
+                            onClick={() => handleSelectChat(chat.chatroomId)}
                             className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${
-                                selectedChat === chat.id ? 'bg-purple-50 border-r-2 border-r-purple-950' : ''
+                                selectedChat === chat.chatroomId ? 'bg-purple-50 border-r-2 border-r-purple-950' : ''
                             }`}
                         >
                             <div className="flex items-center space-x-3">
                                 {/* Avatar or Group Icon */}
                                 <div className="relative">
-                                    {chat.type === 'direct' ? (
-                                        <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
-                                            <span className="text-white font-semibold text-sm">
-                                                {chat.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                                            <FiUsers className="text-white" size={20} />
-                                        </div>
-                                    )}
+                                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <FiUsers className="text-white" size={20} />
+                                    </div>
                                 </div>
 
                                 {/* Chat Info */}
@@ -224,12 +163,7 @@ const Chat = ({ user }: ChatProps) => {
                                         <div className="flex items-center space-x-2">
                                             {chat.lastMessage && (
                                                 <span className="text-xs text-gray-500">
-                                                    {formatTime(chat.lastMessage.timestamp)}
-                                                </span>
-                                            )}
-                                            {chat.unreadCount > 0 && (
-                                                <span className="bg-purple-950 text-white text-xs rounded-full px-1 py-0.5 min-w-[1.25rem] text-center">
-                                                    {chat.unreadCount}
+                                                    {formatTime(chat.lastMessage.createdAt)}
                                                 </span>
                                             )}
                                         </div>
@@ -238,11 +172,6 @@ const Chat = ({ user }: ChatProps) => {
                                         <p className="text-sm text-gray-600 truncate">
                                             {chat.lastMessage.senderId === user.id ? 'You: ' : ''}{chat.lastMessage.content}
                                         </p>
-                                    )}
-                                    {chat.type === 'project' && (
-                                        <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-md">
-                                            Project Chat
-                                        </span>
                                     )}
                                 </div>
                             </div>
@@ -267,27 +196,16 @@ const Chat = ({ user }: ChatProps) => {
 
                                 {/* Avatar */}
                                 <div className="relative">
-                                    {selectedChatRoom.type === 'direct' ? (
-                                        <div className="w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
-                                            <span className="text-white font-semibold text-sm">
-                                                {selectedChatRoom.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                                            <FiUsers className="text-white" size={18} />
-                                        </div>
-                                    )}
+                                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <FiUsers className="text-white" size={18} />
+                                    </div>
                                 </div>
 
                                 {/* Chat Info */}
                                 <div>
                                     <h2 className="font-semibold text-gray-900">{selectedChatRoom.name}</h2>
                                     <p className="text-sm text-gray-600">
-                                        {selectedChatRoom.type === 'direct' 
-                                            ? selectedChatRoom.participants.find(p => p.id !== user.id)?.status 
-                                            : `${selectedChatRoom.participants.length} members`
-                                        }
+                                        {`${selectedChatRoom.participants.length} members`}
                                     </p>
                                 </div>
                             </div>
@@ -295,7 +213,7 @@ const Chat = ({ user }: ChatProps) => {
                     </div>
 
                     {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div className="flex-1 h-full p-4 space-y-4 overflow-y-scroll">
                         {messages.map((message, index) => {
                             const isOwn = message.senderId === user.id;
                             const showAvatar = !isOwn && (index === 0 || messages[index - 1].senderId !== message.senderId);
@@ -369,7 +287,6 @@ const Chat = ({ user }: ChatProps) => {
                     <div className="text-center">
                         <FiMessageCircle size={64} className="mx-auto text-gray-400 mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
-                        <p className="text-gray-600">Choose from your existing conversations or start a new one</p>
                     </div>
                 </div>
             )}

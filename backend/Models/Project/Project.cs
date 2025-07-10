@@ -11,6 +11,7 @@ public class Project
     public int OwnerId { get; set; }
     public string Status { get; set; } = "Active";
 
+    public Chatroom Chatroom { get; set; } = null!;
     public ICollection<ProjectMember> ProjectMembers { get; set; } = [];
     public ICollection<ProjectApplication> ProjectApplications { get; set; } = null!;
 

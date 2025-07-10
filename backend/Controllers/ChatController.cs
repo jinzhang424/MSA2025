@@ -85,7 +85,7 @@ public class ChatController : ControllerBase
 
         _context.Chatrooms.Remove(chatroom);
         _context.SaveChanges();
-        
+
         return Ok("Successfully deleted chatroom");
     }
 
@@ -120,7 +120,7 @@ public class ChatController : ControllerBase
 
         _context.ChatroomUser.Add(chatroomUser);
         _context.SaveChanges();
-        
+
         return Ok("Successfully added user to chatroom");
     }
 
@@ -152,12 +152,65 @@ public class ChatController : ControllerBase
 
         // Preventing the chat owner from removing themselves if there are still others in the chat
         var chatroomUserCount = _context.ChatroomUser.Count();
-        if (chatroomUser.UserId == chatroom.OwnerId && chatroomUserCount > 1) {
+        if (chatroomUser.UserId == chatroom.OwnerId && chatroomUserCount > 1)
+        {
             return BadRequest("You cannot remove yourself as you are the owner and there are still others in this chat.");
         }
 
         _context.ChatroomUser.Remove(chatroomUser);
         _context.SaveChanges();
         return Ok("Successfully removed user from chatroom");
+    }
+    
+    [Authorize]
+    [HttpGet("GetChatroomListings")]
+    public async Task<IActionResult> GetChatroomListings()
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+            return Unauthorized("Invalid token");
+
+        int userId = int.Parse(userIdString);
+
+        // Get all chatrooms the user is a participant in
+        var chatrooms = await _context.Chatrooms
+            .Include(c => c.ChatroomUsers)
+                .ThenInclude(cu => cu.User)
+            .Include(c => c.Messages)
+            .Where(c => c.ChatroomUsers.Any(cu => cu.UserId == userId))
+            .ToListAsync();
+
+        var result = chatrooms.Select(chatroom =>
+        {
+            var lastMsg = chatroom.Messages
+                .OrderByDescending(m => m.CreatedAt)
+                .Select(m => new {
+                    senderId = m.SenderId,
+                    content = m.Content,
+                    createdAt = m.CreatedAt
+                })
+                .FirstOrDefault();
+
+            return new
+            {
+                chatroomId = chatroom.ChatroomId,
+                name = chatroom.Name,
+                participants = chatroom.ChatroomUsers.Select(cu => new
+                {
+                    userId = cu.User.UserId,
+                    image = cu.User.ProfileImage,
+                    firstName = cu.User.FirstName,
+                    lastName = cu.User.LastName
+                }).ToList(),
+                lastMessage = lastMsg == null? null : new
+                {
+                    senderId = lastMsg.senderId,
+                    content = lastMsg.content,
+                    createdAt = lastMsg.createdAt
+                }
+            };
+        }).ToList();
+
+        return Ok(result);
     }
 }
