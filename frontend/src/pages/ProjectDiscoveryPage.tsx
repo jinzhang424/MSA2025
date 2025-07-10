@@ -6,6 +6,8 @@ import { BsFilterRight } from "react-icons/bs";
 import Footer from '../components/Footer';
 import { getProjectCardData } from '../api/Project';
 import { type ProjectCardProps } from '../api/Project';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store/store';
 
 const CATEGORIES = ['All', 'Software Development', 'Web Design', 'Mobile App', 'Graphic Design', 'UI/UX', 'Data Science', 'Game Development'];
 
@@ -16,10 +18,12 @@ const ProjectDiscoveryPage = () => {
     const [projects, setProjects] = useState<ProjectCardProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const user = useSelector((state: RootState) => state.user);
+
     useEffect(() => {
         const fetchProjects = async () => {
             setIsLoading(true);
-            const data = await getProjectCardData();
+            const data = await getProjectCardData(user.token);
             setProjects(data);
             setIsLoading(false);
         };

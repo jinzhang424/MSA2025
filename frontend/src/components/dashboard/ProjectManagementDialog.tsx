@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FiX, FiUsers, FiUserCheck, FiMail, FiUser, FiStar } from 'react-icons/fi';
 import { type UserProjectCardProps } from '../../api/Project';
 import { getProjectMembers, type ProjectMemberData } from '../../api/Project';
-import { getProjectApplications, type ProjectApplication } from '../../api/ProjectApplication';
+import { acceptUserApplication, getProjectPendingApplications, rejectUserApplication, type ProjectApplication } from '../../api/ProjectApplication';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 
@@ -39,7 +39,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
         const fetchApplicants = async () => {
             if (isOpen) {
                 setIsLoadingApplicants(true);
-                const data = await getProjectApplications(project.projectId, user.token);
+                const data = await getProjectPendingApplications(project.projectId, user.token);
                 setApplicants(data);
                 setIsLoadingApplicants(false);
             }
@@ -47,14 +47,25 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
         fetchApplicants();
     }, [isOpen, project.projectId]);
 
-    const handleAcceptApplicant = (applicantId: number) => {
+    const handleAcceptApplicant = async (applicantId: number) => {
         console.log('Accept applicant:', applicantId);
-        // TODO: Implement accept logic
+        console.log('Reject applicant:', applicantId);
+        const success = await acceptUserApplication(applicantId, project.projectId, user.token);
+        if (success) {
+            alert("Successfully accepted user");
+        } else {
+            alert("Error occurred while accepting user");
+        }
     };
 
-    const handleRejectApplicant = (applicantId: number) => {
+    const handleRejectApplicant = async (applicantId: number) => {
         console.log('Reject applicant:', applicantId);
-        // TODO: Implement reject logic
+        const success = await rejectUserApplication(applicantId, project.projectId, user.token);
+        if (success) {
+            alert("Successfully rejected user");
+        } else {
+            alert("Error occurred while rejecting user");
+        }
     };
 
     const handleRemoveMember = (memberId: number) => {

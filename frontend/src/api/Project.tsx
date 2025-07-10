@@ -102,9 +102,14 @@ export interface ProjectCardProps {
     skills: string[]
 }
 
-export const getProjectCardData = async (): Promise<ProjectCardProps[]> => {
+export const getProjectCardData = async (token: string): Promise<ProjectCardProps[]> => {
+    console.log(token);
     try {
-        const res = await axios.get('/api/Project/GetAllProjectsCardData');
+        const res = await axios.get('/api/Project/GetAllProjectsCardData', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         const data = res.data;
 
         console.log("Project card data: ", data)
@@ -130,7 +135,7 @@ export interface UserProjectCardProps {
 
 export const getUserProjectCardData = async (token: string): Promise<UserProjectCardProps[]> => {
     try {
-        const res = await axios.get('/api/Project/GetAllProjectsCardData', {
+        const res = await axios.get('/api/Project/GetAllUserProjects', {
             headers: {
                 Authorization: `Bearer ${token}`
             }

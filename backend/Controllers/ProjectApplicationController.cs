@@ -114,8 +114,8 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
     {
         // Check if the user has applied to the project
         var projectApplication = await _context.ProjectApplication
-            .AnyAsync(pwu => pwu.UserId == userId && pwu.ProjectId == projectId);
-        if (!projectApplication)
+            .FirstOrDefaultAsync(pwu => pwu.UserId == userId && pwu.ProjectId == projectId);
+        if (projectApplication == null)
         {
             return NotFound("User does not exist or has not applied to project");
         }
@@ -127,17 +127,9 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         };
 
         await _context.ProjectMembers.AddAsync(projectMember);
+        projectApplication.Status = "Accepted";
         _context.SaveChanges();
-
-        // User no longer needs to be in waiting list and so it they can be removed
-        try
-        {
-            RemoveUserApplication(userId, projectId);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        
 
         return Ok("Successfully accepted user into project");
     }
@@ -171,8 +163,8 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
     }
     
     [Authorize]
-    [HttpGet("GetProjectApplications/{projectId}")]
-    public async Task<IActionResult> GetProjectApplications(int projectId)
+    [HttpGet("GetProjectPendingApplications/{projectId}")]
+    public async Task<IActionResult> GetProjectPendingApplications(int projectId)
     {
         var project = await _context.Projects
             .Include(p => p.ProjectApplications)
@@ -184,16 +176,18 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
             return NotFound("Project not found");
         }
 
-        var result = project.ProjectApplications.Select(pa => new {
-            userId = pa.User.UserId,
-            firstName = pa.User.FirstName,
-            lastName = pa.User.LastName,
-            email = pa.User.Email,
-            skills = pa.User.Skills ?? new List<string>(),
-            dateApplied = pa.DateApplied.ToString("yyyy-MM-dd HH:mm"),
-            message = pa.CoverMessage,
-            status = pa.Status
-        }).ToList();
+        var result = project.ProjectApplications
+            .Where(pa => pa.Status == "Pending")
+            .Select(pa => new {
+                userId = pa.User.UserId,
+                firstName = pa.User.FirstName,
+                lastName = pa.User.LastName,
+                email = pa.User.Email,
+                skills = pa.User.Skills ?? new List<string>(),
+                dateApplied = pa.DateApplied.ToString("yyyy-MM-dd HH:mm"),
+                message = pa.CoverMessage,
+                status = pa.Status
+            }).ToList();
 
         return Ok(result);
     }

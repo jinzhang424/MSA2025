@@ -220,10 +220,10 @@ public class ProjectController : ControllerBase
         {
             return Unauthorized("Invalid Token");
         }
-
+        
         var userId = int.Parse(userIdString);
         var projects = await _context.Projects
-            .Where(p => p.OwnerId == userId)
+            .Where(p => p.OwnerId != userId) // Stops the user from seeing their own project in the discovery
             .Include(p => p.ProjectMembers)
             .ToListAsync();
             
