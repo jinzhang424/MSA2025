@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FiX, FiUsers, FiUserCheck, FiMail, FiUser, FiStar } from 'react-icons/fi';
-import { type UserProjectCardProps } from '../../api/Project';
+import { removeUserFromProject, type UserProjectCardProps } from '../../api/Project';
 import { getProjectMembers, type ProjectMemberData } from '../../api/Project';
 import { acceptUserApplication, getProjectPendingApplications, rejectUserApplication, type ProjectApplication } from '../../api/ProjectApplication';
 import { useSelector } from 'react-redux';
@@ -53,10 +53,10 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
         if (success) {
             alert("Successfully accepted user");
             const acceptedApplicant = applicants.find(a => a.userId === applicantId);
+
+            // Moving applicant from applicants to members
             if (acceptedApplicant) {
-                // Remove from applicants
                 setApplicants(prev => prev.filter(a => a.userId !== applicantId));
-                // Add to members
                 setMembers(prev => [
                     ...prev,
                     {
@@ -91,11 +91,16 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
         }
     };
 
-    const handleRemoveMember = (memberId: number) => {
+    const handleRemoveMember = async (memberId: number) => {
         if (window.confirm('Are you sure you want to remove this member from the project?')) {
-            console.log('Remove member:', memberId);
-            // TODO: Implement remove logic
+        const success = await removeUserFromProject(memberId, project.projectId, user.token);
+        if (success) {
+            setMembers(prev => prev.filter(m => m.userId !== memberId));
+            alert("Member successfully removed.");
+        } else {
+            alert("Error occurred while removing member.");
         }
+    }
     };
 
     const getRoleIcon = (role: string) => {

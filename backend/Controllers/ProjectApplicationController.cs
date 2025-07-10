@@ -134,7 +134,7 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         return Ok("Successfully accepted user into project");
     }
 
-    [HttpDelete("RejectUserApplication/{victimId}/{projectId}")]
+    [HttpPatch("RejectUserApplication/{victimId}/{projectId}")]
     public async Task<IActionResult> RejectUserApplication(int victimId, int projectId)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

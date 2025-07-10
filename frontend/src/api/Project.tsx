@@ -207,3 +207,17 @@ export const getProjectMembers = async (projectId: number, token: string): Promi
         return [];
     }
 }
+
+export const removeUserFromProject = async (victimId: number, projectId: number, token: string): Promise<boolean> => {
+    try {
+        await axios.delete(`/api/Project/RemoveUserFromProject/${victimId}/${projectId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return true;
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
+};

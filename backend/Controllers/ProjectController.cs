@@ -144,6 +144,52 @@ public class ProjectController : ControllerBase
     }
 
     [Authorize]
+    [HttpDelete("RemoveUserFromProject/{victimId}/{projectId}")]
+    public async Task<IActionResult> RemoveUserFromProject(int victimId, int projectId)
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+        {
+            return Unauthorized("Invalid token.");
+        }
+        int userId = int.Parse(userIdString);
+
+        // Get the project and check if the current user is the owner
+        var project = await _context.Projects
+            .Include(p => p.ProjectMembers)
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+        if (project == null)
+        {
+            return NotFound("Project not found.");
+        }
+
+        if (project.OwnerId != userId)
+        {
+            return Unauthorized("Only the project owner can remove members.");
+        }
+
+        // Prevent owner from removing themselves
+        if (victimId == userId)
+        {
+            return BadRequest("Owner cannot remove themselves from the project.");
+        }
+
+        // Find the project member to remove
+        var member = project.ProjectMembers.FirstOrDefault(pm => pm.UserId == victimId);
+        if (member == null)
+        {
+            return NotFound("User is not a member of this project.");
+        }
+
+        _context.ProjectMembers.Remove(member);
+        await _context.SaveChangesAsync();
+
+        return Ok("User successfully removed from project.");
+    }
+
+
+    [Authorize]
     [HttpPatch("UpdateProjectDetails/{projectId}")]
     public async Task<IActionResult> UpdateProjectDetails([FromBody] ProjectDto projectDto, int projectId)
     {

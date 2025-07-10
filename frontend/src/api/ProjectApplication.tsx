@@ -89,7 +89,7 @@ export const acceptUserApplication = async (userId: number, projectId: number, t
 
 export const rejectUserApplication = async (victimId: number, projectId: number, token: string): Promise<boolean> => {
     try {
-        const res = await axios.delete(`/api/ProjectApplication/RejectUserApplication/${victimId}/${projectId}`, {
+        const res = await axios.patch(`/api/ProjectApplication/RejectUserApplication/${victimId}/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
