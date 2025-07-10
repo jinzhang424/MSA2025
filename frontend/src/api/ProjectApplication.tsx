@@ -100,3 +100,56 @@ export const rejectUserApplication = async (victimId: number, projectId: number,
         return false;
     }
 };
+
+
+export interface UserOutgoingApplication {
+    projectId: number,
+    title: string,
+    description: string,
+    image: string,
+    dateApplied: string,
+    skills: string[],
+    status: string,
+    coverMessage: string
+}
+
+export const GetOutgoingApplications = async (token: string): Promise<UserOutgoingApplication[]> => {
+    try {
+        const res = await axios.get('/api/ProjectApplication/GetOutgoingApplications', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        return res.data as UserOutgoingApplication[];
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+};
+
+export interface UserIncomingApplication {
+    applicant: {
+        userId: number,
+        firstName: string,
+        lastName: string,
+        email: string,
+        profilePicture: string | null,
+        skills: string[]
+    },
+    projectId: number,
+    projectTitle: string,
+    status: string,
+    dateApplied: string,
+    coverMessage: string
+}
+
+export const GetIncomingApplications = async (token: string): Promise<UserIncomingApplication[]> => {
+    try {
+        const res = await axios.get('/api/ProjectApplication/GetIncomingApplications', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return res.data as UserIncomingApplication[];
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+};

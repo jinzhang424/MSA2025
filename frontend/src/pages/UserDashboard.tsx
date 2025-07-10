@@ -13,7 +13,6 @@ import { type RootState } from '../store/store';
 
 function UserDashboard() {
     const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
-    
     const user = useSelector((state: RootState) => state.user);
 
     const sidebarItems = [
@@ -24,7 +23,7 @@ function UserDashboard() {
         { id: 'chat', label: 'Chat', icon: FiMessageCircle },
         { id: 'settings', label: 'Settings', icon: FiSettings },
     ];
-
+    
     const renderContent = () => {
         switch (activeTab) {
             case 'overview':

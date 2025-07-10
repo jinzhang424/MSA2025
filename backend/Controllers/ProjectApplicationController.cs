@@ -63,11 +63,13 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
     [HttpPost("ApplyForProject/{projectId}")]
     public async Task<IActionResult> ApplyForProject([FromBody] ProjectApplicationDto projectApplicationDto, int projectId)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
         {
             return Unauthorized("Invalid token");
         }
+
+        var userId = int.Parse(userIdString);
 
         var projectExists = await _context.Projects.AnyAsync(p => p.ProjectId == projectId);
         if (!projectExists)
@@ -75,12 +77,20 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
             return NotFound("Project not found");
         }
 
+        var existingApplication = await _context.ProjectApplication
+            .FirstOrDefaultAsync(pa => pa.ProjectId == projectId && pa.UserId == userId);
+
+        if (existingApplication != null)
+        {
+            return Conflict("You have already applied for this project.");
+        }
+
         var waitingListUser = new ProjectApplication
         {
             CoverMessage = projectApplicationDto.CoverMessage,
             Availablity = projectApplicationDto.Availability,
             ProjectId = projectId,
-            UserId = int.Parse(userId)
+            UserId = userId
         };
 
         await _context.ProjectApplication.AddAsync(waitingListUser);
@@ -129,7 +139,7 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         await _context.ProjectMembers.AddAsync(projectMember);
         projectApplication.Status = "Accepted";
         _context.SaveChanges();
-        
+
 
         return Ok("Successfully accepted user into project");
     }
@@ -161,7 +171,7 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
 
         return Ok("Successfully rejected user");
     }
-    
+
     [Authorize]
     [HttpGet("GetProjectPendingApplications/{projectId}")]
     public async Task<IActionResult> GetProjectPendingApplications(int projectId)
@@ -178,7 +188,8 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
 
         var result = project.ProjectApplications
             .Where(pa => pa.Status == "Pending")
-            .Select(pa => new {
+            .Select(pa => new
+            {
                 userId = pa.User.UserId,
                 firstName = pa.User.FirstName,
                 lastName = pa.User.LastName,
@@ -191,4 +202,84 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
 
         return Ok(result);
     }
+
+    [Authorize]
+    [HttpGet("GetOutgoingApplications")]
+    public async Task<IActionResult> GetOutgoingApplications()
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+        {
+            return Unauthorized("Invalid Token");
+        }
+
+        int userId = int.Parse(userIdString);
+
+        var applications = await _context.ProjectApplication
+            .Include(pa => pa.Project)
+            .Where(pa => pa.UserId == userId)
+            .OrderByDescending(pa => pa.DateApplied)
+            .ToListAsync();
+
+        var result = applications.Select(pa => new
+        {
+            projectId = pa.ProjectId,
+            title = pa.Project.Title,
+            description = pa.Project.Description,
+            image = pa.Project.ImageUrl,
+            dateApplied = pa.DateApplied.ToString("yyyy-MM-dd"),
+            skills = pa.Project.Skills ?? new List<string>(),
+            status = pa.Status,
+            coverMessage = pa.CoverMessage
+        }).ToList();
+
+        return Ok(result);
+    }
+
+    [Authorize]
+[HttpGet("GetIncomingApplications")]
+public async Task<IActionResult> GetIncomingApplications()
+{
+    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (userIdString == null)
+    {
+        return Unauthorized("Invalid Token");
+    }
+
+    int userId = int.Parse(userIdString);
+
+    // Get all project IDs owned by the current user
+    var ownedProjectIds = await _context.Projects
+        .Where(p => p.OwnerId == userId)
+        .Select(p => p.ProjectId)
+        .ToListAsync();
+
+    // Get all applications to those projects
+    var applications = await _context.ProjectApplication
+        .Include(pa => pa.User)
+        .Include(pa => pa.Project)
+        .Where(pa => ownedProjectIds.Contains(pa.ProjectId))
+        .OrderByDescending(pa => pa.DateApplied)
+        .ToListAsync();
+
+    var result = applications.Select(pa => new
+    {
+        applicant = new
+        {
+            userId = pa.User.UserId,
+            firstName = pa.User.FirstName,
+            lastName = pa.User.LastName,
+            email = pa.User.Email,
+            profilePicture = pa.User.ProfileImage,
+            skills = pa.User.Skills ?? new List<string>()
+        },
+        projectId = pa.ProjectId,
+        projectTitle = pa.Project.Title,
+        status = pa.Status,
+        dateApplied = pa.DateApplied.ToString("yyyy-MM-dd"),
+        coverMessage = pa.CoverMessage
+    }).ToList();
+
+    return Ok(result);
+}
 }
