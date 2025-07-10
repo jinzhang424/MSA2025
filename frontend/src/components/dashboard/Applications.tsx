@@ -62,6 +62,7 @@ const Applications = ({ user }: ApplicationsProps) => {
     };
 
     const handleApplicationAction = async (applicantId: number, projectId: number, action: 'accept' | 'reject') => {
+        console.log("Applicant id", applicantId)
         let success = false;
         if (action == 'accept') {
             success = await acceptUserApplication(applicantId, projectId, user.token);

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { FiSend, FiSearch, FiPaperclip, FiUsers, FiMessageCircle } from 'react-icons/fi';
-import { type User, type ChatMessage } from '../../types/dashboard';
+import { type User } from '../../types/dashboard';
 import { FaChevronLeft } from "react-icons/fa6";
 import { getChatroomListings, type ChatRoomListing } from '../../api/Chatroom';
 import { getChatroomMessages, sendMessage, type Message, type MessageDto } from '../../api/Message';
@@ -18,6 +18,7 @@ const Chat = ({ user }: ChatProps) => {
 
     const [chatRooms, setChatRooms] = useState<ChatRoomListing[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSending, setIsSending] = useState(false);
 
     const [messages, setMessages] = useState<Message[]>([]);
 
@@ -49,6 +50,8 @@ const Chat = ({ user }: ChatProps) => {
         e.preventDefault();
         if (!newMessage.trim() || !selectedChat) return;
 
+        setIsSending(true)
+
         const message: MessageDto = {
             chatroomId: selectedChat,
             content: newMessage,
@@ -58,6 +61,7 @@ const Chat = ({ user }: ChatProps) => {
         if (!success) {
             alert("Error while sending chat message");
         }
+        setIsSending(false)
     };
 
     const formatTime = (timestamp: string) => {
@@ -120,7 +124,6 @@ const Chat = ({ user }: ChatProps) => {
                         >
                             <div className="flex items-center space-x-3">
                                 {/* Avatar or Group Icon */}
-                                {/* Avatar or Group Icon */}
                                 <div className="relative">
                                     {chat.isGroup ? (
                                         <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
@@ -151,7 +154,7 @@ const Chat = ({ user }: ChatProps) => {
                                     </div>
                                     {chat.lastMessage && (
                                         <p className="text-sm text-gray-600 truncate">
-                                            {chat.lastMessage.senderId === user.id ? 'You: ' : ''}{chat.lastMessage.content}
+                                            {chat.lastMessage.senderId === user.id ? 'You: ' : ''}{`${chat.lastMessage.senderFirstName}: ${chat.lastMessage.content}`}
                                         </p>
                                     )}
                                     {chat.isGroup && (
@@ -219,7 +222,7 @@ const Chat = ({ user }: ChatProps) => {
                                         {showAvatar && !isOwn && (
                                             <div className="w-8 h-8 bg-purple-950 rounded-full flex items-center justify-center flex-shrink-0">
                                                 <span className="text-white font-semibold text-xs">
-                                                    {`${message.senderFirstName[0]} ${message.senderLastName[0]}`}
+                                                    {`${message.senderFirstName[0].toUpperCase()}${message.senderLastName[0].toUpperCase()}`}
                                                 </span>
                                             </div>
                                         )}
@@ -233,7 +236,7 @@ const Chat = ({ user }: ChatProps) => {
                                         }`}>
                                             {showAvatar && !isOwn && (
                                                 <p className="text-xs font-medium mb-1 text-gray-600">
-                                                    {message.senderFirstName}
+                                                    {`${message.senderFirstName} ${message.senderLastName}`}
                                                 </p>
                                             )}
                                             <p className="text-sm">{message.content}</p>
@@ -253,9 +256,6 @@ const Chat = ({ user }: ChatProps) => {
                     {/* Message Input */}
                     <div className="p-4 border-t border-gray-200 bg-white">
                         <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
-                            <button type="button" className="p-2 text-gray-500 hover:text-gray-700 transition-colors">
-                                <FiPaperclip size={18} />
-                            </button>
                             <div className="flex-1 relative">
                                 <input
                                     type="text"
@@ -267,10 +267,10 @@ const Chat = ({ user }: ChatProps) => {
                             </div>
                             <button
                                 type="submit"
-                                disabled={!newMessage.trim()}
+                                disabled={!newMessage.trim() || isSending}
                                 className="p-2 bg-purple-950 text-white rounded-full hover:bg-purple-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
-                                <FiSend size={18} />
+                                <FiSend size={21} />
                             </button>
                         </form>
                     </div>

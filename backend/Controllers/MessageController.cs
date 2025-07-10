@@ -69,7 +69,7 @@ public class MessageController : ControllerBase
 
         var messages = _context.Messages
             .Where(m => m.ChatroomId == chatroomId)
-            .OrderByDescending(m => m.CreatedAt)
+            .OrderBy(m => m.CreatedAt)
             .Select(m => new
             {
                 messageId = m.MessageId,

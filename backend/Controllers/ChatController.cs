@@ -185,9 +185,10 @@ public class ChatController : ControllerBase
             var lastMsg = chatroom.Messages
                 .OrderByDescending(m => m.CreatedAt)
                 .Select(m => new {
-                    senderId = m.SenderId,
-                    content = m.Content,
-                    createdAt = m.CreatedAt
+                    m.SenderId,
+                    m.Sender.FirstName,
+                    m.Content,
+                    m.CreatedAt
                 })
                 .FirstOrDefault();
 
@@ -205,9 +206,10 @@ public class ChatController : ControllerBase
                 }).ToList(),
                 lastMessage = lastMsg == null? null : new
                 {
-                    senderId = lastMsg.senderId,
-                    content = lastMsg.content,
-                    createdAt = lastMsg.createdAt
+                    senderId = lastMsg.SenderId,
+                    senderFirstName = lastMsg.FirstName,
+                    content = lastMsg.Content,
+                    createdAt = lastMsg.CreatedAt
                 }
             };
         }).ToList();

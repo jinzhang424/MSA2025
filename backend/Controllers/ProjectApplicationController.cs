@@ -119,7 +119,7 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         }
     }
 
-    [HttpPut("AcceptUserApplication/{userId}/{projectId}")]
+    [HttpPut("AcceptUserApplication/{applicantId}/{projectId}")]
     public async Task<IActionResult> AcceptUserApplication(int applicantId, int projectId)
     {
         var project = await _context.Projects

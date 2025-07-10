@@ -14,6 +14,7 @@ export interface ChatRoomListing {
     participants: Participants[]
     lastMessage: {
         senderId: number,
+        senderFirstName: string,
         content: string,
         createdAt: string,
     }
