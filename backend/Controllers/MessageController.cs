@@ -70,6 +70,15 @@ public class MessageController : ControllerBase
         var messages = _context.Messages
             .Where(m => m.ChatroomId == chatroomId)
             .OrderByDescending(m => m.CreatedAt)
+            .Select(m => new
+            {
+                messageId = m.MessageId,
+                senderId = m.SenderId,
+                senderFirstName = m.Sender.FirstName,
+                senderLastName = m.Sender.LastName,
+                content = m.Content,
+                createdAt = m.CreatedAt
+            })
             .ToList();
 
         return Ok(messages);

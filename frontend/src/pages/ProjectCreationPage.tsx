@@ -180,7 +180,17 @@ const ProjectCreationPage = () => {
                                     Available Spots*
                                 </label>
 
-                                <input type="number" id="availableSpots" name="availableSpots" min="1" max="20" required className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent" value={formData.totalSpots} onChange={handleNumberChange} />
+                                <input 
+                                    type="number" 
+                                    id="totalSpots" 
+                                    name="totalSpots" 
+                                    min="1" 
+                                    max="20" 
+                                    required 
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent" 
+                                    value={formData.totalSpots} 
+                                    onChange={handleNumberChange} 
+                                />
                             </div>
 
                             <div>

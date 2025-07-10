@@ -3,6 +3,7 @@ import { FiSend, FiSearch, FiPaperclip, FiUsers, FiMessageCircle } from 'react-i
 import { type User, type ChatMessage } from '../../types/dashboard';
 import { FaChevronLeft } from "react-icons/fa6";
 import { getChatroomListings, type ChatRoomListing } from '../../api/Chatroom';
+import { getChatroomMessages, sendMessage, type Message, type MessageDto } from '../../api/Message';
 
 interface ChatProps {
     user: User;
@@ -18,6 +19,8 @@ const Chat = ({ user }: ChatProps) => {
     const [chatRooms, setChatRooms] = useState<ChatRoomListing[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [messages, setMessages] = useState<Message[]>([]);
+
     useEffect(() => {
         const fetchChatRooms = async () => {
             setIsLoading(true);
@@ -27,41 +30,6 @@ const Chat = ({ user }: ChatProps) => {
         };
         fetchChatRooms();
     }, [user.token]);
-
-    const [messages, setMessages] = useState<ChatMessage[]>([
-        {
-            id: 1,
-            senderId: 2,
-            senderName: 'Sarah Johnson',
-            content: 'Hey John! How\'s the e-commerce project coming along?',
-            timestamp: '2025-07-06T14:25:00Z',
-            type: 'text'
-        },
-        {
-            id: 2,
-            senderId: 2,
-            senderName: 'Sarah Johnson',
-            content: 'I\'ve been working on the user authentication flow and wanted to sync up.',
-            timestamp: '2025-07-06T14:26:00Z',
-            type: 'text'
-        },
-        {
-            id: 3,
-            senderId: user.id,
-            senderName: `${user.firstName} ${user.lastName}`,
-            content: 'Hi Sarah! It\'s going well. I\'ve completed the product catalog and shopping cart features.',
-            timestamp: '2025-07-06T14:30:00Z',
-            type: 'text'
-        },
-        {
-            id: 4,
-            senderId: user.id,
-            senderName: `${user.firstName} ${user.lastName}`,
-            content: 'Great timing on the auth flow - we should definitely coordinate on that. Want to hop on a quick call?',
-            timestamp: '2025-07-06T14:31:00Z',
-            type: 'text'
-        }
-    ]);
 
     const filteredChats = chatRooms.filter(chat =>
         chat.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -77,21 +45,19 @@ const Chat = ({ user }: ChatProps) => {
         scrollToBottom();
     }, [messages]);
 
-    const handleSendMessage = (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newMessage.trim() || !selectedChat) return;
 
-        const message: ChatMessage = {
-            id: 1,
-            senderId: user.id,
-            senderName: `${user.firstName} ${user.lastName}`,
+        const message: MessageDto = {
+            chatroomId: selectedChat,
             content: newMessage,
-            timestamp: new Date().toISOString(),
-            type: 'text'
         };
 
-        setMessages(prev => [...prev, message]);
-        setNewMessage('');
+        const success = await sendMessage(user.token, message);
+        if (!success) {
+            alert("Error while sending chat message");
+        }
     };
 
     const formatTime = (timestamp: string) => {
@@ -115,9 +81,15 @@ const Chat = ({ user }: ChatProps) => {
         }
     };
 
-    const handleSelectChat = (chatId: number) => {
-        setOpenChat(true)
-        setSelectedChat(chatId)
+    const handleSelectChat = async (chatId: number) => {
+        const messages = await getChatroomMessages(user.token, chatId);
+        if (messages == null) {
+            alert("Error while loading chat messages")
+        } else {
+            setMessages(messages)
+            setOpenChat(true)
+            setSelectedChat(chatId)
+        }
     }
 
     return (
@@ -241,13 +213,13 @@ const Chat = ({ user }: ChatProps) => {
                             const showAvatar = !isOwn && (index === 0 || messages[index - 1].senderId !== message.senderId);
                             
                             return (
-                                <div key={message.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                                <div key={message.messageId} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                                     <div className={`flex space-x-2 max-w-xs lg:max-w-md ${isOwn ? 'flex-row-reverse space-x-reverse' : ''}`}>
                                         {/* Avatar */}
                                         {showAvatar && !isOwn && (
                                             <div className="w-8 h-8 bg-purple-950 rounded-full flex items-center justify-center flex-shrink-0">
                                                 <span className="text-white font-semibold text-xs">
-                                                    {message.senderName.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                                    {`${message.senderFirstName[0]} ${message.senderLastName[0]}`}
                                                 </span>
                                             </div>
                                         )}
@@ -261,14 +233,14 @@ const Chat = ({ user }: ChatProps) => {
                                         }`}>
                                             {showAvatar && !isOwn && (
                                                 <p className="text-xs font-medium mb-1 text-gray-600">
-                                                    {message.senderName}
+                                                    {message.senderFirstName}
                                                 </p>
                                             )}
                                             <p className="text-sm">{message.content}</p>
                                             <p className={`text-xs mt-1 ${
                                                 isOwn ? 'text-purple-200' : 'text-gray-500'
                                             }`}>
-                                                {formatTime(message.timestamp)}
+                                                {formatTime(message.createdAt)}
                                             </p>
                                         </div>
                                     </div>
