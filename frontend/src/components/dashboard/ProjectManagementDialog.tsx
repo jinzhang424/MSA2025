@@ -175,7 +175,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                 <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
                                     <div className="flex items-center">
                                         <FiUsers size={14} className="mr-1" />
-                                        {project.totalSpots - project.spotsAvailable}/{project.totalSpots} members
+                                        {project.spotsTaken}/{project.totalSpots} members
                                     </div>
                                 </div>
                             </div>

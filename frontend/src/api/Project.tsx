@@ -126,7 +126,7 @@ export interface UserProjectCardProps {
     description: string,
     image: string | undefined,
     category: string,
-    spotsAvailable: number,
+    spotsTaken: number,
     totalSpots: number,
     duration: string,
     skills: string[],

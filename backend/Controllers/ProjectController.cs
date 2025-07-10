@@ -108,8 +108,8 @@ public class ProjectController : ControllerBase
             category = project.Category,
             totalSpots = project.TotalSpots,
             skills = project.Skills ?? new List<string>(),
-            teamLead = teamLead,
-            teamMembers = teamMembers,
+            teamLead,
+            teamMembers,
             duration = project.Duration ?? ""
         };
 

@@ -150,7 +150,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
                                     <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                                         <div className="flex items-center">
                                             <FiUsers size={16} className="mr-1" />
-                                            {project.totalSpots - project.spotsAvailable}/{project.totalSpots} filled
+                                            {project.spotsTaken}/{project.totalSpots}
                                         </div>
                                     </div>
 
