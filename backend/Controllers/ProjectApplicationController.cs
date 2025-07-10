@@ -120,11 +120,19 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
     }
 
     [HttpPut("AcceptUserApplication/{userId}/{projectId}")]
-    public async Task<IActionResult> AcceptUserApplication(int userId, int projectId)
+    public async Task<IActionResult> AcceptUserApplication(int applicantId, int projectId)
     {
-        // Check if the user has applied to the project
+        var project = await _context.Projects
+            .Include(p => p.Chatroom)
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+        if (project == null)
+        {
+            return NotFound("Project was not found");
+        }
+
+        // Check if the applicant has actually applied to the project
         var projectApplication = await _context.ProjectApplication
-            .FirstOrDefaultAsync(pwu => pwu.UserId == userId && pwu.ProjectId == projectId);
+            .FirstOrDefaultAsync(pwu => pwu.UserId == applicantId && pwu.ProjectId == projectId);
         if (projectApplication == null)
         {
             return NotFound("User does not exist or has not applied to project");
@@ -133,13 +141,21 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         var projectMember = new ProjectMember
         {
             ProjectId = projectId,
-            UserId = userId
+            UserId = applicantId
         };
 
         await _context.ProjectMembers.AddAsync(projectMember);
         projectApplication.Status = "Accepted";
-        _context.SaveChanges();
 
+
+        var chatroomUser = new ChatroomUser
+        {
+            UserId = applicantId,
+            ChatroomId = project.Chatroom.ChatroomId
+        };
+
+        await _context.ChatroomUser.AddAsync(chatroomUser);
+        _context.SaveChanges();
 
         return Ok("Successfully accepted user into project");
     }
