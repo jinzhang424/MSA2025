@@ -304,7 +304,7 @@ public class ProjectController : ControllerBase
             description = project.Description,
             image = project.ImageUrl,
             category = project.Category,
-            spotsAvailable = project.ProjectMembers?.Count ?? 0,
+            spotsTaken = project.ProjectMembers?.Count ?? 0,
             totalSpots = project.TotalSpots,
             duration = project.Duration,
             skills = project.Skills ?? new List<string>()
