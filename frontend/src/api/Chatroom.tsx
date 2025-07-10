@@ -10,6 +10,7 @@ export interface Participants {
 export interface ChatRoomListing {
     chatroomId: number,
     name: string,
+    isGroup: boolean,
     participants: Participants[]
     lastMessage: {
         senderId: number,

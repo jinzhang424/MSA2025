@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { FiSend, FiSearch, FiPaperclip, FiUsers, FiMessageCircle } from 'react-icons/fi';
 import { type User, type ChatMessage } from '../../types/dashboard';
 import { FaChevronLeft } from "react-icons/fa6";
-import { getChatroomListings, type ChatRoomListing } from '../../api/Messages';
+import { getChatroomListings, type ChatRoomListing } from '../../api/Chatroom';
 
 interface ChatProps {
     user: User;
@@ -148,10 +148,19 @@ const Chat = ({ user }: ChatProps) => {
                         >
                             <div className="flex items-center space-x-3">
                                 {/* Avatar or Group Icon */}
+                                {/* Avatar or Group Icon */}
                                 <div className="relative">
-                                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                                        <FiUsers className="text-white" size={20} />
-                                    </div>
+                                    {chat.isGroup ? (
+                                        <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
+                                            <span className="text-white font-semibold text-sm">
+                                                {chat.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                                            <FiUsers className="text-white" size={20} />
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Chat Info */}
@@ -172,6 +181,11 @@ const Chat = ({ user }: ChatProps) => {
                                         <p className="text-sm text-gray-600 truncate">
                                             {chat.lastMessage.senderId === user.id ? 'You: ' : ''}{chat.lastMessage.content}
                                         </p>
+                                    )}
+                                    {chat.isGroup && (
+                                        <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-md">
+                                            Project Chat
+                                        </span>
                                     )}
                                 </div>
                             </div>
@@ -196,16 +210,24 @@ const Chat = ({ user }: ChatProps) => {
 
                                 {/* Avatar */}
                                 <div className="relative">
-                                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                                        <FiUsers className="text-white" size={18} />
-                                    </div>
+                                    {selectedChatRoom.isGroup ? (
+                                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                            <FiUsers className="text-white" size={18} />
+                                        </div>
+                                    ) : (
+                                        <div className="w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
+                                            <span className="text-white font-semibold text-sm">
+                                                {selectedChatRoom.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Chat Info */}
                                 <div>
                                     <h2 className="font-semibold text-gray-900">{selectedChatRoom.name}</h2>
                                     <p className="text-sm text-gray-600">
-                                        {`${selectedChatRoom.participants.length} members`}
+                                        {selectedChatRoom.isGroup && `${selectedChatRoom.participants.length} members`}
                                     </p>
                                 </div>
                             </div>

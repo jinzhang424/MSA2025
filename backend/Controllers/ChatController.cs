@@ -195,6 +195,7 @@ public class ChatController : ControllerBase
             {
                 chatroomId = chatroom.ChatroomId,
                 name = chatroom.Name,
+                isGroup = chatroom.IsGroup,
                 participants = chatroom.ChatroomUsers.Select(cu => new
                 {
                     userId = cu.User.UserId,

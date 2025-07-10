@@ -85,6 +85,7 @@ public class ApplicationDbContext : DbContext
             .HasOne(p => p.Chatroom)
             .WithOne(c => c.Project)
             .HasForeignKey<Chatroom>(c => c.ProjectId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

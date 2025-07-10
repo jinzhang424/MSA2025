@@ -44,6 +44,7 @@ public class ProjectController : ControllerBase
             OwnerId = userId
         };
 
+        // Adding the creator 
         await _context.Projects.AddAsync(project);
         await _context.SaveChangesAsync();
 
@@ -57,9 +58,11 @@ public class ProjectController : ControllerBase
         await _context.ProjectMembers.AddAsync(projectMember);
         await _context.SaveChangesAsync();
 
+        // Creating a chatroom for the project
         var chatroom = new Chatroom
         {
             Name = projectDto.Title,
+            IsGroup = true,
             ProjectId = project.ProjectId,
             OwnerId = userId
         };
@@ -67,6 +70,7 @@ public class ProjectController : ControllerBase
         await _context.Chatrooms.AddAsync(chatroom);
         await _context.SaveChangesAsync();
 
+        // Adding the creator to the project chatroom
         var chatroomUser = new ChatroomUser
         {
             UserId = userId,
