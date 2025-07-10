@@ -266,13 +266,13 @@ public class ProjectController : ControllerBase
         {
             return Unauthorized("Invalid Token");
         }
-        
+
         var userId = int.Parse(userIdString);
         var projects = await _context.Projects
             .Where(p => p.OwnerId != userId) // Stops the user from seeing their own project in the discovery
             .Include(p => p.ProjectMembers)
             .ToListAsync();
-            
+
         var result = projects.Select(project => new
         {
             projectId = project.ProjectId,
@@ -310,7 +310,8 @@ public class ProjectController : ControllerBase
         // Completed projects (owned or joined, with status 'Completed')
         var completedProjects = await _context.Projects.CountAsync(p => (p.OwnerId == userId || p.ProjectMembers.Any(pm => pm.UserId == userId)) && p.Status == "Completed");
 
-        return Ok(new {
+        return Ok(new
+        {
             myProjects,
             joinedProjects,
             pendingApplications,
@@ -332,10 +333,12 @@ public class ProjectController : ControllerBase
             return NotFound("Project not found");
         }
 
-        var result = project.ProjectMembers.Select(pm => new {
+        var result = project.ProjectMembers.Select(pm => new
+        {
             projectId = project.ProjectId,
             userId = pm.UserId,
-            user = new {
+            user = new
+            {
                 id = pm.User.UserId,
                 firstName = pm.User.FirstName,
                 lastName = pm.User.LastName,
@@ -345,6 +348,41 @@ public class ProjectController : ControllerBase
             },
             role = pm.Role,
             joinedAt = pm.JoinedAt.ToString("yyyy-MM-dd HH:mm")
+        }).ToList();
+
+        return Ok(result);
+    }
+    
+    [Authorize]
+    [HttpGet("GetJoinedProjects")]
+    public async Task<IActionResult> GetJoinedProjects()
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+        {
+            return Unauthorized("Invalid token");
+        }
+        int userId = int.Parse(userIdString);
+
+        // Get all ProjectMembers for this user (excluding projects where they are the owner, if you want)
+        var joinedProjectMembers = await _context.ProjectMembers
+            .Include(pm => pm.Project)
+            .ThenInclude(p => p.ProjectMembers)
+            .Where(pm => pm.UserId == userId && pm.Role != "Owner")
+            .ToListAsync();
+
+        var result = joinedProjectMembers.Select(pm => new
+        {
+            projectId = pm.Project.ProjectId,
+            title = pm.Project.Title,
+            description = pm.Project.Description,
+            image = pm.Project.ImageUrl,
+            category = pm.Project.Category,
+            spotsTaken = pm.Project.ProjectMembers.Count,
+            totalSpots = pm.Project.TotalSpots,
+            skills = pm.Project.Skills,
+            status = pm.Project.Status,
+            role = pm.Role
         }).ToList();
 
         return Ok(result);

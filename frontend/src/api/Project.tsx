@@ -221,3 +221,30 @@ export const removeUserFromProject = async (victimId: number, projectId: number,
         return false;
     }
 };
+
+export interface JoinedProjectsCardData {
+    projectId: number,
+    title: string,
+    description: string,
+    image: string,
+    category: string,
+    spotsTaken: number,
+    totalSpots: number,
+    skills: string[],
+    status: string,
+    role: string,
+}
+
+export const getJoinedProjectsCardData = async (token: string) => {
+    try {
+        const res = await axios.get('/api/Project/GetJoinedProjects', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return res.data as JoinedProjectsCardData[];
+    } catch (e) {
+        console.error(e);
+        return [];
+    }
+}
