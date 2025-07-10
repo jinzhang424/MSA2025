@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
-import { getJoinedProjectsCardData, type JoinedProjectsCardData } from '../../api/Project';
+import { getJoinedProjectsCardData, removeUserFromProject, type JoinedProjectsCardData } from '../../api/Project';
 
 interface JoinedProjectsProps {
     user: User;
@@ -52,10 +52,15 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
         }
     };
 
-    const handleLeaveProject = (projectId: number, projectTitle: string) => {
+    const handleLeaveProject = async (projectId: number, projectTitle: string) => {
         if (window.confirm(`Are you sure you want to leave "${projectTitle}"?`)) {
-            // TODO: Implement leave project functionality
-            console.log('Leave project:', projectId);
+            const success = await removeUserFromProject(user.id, projectId, user.token);
+            if (success) {
+                setJoinedProjects((prev) => prev.filter(jp => jp.projectId !== projectId))
+                alert(`Successfully left ${projectTitle}`);
+            } else {
+                alert(`Error occurred while trying to leave ${projectTitle}`);
+            }
         }
     };
 

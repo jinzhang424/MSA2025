@@ -164,13 +164,13 @@ public class ProjectController : ControllerBase
             return NotFound("Project not found.");
         }
 
-        if (project.OwnerId != userId)
+        if (victimId != userId && project.OwnerId != userId)
         {
-            return Unauthorized("Only the project owner can remove members.");
+            return Unauthorized("Only the project owner can remove other members.");
         }
 
         // Prevent owner from removing themselves
-        if (victimId == userId)
+        if (victimId == project.OwnerId)
         {
             return BadRequest("Owner cannot remove themselves from the project.");
         }
