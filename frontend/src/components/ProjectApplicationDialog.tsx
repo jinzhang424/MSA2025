@@ -1,74 +1,27 @@
 import { useState } from 'react';
-import { useParams } from 'react-router';
 import { FiSend } from 'react-icons/fi';
 import { useRef } from 'react';
 import SuccessDialog from './SuccessDialog';
+import { useSelector } from 'react-redux';
+import { type RootState } from '../store/store';
+import { sendApplication } from '../api/ProjectApplication';
+import { type ApplicationFormData } from '../api/ProjectApplication';
 
-interface ProjectData {
-    id: string;
-    title: string;
-    description: string;
-    image: string;
-    category: string;
-    skills: string[];
-    availableSpots: number;
-    totalSpots: number;
-    deadline: string;
-    location: string;
-    duration: string;
-    createdBy: {
-        name: string;
-        profilePicture?: string;
-    };
-    requirements: string[];
+interface ProjectApplicationDialogProps {
+    projectId: number,
+    projectTitle: string
 }
 
-interface ApplicationFormData {
-    message: string;
-    experience: string;
-    motivation: string;
-    availability: string;
-}
-
-const ProjectApplicationDialog = () => {
+const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplicationDialogProps) => {
     const [open, setOpen] = useState(false);
-    const { id } = useParams();
     const [formData, setFormData] = useState<ApplicationFormData>({
-        message: '',
-        experience: '',
-        motivation: '',
+        coverMessage: '',
         availability: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const dialogRef = useRef<HTMLDivElement>(null);
-
-    // Mock project data - replace with actual API call using the `id` parameter
-    const project: ProjectData = {
-        id: id || '1',
-        title: 'E-commerce Platform Development',
-        description: 'Build a modern, scalable e-commerce platform with React, Node.js, and MongoDB. This project aims to create a full-featured online marketplace with advanced search, payment integration, and real-time analytics.',
-        image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800',
-        category: 'Web Development',
-        skills: ['React', 'Node.js', 'MongoDB', 'Stripe API', 'Redux', 'Express.js'],
-        availableSpots: 2,
-        totalSpots: 5,
-        deadline: '2025-07-15',
-        location: 'Remote',
-        duration: '3-4 months',
-        createdBy: {
-            name: 'Sarah Johnson',
-            profilePicture: undefined
-        },
-        requirements: [
-            '2+ years of React development experience',
-            'Experience with Node.js and Express',
-            'Knowledge of MongoDB or similar NoSQL databases',
-            'Experience with payment gateway integration',
-            'Strong problem-solving skills',
-            'Good communication and teamwork abilities'
-        ]
-    };
+    const user = useSelector((state: RootState) => state.user)
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -83,16 +36,15 @@ const ProjectApplicationDialog = () => {
         setIsSubmitting(true);
 
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
             console.log('Application submitted:', {
-                projectId: project.id,
+                projectId: projectId,
                 ...formData
             });
-            
+
+            await sendApplication(formData, projectId, user.token);
             setSubmitted(true);
         } catch (error) {
+            alert("Error occurred while sending application");
             console.error('Error submitting application:', error);
         } finally {
             setIsSubmitting(false);
@@ -113,9 +65,6 @@ const ProjectApplicationDialog = () => {
         setSubmitted(false);
     }
 
-    console.log("submitted: ", submitted, "open: ", open);
-
-    // Application Code
     return (
         <div>
             <button className="bg-purple-950 text-white px-6 py-3 rounded-md hover:bg-purple-900 flex items-center justify-center cursor-pointer w-54 duration-150" onClick={() => openDialog()}>
@@ -126,10 +75,10 @@ const ProjectApplicationDialog = () => {
                 {/* Black Tint */}
                 <div className='absolute inset-0 bg-black/60' onClick={() => closeDialog()}/>
                 
-                <SuccessDialog projectTitle={project.title} submitted={submitted}/>
+                <SuccessDialog projectTitle={projectTitle} submitted={submitted}/>
 
                 {/* Application */}
-                <div className={`relative mt-16 sm:mx-12 mx-6 bg-white rounded-lg p-12 w-full max-w-[700px] h-fit ${(!open || submitted) && 'scale-50 duration-300 opacity-0'}`}>
+                <div className={`relative mt-16 sm:mx-12 mx-6 bg-white rounded-lg p-12 w-full max-w-[600px] h-fit ${(!open || submitted) && 'scale-50 duration-300 opacity-0'}`}>
 
                     <h2 className="text-3xl font-bold text-gray-900 w-full text-center py-6">Submit Your Application</h2>
                     
@@ -140,30 +89,13 @@ const ProjectApplicationDialog = () => {
                                 Cover Message *
                             </label>
                             <textarea
-                                id="message"
-                                name="message"
+                                id="coverMessage"
+                                name="coverMessage"
                                 required
                                 rows={4}
                                 className="w-full px-4 py-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent transition-all duration-200 text-gray-950"
                                 placeholder="Introduce yourself and explain why you're interested in this project..."
-                                value={formData.message}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-
-                        {/* Experience */}
-                        <div>
-                            <label htmlFor="experience" className="block text-sm font-semibold text-gray-700 mb-2">
-                                Relevant Experience *
-                            </label>
-                            <textarea
-                                id="experience"
-                                name="experience"
-                                required
-                                rows={4}
-                                className="w-full px-4 py-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent transition-all duration-200 text-gray-950"
-                                placeholder="Describe your relevant experience and skills for this project..."
-                                value={formData.experience}
+                                value={formData.coverMessage}
                                 onChange={handleInputChange}
                             />
                         </div>

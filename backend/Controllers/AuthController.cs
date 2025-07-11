@@ -54,7 +54,7 @@ public class AuthController : ControllerBase
 
         if (user == null)
         {
-            return Unauthorized("Invalid email");
+            return Conflict("Invalid email");
         }
 
         var hasher = new PasswordHasher<User>();
@@ -62,7 +62,7 @@ public class AuthController : ControllerBase
 
         if (result == PasswordVerificationResult.Failed)
         {
-            return Unauthorized("Invalid email or password");
+            return Conflict("Invalid email or password");
         }
 
         return Ok(new {

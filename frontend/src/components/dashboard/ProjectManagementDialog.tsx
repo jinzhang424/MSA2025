@@ -1,98 +1,106 @@
-import { useState } from 'react';
-import { FiX, FiUsers, FiUserCheck, FiMail, FiCalendar, FiUser, FiStar } from 'react-icons/fi';
-import { type Project, type ProjectMember, type ProjectApplicant } from '../../types/dashboard';
+import { useState, useEffect } from 'react';
+import { FiX, FiUsers, FiUserCheck, FiMail, FiUser, FiStar } from 'react-icons/fi';
+import { removeUserFromProject, type UserProjectCardProps } from '../../api/Project';
+import { getProjectMembers, type ProjectMemberData } from '../../api/Project';
+import { acceptUserApplication, getProjectPendingApplications, rejectUserApplication, type ProjectApplication } from '../../api/ProjectApplication';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 
 interface ProjectManagementDialogProps {
-    project: Project;
+    project: UserProjectCardProps;
     isOpen: boolean;
     onClose: () => void;
 }
 
 const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagementDialogProps) => {
     const [activeTab, setActiveTab] = useState<'members' | 'applicants'>('members');
+    const [members, setMembers] = useState<ProjectMemberData[]>([]);
+    const [isLoadingMembers, setIsLoadingMembers] = useState(false);
+    const [applicants, setApplicants] = useState<ProjectApplication[]>([]);
+    const [isLoadingApplicants, setIsLoadingApplicants] = useState(false);
 
-    // Mock data - replace with actual API calls
-    const [members] = useState<ProjectMember[]>([
-        {
-            id: '1',
-            userId: '1',
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@example.com',
-            role: 'creator',
-            skills: ['React', 'TypeScript', 'Node.js'],
-            joinedAt: '2025-06-01T10:00:00Z',
-            status: 'active'
-        },
-        {
-            id: '2',
-            userId: '2',
-            firstName: 'Sarah',
-            lastName: 'Johnson',
-            email: 'sarah.johnson@example.com',
-            role: 'lead',
-            skills: ['UI/UX', 'Figma', 'React'],
-            joinedAt: '2025-06-05T14:30:00Z',
-            status: 'active'
-        },
-        {
-            id: '3',
-            userId: '3',
-            firstName: 'Mike',
-            lastName: 'Chen',
-            email: 'mike.chen@example.com',
-            role: 'member',
-            skills: ['Node.js', 'MongoDB', 'AWS'],
-            joinedAt: '2025-06-10T09:15:00Z',
-            status: 'active'
-        }
-    ]);
+    const user = useSelector((state: RootState) => state.user);
 
-    const [applicants] = useState<ProjectApplicant[]>([
-        {
-            id: '1',
-            userId: '4',
-            firstName: 'Alice',
-            lastName: 'Williams',
-            email: 'alice.williams@example.com',
-            skills: ['Python', 'Django', 'PostgreSQL'],
-            appliedAt: '2025-07-01T16:20:00Z',
-            message: 'I\'m excited to contribute to this e-commerce platform. I have 3 years of experience with Python and Django.',
-            status: 'pending'
-        },
-        {
-            id: '2',
-            userId: '5',
-            firstName: 'David',
-            lastName: 'Brown',
-            email: 'david.brown@example.com',
-            skills: ['React', 'JavaScript', 'CSS'],
-            appliedAt: '2025-07-02T11:45:00Z',
-            message: 'I would love to help with the frontend development. I have experience building responsive e-commerce interfaces.',
-            status: 'pending'
-        }
-    ]);
+    console.log(project)
 
-    const handleAcceptApplicant = (applicantId: string) => {
+    useEffect(() => {
+        const fetchMembers = async () => {
+            if (isOpen) {
+                setIsLoadingMembers(true);
+                const data = await getProjectMembers(project.projectId, user.token);
+                setMembers(data);
+                setIsLoadingMembers(false);
+            }
+        };
+        fetchMembers();
+    }, [isOpen, project.projectId]);
+
+    useEffect(() => {
+        const fetchApplicants = async () => {
+            if (isOpen) {
+                setIsLoadingApplicants(true);
+                const data = await getProjectPendingApplications(project.projectId, user.token);
+                setApplicants(data);
+                setIsLoadingApplicants(false);
+            }
+        };
+        fetchApplicants();
+    }, [isOpen, project.projectId]);
+
+    const handleAcceptApplicant = async (applicantId: number) => {
         console.log('Accept applicant:', applicantId);
-        // TODO: Implement accept logic
-    };
+        const success = await acceptUserApplication(applicantId, project.projectId, user.token);
+        if (success) {
+            alert("Successfully accepted user");
+            const acceptedApplicant = applicants.find(a => a.userId === applicantId);
 
-    const handleRejectApplicant = (applicantId: string) => {
-        console.log('Reject applicant:', applicantId);
-        // TODO: Implement reject logic
-    };
-
-    const handleRemoveMember = (memberId: string) => {
-        if (window.confirm('Are you sure you want to remove this member from the project?')) {
-            console.log('Remove member:', memberId);
-            // TODO: Implement remove logic
+            // Moving applicant from applicants to members
+            if (acceptedApplicant) {
+                setApplicants(prev => prev.filter(a => a.userId !== applicantId));
+                setMembers(prev => [
+                    ...prev,
+                    {
+                        projectId: project.projectId,
+                        userId: acceptedApplicant.userId,
+                        user: {
+                            id: acceptedApplicant.userId,
+                            firstName: acceptedApplicant.firstName,
+                            lastName: acceptedApplicant.lastName,
+                            email: acceptedApplicant.email,
+                            bio: "", // If you have bio, add it here
+                            skills: acceptedApplicant.skills,
+                        },
+                        role: "Member", // Or whatever role is appropriate
+                        joinedAt: new Date().toISOString(),
+                    }
+                ]);
+            }
+        } else {
+            alert("Error occurred while accepting user");
         }
     };
 
-    const handleChangeRole = (memberId: string, newRole: 'member' | 'lead') => {
-        console.log('Change role:', memberId, newRole);
-        // TODO: Implement role change logic
+    const handleRejectApplicant = async (applicantId: number) => {
+        console.log('Reject applicant:', applicantId);
+        const success = await rejectUserApplication(applicantId, project.projectId, user.token);
+        if (success) {
+            setApplicants(prev => prev.filter(a => a.userId !== applicantId));
+            alert("Successfully rejected user");
+        } else {
+            alert("Error occurred while rejecting user");
+        }
+    };
+
+    const handleRemoveMember = async (memberId: number) => {
+        if (window.confirm('Are you sure you want to remove this member from the project?')) {
+        const success = await removeUserFromProject(memberId, project.projectId, user.token);
+        if (success) {
+            setMembers(prev => prev.filter(m => m.userId !== memberId));
+            alert("Member successfully removed.");
+        } else {
+            alert("Error occurred while removing member.");
+        }
+    }
     };
 
     const getRoleIcon = (role: string) => {
@@ -127,6 +135,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
     if (!isOpen) return null;
 
+    console.log(applicants.length === 0)
+
     return (
         <div className="fixed inset-0 z-50 overflow-hidden">
             {/* Backdrop */}
@@ -150,7 +160,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+                            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-md transition-colors"
                         >
                             <FiX size={20} />
                         </button>
@@ -160,9 +170,9 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                     <div className="p-6 border-b border-gray-200 bg-white">
                         <div className="flex items-center space-x-6">
                             <img
-                                src={project.image}
+                                src={project.image || "./project-img-replacement.png"}
                                 alt={project.title}
-                                className="w-16 h-16 rounded-lg object-cover"
+                                className="w-16 h-16 rounded-md object-cover"
                             />
                             <div className="flex-1">
                                 <h3 className="font-semibold text-gray-900">{project.title}</h3>
@@ -170,11 +180,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                 <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
                                     <div className="flex items-center">
                                         <FiUsers size={14} className="mr-1" />
-                                        {project.totalSpots - project.availableSpots}/{project.totalSpots} members
-                                    </div>
-                                    <div className="flex items-center">
-                                        <FiCalendar size={14} className="mr-1" />
-                                        Due {formatDate(project.deadline || '')}
+                                        {project.spotsTaken}/{project.totalSpots} members
                                     </div>
                                 </div>
                             </div>
@@ -206,7 +212,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                         >
                             <div className="flex items-center justify-center space-x-2">
                                 <FiUserCheck size={16} />
-                                <span>Applicants ({applicants.filter(a => a.status === 'pending').length})</span>
+                                <span>Applicants ({applicants.length})</span>
                             </div>
                         </button>
                     </div>
@@ -216,13 +222,13 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                         {activeTab === 'members' && (
                             <div className="space-y-4">
                                 {members.map((member) => (
-                                    <div key={member.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <div key={member.userId} className="bg-white border border-gray-200 rounded-md p-4">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-4">
                                                 {/* Avatar */}
                                                 <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
                                                     <span className="text-white font-semibold text-sm">
-                                                        {member.firstName[0]}{member.lastName[0]}
+                                                        {member.user.firstName[0]}{member.user.lastName[0]}
                                                     </span>
                                                 </div>
                                                 
@@ -230,7 +236,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                 <div className="flex-1">
                                                     <div className="flex items-center space-x-2">
                                                         <h3 className="font-semibold text-gray-900">
-                                                            {member.firstName} {member.lastName}
+                                                            {member.user.firstName} {member.user.lastName}
                                                         </h3>
                                                         {getRoleIcon(member.role)}
                                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(member.role)}`}>
@@ -239,10 +245,10 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                     </div>
                                                     <p className="text-sm text-gray-600 flex items-center mt-1">
                                                         <FiMail size={14} className="mr-1" />
-                                                        {member.email}
+                                                        {member.user.email}
                                                     </p>
                                                     <div className="flex flex-wrap gap-1 mt-2">
-                                                        {member.skills.map((skill) => (
+                                                        {member.user.skills.map((skill) => (
                                                             <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
                                                                 {skill}
                                                             </span>
@@ -255,10 +261,10 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                             </div>
 
                                             {/* Actions */}
-                                            {member.role !== 'creator' && (
+                                            {member.role !== 'Owner' && (
                                                 <div className="flex items-center space-x-2">
                                                     <button
-                                                        onClick={() => handleRemoveMember(member.id)}
+                                                        onClick={() => handleRemoveMember(member.userId)}
                                                         className="text-sm text-gray-100 font-semibold bg-red-600 px-4 py-2 hover:bg-red-500 rounded-md transition-colors cursor-pointer"
                                                     >
                                                         Remove
@@ -273,15 +279,15 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
                         {activeTab === 'applicants' && (
                             <div className="space-y-4">
-                                {applicants.filter(a => a.status === 'pending').length === 0 ? (
+                                {applicants.length === 0 ? (
                                     <div className="text-center py-12">
                                         <FiUsers size={48} className="mx-auto text-gray-400 mb-4" />
                                         <h3 className="text-lg font-medium text-gray-900 mb-2">No pending applicants</h3>
                                         <p className="text-gray-600">All applications have been reviewed.</p>
                                     </div>
                                 ) : (
-                                    applicants.filter(a => a.status === 'pending').map((applicant) => (
-                                        <div key={applicant.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    applicants.map((applicant) => (
+                                        <div key={applicant.userId} className="bg-white border border-gray-200 rounded-md p-4">
                                             <div className="flex items-start justify-between">
                                                 <div className="flex items-start space-x-4 flex-1">
                                                     {/* Avatar */}
@@ -308,12 +314,12 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                             ))}
                                                         </div>
                                                         {applicant.message && (
-                                                            <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                                                            <div className="mt-3 p-3 bg-gray-50 rounded-md">
                                                                 <p className="text-sm text-gray-700">{applicant.message}</p>
                                                             </div>
                                                         )}
                                                         <p className="text-xs text-gray-500 mt-2">
-                                                            Applied {formatDate(applicant.appliedAt)}
+                                                            Applied {formatDate(applicant.dateApplied)}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -321,13 +327,13 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                 {/* Actions */}
                                                 <div className="flex items-center space-x-2 ml-4 font-semibold">
                                                     <button
-                                                        onClick={() => handleAcceptApplicant(applicant.id)}
+                                                        onClick={() => handleAcceptApplicant(applicant.userId)}
                                                         className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors"
                                                     >
                                                         Accept
                                                     </button>
                                                     <button
-                                                        onClick={() => handleRejectApplicant(applicant.id)}
+                                                        onClick={() => handleRejectApplicant(applicant.userId)}
                                                         className="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors"
                                                     >
                                                         Reject

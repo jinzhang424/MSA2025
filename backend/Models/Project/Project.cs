@@ -1,11 +1,17 @@
 public class Project
 {
     public int ProjectId { get; set; }
-    public string ProjectTitle { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
     public string? Description { get; set; } = string.Empty;
-    public string? Tags { get; set; } = string.Empty;
-    public int? NumOfPositions { get; set; }
+    public string? ImageUrl { get; set; }
+    public string Category { get; set; } = string.Empty;
+    public int TotalSpots { get; set; }
+    public List<string> Skills { get; set; } = [];
+    public string Duration { get; set; } = string.Empty;
+    public int OwnerId { get; set; }
+    public string Status { get; set; } = "Active";
 
+    public Chatroom Chatroom { get; set; } = null!;
     public ICollection<ProjectMember> ProjectMembers { get; set; } = [];
     public ICollection<ProjectApplication> ProjectApplications { get; set; } = null!;
 

@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { FiCamera, FiSave, FiEye, FiEyeOff } from 'react-icons/fi';
-import type { User } from '../../types/user';
+import type { User } from '../../types/dashboard';
+import { updatePassword, updateProfile } from '../../api/User';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../../store/userSlice';
 
 interface SettingsProps {
     user: User;
 }
 
-interface ProfileData {
+export interface ProfileData {
     firstName: string;
     lastName: string;
     email: string;
@@ -14,8 +17,8 @@ interface ProfileData {
     skills: string[];
 }
 
-interface PasswordData {
-    currentPassword: string;
+export interface PasswordData {
+    oldPassword: string;
     newPassword: string;
     confirmPassword: string;
 }
@@ -30,7 +33,7 @@ const Settings = ({ user }: SettingsProps) => {
         skills: user.skills
     });
     const [passwordData, setPasswordData] = useState<PasswordData>({
-        currentPassword: '',
+        oldPassword: '',
         newPassword: '',
         confirmPassword: ''
     });
@@ -41,6 +44,8 @@ const Settings = ({ user }: SettingsProps) => {
     });
     const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined);
     const [newSkill, setNewSkill] = useState('');
+    
+    const dispatch = useDispatch();
 
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -56,17 +61,6 @@ const Settings = ({ user }: SettingsProps) => {
             ...prev,
             [name]: value
         }));
-    };
-
-    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setProfilePicture(e.target?.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
     };
 
     const addSkill = () => {
@@ -86,14 +80,28 @@ const Settings = ({ user }: SettingsProps) => {
         }));
     };
 
-    const handleProfileSubmit = (e: React.FormEvent) => {
+    const handleProfileSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: Implement profile update API call
-        console.log('Profile update:', profileData);
-        alert('Profile updated successfully!');
+        
+        dispatch(setCredentials({
+            id: user.id,
+            firstName: profileData.firstName,
+            lastName: profileData.lastName,
+            email: profileData.email,
+            bio: profileData.bio,
+            token: user.token,
+            skills: profileData.skills
+        })) 
+        const success = await updateProfile(profileData, user.token);
+        if (success) {
+            
+            alert('Profile updated successfully!');
+        } else {
+            alert('Error updating profile');
+        }
     };
 
-    const handlePasswordSubmit = (e: React.FormEvent) => {
+    const handlePasswordSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
         if (passwordData.newPassword !== passwordData.confirmPassword) {
@@ -101,19 +109,17 @@ const Settings = ({ user }: SettingsProps) => {
             return;
         }
 
-        if (passwordData.newPassword.length < 8) {
-            alert('Password must be at least 8 characters long!');
-            return;
+        const success = await updatePassword(passwordData, user.token);
+        if (success) {
+            alert('Password updated successfully!');
+            setPasswordData({
+                oldPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            });
+        } else {
+            alert('Error while updating password');
         }
-
-        // TODO: Implement password update API call
-        console.log('Password update requested');
-        alert('Password updated successfully!');
-        setPasswordData({
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: ''
-        });
     };
 
     return (
@@ -166,7 +172,8 @@ const Settings = ({ user }: SettingsProps) => {
                                         </span>
                                     </div>
                                 )}
-                                <label className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
+                                {/* Profile picture change TBD */}
+                                {/* <label className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
                                     <FiCamera size={16} className="text-gray-600" />
                                     <input
                                         type="file"
@@ -174,7 +181,7 @@ const Settings = ({ user }: SettingsProps) => {
                                         onChange={handleProfilePictureChange}
                                         className="hidden"
                                     />
-                                </label>
+                                </label> */}
                             </div>
                             <div>
                                 <h3 className="text-lg font-medium text-gray-900">Profile Picture</h3>
@@ -313,17 +320,17 @@ const Settings = ({ user }: SettingsProps) => {
 
                         {/* Current Password */}
                         <div>
-                            <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                            <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700 mb-2">
                                 Current Password
                             </label>
                             <div className="relative">
                                 <input
                                     type={showPasswords.current ? 'text' : 'password'}
-                                    id="currentPassword"
-                                    name="currentPassword"
+                                    id="oldPassword"
+                                    name="oldPassword"
                                     required
                                     className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent transition-all duration-200"
-                                    value={passwordData.currentPassword}
+                                    value={passwordData.oldPassword}
                                     onChange={handlePasswordChange}
                                 />
                                 <button

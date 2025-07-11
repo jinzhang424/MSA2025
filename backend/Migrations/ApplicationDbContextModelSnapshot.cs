@@ -33,6 +33,9 @@ namespace backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsGroup")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -40,7 +43,13 @@ namespace backend.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("integer");
+
                     b.HasKey("ChatroomId");
+
+                    b.HasIndex("ProjectId")
+                        .IsUnique();
 
                     b.ToTable("Chatrooms");
                 });
@@ -93,6 +102,42 @@ namespace backend.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notification");
+                });
+
             modelBuilder.Entity("Project", b =>
                 {
                     b.Property<int>("ProjectId")
@@ -101,18 +146,37 @@ namespace backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ProjectId"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("NumOfPositions")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ProjectTitle")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Tags")
+                    b.Property<string>("Description")
                         .HasColumnType("text");
+
+                    b.Property<string>("Duration")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("integer");
+
+                    b.PrimitiveCollection<List<string>>("Skills")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TotalSpots")
+                        .HasColumnType("integer");
 
                     b.HasKey("ProjectId");
 
@@ -126,6 +190,9 @@ namespace backend.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("DateApplied")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -185,6 +252,9 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ProfileImage")
+                        .HasColumnType("text");
+
                     b.PrimitiveCollection<List<string>>("Skills")
                         .IsRequired()
                         .HasColumnType("text[]");
@@ -192,6 +262,16 @@ namespace backend.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Chatroom", b =>
+                {
+                    b.HasOne("Project", "Project")
+                        .WithOne("Chatroom")
+                        .HasForeignKey("Chatroom", "ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("ChatroomUser", b =>
@@ -230,6 +310,17 @@ namespace backend.Migrations
                     b.Navigation("Chatroom");
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("Notification", b =>
+                {
+                    b.HasOne("User", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ProjectApplication", b =>
@@ -279,6 +370,9 @@ namespace backend.Migrations
 
             modelBuilder.Entity("Project", b =>
                 {
+                    b.Navigation("Chatroom")
+                        .IsRequired();
+
                     b.Navigation("ProjectApplications");
 
                     b.Navigation("ProjectMembers");
@@ -289,6 +383,8 @@ namespace backend.Migrations
                     b.Navigation("ChatroomUsers");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("Notifications");
 
                     b.Navigation("ProjectApplicantions");
 

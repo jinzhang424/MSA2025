@@ -1,76 +1,40 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoClose } from "react-icons/io5";
 import ProjectCard from '../components/ProjectCard';
 import SimpleHero from '../components/SimpleHero';
 import { BsFilterRight } from "react-icons/bs";
 import Footer from '../components/Footer';
+import { getProjectCardData } from '../api/Project';
+import { type ProjectCardProps } from '../api/Project';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store/store';
 
 const CATEGORIES = ['All', 'Software Development', 'Web Design', 'Mobile App', 'Graphic Design', 'UI/UX', 'Data Science', 'Game Development'];
-const SAMPLE_PROJECTS = [
-    {
-        id: '1',
-        title: 'E-commerce Website Redesign',
-        description: 'Looking for frontend developers and UI/UX designers to collaborate on redesigning an e-commerce platform with modern design principles and improved user experience.',
-        image: 'https://images.unsplash.com/photo-1661956602944-249bcd04b63f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-        category: 'Web Design',
-        availableSpots: 3,
-        deadline: 'Oct 15, 2023',
-        skills: ['React', 'UI/UX', 'Figma', 'JavaScript', 'Responsive Design']
-    }, {
-        id: '2',
-        title: 'Mobile Fitness Tracking App',
-        description: 'Developing a fitness tracking app that allows users to monitor workouts, set goals, and connect with friends. Need mobile developers and backend engineers.',
-        image: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-        category: 'Mobile App',
-        availableSpots: 2,
-        deadline: 'Nov 30, 2023',
-        skills: ['Swift', 'Kotlin', 'Firebase', 'UX Design', 'API Development']
-    }, {
-        id: '3',
-        title: 'Data Visualization Dashboard',
-        description: 'Creating an interactive dashboard to visualize complex data sets for a research project. Looking for data scientists and frontend developers.',
-        image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-        category: 'Data Science',
-        availableSpots: 4,
-        deadline: 'Dec 10, 2023',
-        skills: ['D3.js', 'React', 'Python', 'Data Analysis', 'SQL']
-    }, {
-        id: '4',
-        title: 'Brand Identity Design for Tech Startup',
-        description: 'Seeking graphic designers to help create a comprehensive brand identity including logo, color palette, and brand guidelines for a new tech startup.',
-        image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=871&q=80',
-        category: 'Graphic Design',
-        availableSpots: 2,
-    skills: ['Logo Design', 'Branding', 'Adobe Illustrator', 'Typography', 'Color Theory']
-    }, {
-        id: '5',
-        title: '2D Platformer Game Development',
-        description: 'Building a fun 2D platformer game with unique mechanics. Need game designers, developers, and artists to join the team.',
-        image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-        category: 'Game Development',
-        availableSpots: 5,
-        deadline: 'Jan 20, 2024',
-        skills: ['Unity', 'C#', 'Game Design', '2D Art', 'Animation']
-    }, {
-        id: '6',
-        title: 'AI-Powered Chatbot for Customer Service',
-        description: 'Developing a chatbot using natural language processing to improve customer service experiences. Looking for ML engineers and UX designers.',
-        image: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=806&q=80',
-        category: 'Software Development',
-        availableSpots: 3,
-        deadline: 'Nov 15, 2023',
-        skills: ['NLP', 'Python', 'Machine Learning', 'API Integration', 'UX Writing']
-    }
-];
 
 const ProjectDiscoveryPage = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(false);
+    const [projects, setProjects] = useState<ProjectCardProps[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const filteredProjects = SAMPLE_PROJECTS.filter(project => {
-    const matchesCategory = selectedCategory === 'All' || project.category === selectedCategory;
-    const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) || project.description.toLowerCase().includes(searchQuery.toLowerCase()) || project.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase())); return matchesCategory && matchesSearch;});
+    const user = useSelector((state: RootState) => state.user);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            setIsLoading(true);
+            const data = await getProjectCardData(user.token);
+            setProjects(data);
+            setIsLoading(false);
+        };
+        fetchProjects();
+    }, []);
+
+    const filteredProjects = projects.filter(project => {
+        const matchesCategory = selectedCategory === 'All' || project.category === selectedCategory;
+        const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) || project.description.toLowerCase().includes(searchQuery.toLowerCase()) || project.skills.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+        return matchesCategory && matchesSearch;
+    });
 
     return (
         <div className="bg-gray-50 min-h-screen">
@@ -136,18 +100,21 @@ const ProjectDiscoveryPage = () => {
                     {filteredProjects.length}{' '}
                     {filteredProjects.length === 1 ? 'project' : 'projects'} found
                 </p>
-                
                 </div>
 
                 {/* Project Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredProjects.map(project => 
-                        <ProjectCard key={project.id} {...project} />
+                    {isLoading ? (
+                        <div className="col-span-full text-center py-12 text-gray-500">Loading projects...</div>
+                    ) : (
+                        filteredProjects.map(project => 
+                            <ProjectCard key={project.projectId} {...project} />
+                        )
                     )}
                 </div>
 
                 {/* Empty state */}
-                {filteredProjects.length === 0 && <div className="text-center py-16">
+                {!isLoading && filteredProjects.length === 0 && <div className="text-center py-16">
                     <div className="text-gray-400 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -169,7 +136,6 @@ const ProjectDiscoveryPage = () => {
                     </button>
                 </div>}
             </div>
-            
             <Footer/>
         </div>
     )

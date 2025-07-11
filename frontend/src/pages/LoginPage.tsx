@@ -6,9 +6,9 @@ import BackLink from '../components/BackLink';
 import { login } from '../api/Auth';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../store/userSlice';
-import type { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router';
 import Spinner from '../components/animation/Spinner';
+import type { User } from '../types/dashboard';
 
 interface LoginFormData {
     email: string;
@@ -37,21 +37,19 @@ const LoginPage = () => {
         e.preventDefault();
 
         setIsSigningIn(true)
-        try {
-            const user: AxiosResponse | null = await login(formData.email, formData.password)
-            if (user) {
-                dispatch(setCredentials({
-                    ...user.data
-                }));
-            }
+        
+        const user: User | null = await login(formData.email, formData.password)
+        if (user !== null) {
+            dispatch(setCredentials({
+                ...user
+            }));
 
             navigate("/dashboard")
-        } catch (e) {
-            console.error("Error occured while signing in")
+        } else {
             alert("Error occurred while signing please try again")
-        } finally {
-            setIsSigningIn(false)
         }
+
+        setIsSigningIn(false)
     };
 
     return (
