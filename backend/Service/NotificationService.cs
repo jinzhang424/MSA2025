@@ -20,18 +20,4 @@ public class NotificationService(ApplicationDbContext context)
         _context.Notification.Add(notification);
         await _context.SaveChangesAsync();
     }
-
-    public async Task SubmitApplicationNotification(int ownerId, string applicantName, string projectTitle)
-    {
-        var notification = new Notification
-        {
-            UserId = ownerId,
-            Title = "New Project Application",
-            Content = $"{applicantName} has applied to your project '{projectTitle}'.",
-            Type = "NewApplication",
-            CreatedAt = DateTime.UtcNow
-        };
-        _context.Notification.Add(notification);
-        await _context.SaveChangesAsync();
-    }
 };

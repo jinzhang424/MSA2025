@@ -75,7 +75,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     Welcome back, {user.firstName}! 👋
                 </h2>
                 <p className="text-purple-100">
-                    You have {stats.pendingApplications} pending applications and {notifications.length} upcoming deadlines.
+                    You have {stats.pendingApplications} pending applications and {notifications.length} recent events.
                 </p>
             </div>
 
@@ -199,7 +199,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                         <div className="p-6">
                             <div className="space-y-4">
                                 {notifications.map((notification) => (
-                                    <div key={notification.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div key={notification.id} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                                         <div>
                                             <h4 className="text-sm font-medium text-gray-900">
                                                 {notification.title}
