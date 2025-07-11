@@ -57,4 +57,32 @@ public class UserController(ApplicationDbContext context) : ControllerBase
 
         return Ok("Successfully deleted account");
     }
+
+    [HttpPatch("UpdateProfile")]
+    public async Task<IActionResult> UpdateProfile([FromBody] UserInfoDto userInfoDto)
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+        {
+            return Unauthorized("Invalid Token");
+        }
+        var userId = int.Parse(userIdString);
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+
+        user.FirstName = userInfoDto.FirstName;
+        user.LastName = userInfoDto.LastName;
+        user.Bio = userInfoDto.Bio;
+        user.Email = userInfoDto.Email;
+        user.Skills = userInfoDto.Skills;
+        user.ProfileImage = user.ProfileImage;
+
+        await _context.SaveChangesAsync();
+
+        return Ok("Successfully updated user profile");
+    }
 }

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { FiCamera, FiSave, FiEye, FiEyeOff } from 'react-icons/fi';
 import type { User } from '../../types/dashboard';
+import { updateProfile } from '../../api/User';
 
 interface SettingsProps {
     user: User;
 }
 
-interface ProfileData {
+export interface ProfileData {
     firstName: string;
     lastName: string;
     email: string;
@@ -14,7 +15,7 @@ interface ProfileData {
     skills: string[];
 }
 
-interface PasswordData {
+export interface PasswordData {
     currentPassword: string;
     newPassword: string;
     confirmPassword: string;
@@ -58,17 +59,6 @@ const Settings = ({ user }: SettingsProps) => {
         }));
     };
 
-    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setProfilePicture(e.target?.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     const addSkill = () => {
         if (newSkill.trim() && !profileData.skills.includes(newSkill.trim())) {
             setProfileData(prev => ({
@@ -86,11 +76,15 @@ const Settings = ({ user }: SettingsProps) => {
         }));
     };
 
-    const handleProfileSubmit = (e: React.FormEvent) => {
+    const handleProfileSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: Implement profile update API call
-        console.log('Profile update:', profileData);
-        alert('Profile updated successfully!');
+        
+        const success = await updateProfile(profileData, user.token);
+        if (success) {
+            alert('Profile updated successfully!');
+        } else {
+            alert('Error updating profile');
+        }
     };
 
     const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -166,7 +160,8 @@ const Settings = ({ user }: SettingsProps) => {
                                         </span>
                                     </div>
                                 )}
-                                <label className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
+                                {/* Profile picture change TBD */}
+                                {/* <label className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
                                     <FiCamera size={16} className="text-gray-600" />
                                     <input
                                         type="file"
@@ -174,7 +169,7 @@ const Settings = ({ user }: SettingsProps) => {
                                         onChange={handleProfilePictureChange}
                                         className="hidden"
                                     />
-                                </label>
+                                </label> */}
                             </div>
                             <div>
                                 <h3 className="text-lg font-medium text-gray-900">Profile Picture</h3>
