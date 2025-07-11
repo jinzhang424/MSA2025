@@ -8,12 +8,17 @@ import Applications from '../components/dashboard/Applications';
 import Settings from '../components/dashboard/Settings';
 import Chat from '../components/dashboard/Chat';
 import { type DashboardTab } from '../types/dashboard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { type RootState } from '../store/store';
+import { logout } from '../store/userSlice';
+import { useNavigate } from 'react-router';
 
 function UserDashboard() {
     const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
     const user = useSelector((state: RootState) => state.user);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const sidebarItems = [
         { id: 'overview', label: 'Overview', icon: FiHome },
@@ -44,8 +49,8 @@ function UserDashboard() {
     };
 
     const handleLogout = () => {
-        // TODO: Implement logout logic
-        console.log('Logout clicked');
+        dispatch(logout());
+        navigate("/login");
     };
 
     return (
