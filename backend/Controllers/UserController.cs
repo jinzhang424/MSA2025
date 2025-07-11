@@ -115,4 +115,6 @@ public class UserController(ApplicationDbContext context) : ControllerBase
 
         return Ok("Successfully updated password");
     }
+
+
 }

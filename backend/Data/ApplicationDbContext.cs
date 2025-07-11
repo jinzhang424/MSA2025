@@ -11,6 +11,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Project> Projects { get; set; }
     public DbSet<ProjectMember> ProjectMembers { get; set; }
     public DbSet<ProjectApplication> ProjectApplication { get; set; }
+    public DbSet<Notification> Notification { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -34,6 +35,9 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<ProjectApplication>()
             .HasKey(pa => new { pa.ProjectId, pa.UserId });
+
+        modelBuilder.Entity<Notification>()
+            .HasKey(n => n.Id);
 
         // Creating the many to many relationship between User and Chatroom
         modelBuilder.Entity<ChatroomUser>()
@@ -86,6 +90,13 @@ public class ApplicationDbContext : DbContext
             .WithOne(c => c.Project)
             .HasForeignKey<Chatroom>(c => c.ProjectId)
             .IsRequired(false)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Creating a one-to-many relationship between a user and a notification
+        modelBuilder.Entity<Notification>()
+            .HasOne(n => n.User)
+            .WithMany(u => u.Notifications)
+            .HasForeignKey(n => n.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

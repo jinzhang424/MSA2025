@@ -13,4 +13,5 @@ public class User
     public ICollection<Message> Messages { get; set; } = [];
     public ICollection<ProjectMember> ProjectMembers { get; set; } = [];
     public ICollection<ProjectApplication> ProjectApplicantions { get; set; } = [];
+    public ICollection<Notification>? Notifications { get; set; }
 }

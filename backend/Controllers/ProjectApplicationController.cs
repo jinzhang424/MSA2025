@@ -9,9 +9,10 @@ namespace backend.Controllers;
 [ApiController]
 [Route("api/ProjectApplication")]
 
-public class ApplicationController(ApplicationDbContext context) : ControllerBase
+public class ApplicationController(ApplicationDbContext context, NotificationService notificationService) : ControllerBase
 {
     private readonly ApplicationDbContext _context = context;
+    private readonly NotificationService _notificationService = notificationService;
 
     private async void RemoveUserApplication(int userId, int projectId)
     {
@@ -68,19 +69,17 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         {
             return Unauthorized("Invalid token");
         }
-
         var userId = int.Parse(userIdString);
 
-        var projectExists = await _context.Projects.AnyAsync(p => p.ProjectId == projectId);
-        if (!projectExists)
+        var project = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
+        if (project == null)
         {
             return NotFound("Project not found");
         }
 
         var existingApplication = await _context.ProjectApplication
-            .FirstOrDefaultAsync(pa => pa.ProjectId == projectId && pa.UserId == userId);
-
-        if (existingApplication != null)
+            .AnyAsync(pa => pa.ProjectId == projectId && pa.UserId == userId);
+        if (existingApplication)
         {
             return Conflict("You have already applied for this project.");
         }
@@ -95,6 +94,16 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
 
         await _context.ProjectApplication.AddAsync(waitingListUser);
         await _context.SaveChangesAsync();
+
+        
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+
+        var fullName = $"{user.FirstName} {user.LastName}";
+        await _notificationService.SubmitApplicationNotification(userId, fullName, project.Title);
 
         return Ok("Successfully applied to project");
     }
@@ -157,33 +166,39 @@ public class ApplicationController(ApplicationDbContext context) : ControllerBas
         await _context.ChatroomUser.AddAsync(chatroomUser);
         _context.SaveChanges();
 
+        await _notificationService.ApplicationDecisionNotification(applicantId, project.Title, true);
+
         return Ok("Successfully accepted user into project");
     }
 
-    [HttpPatch("RejectUserApplication/{victimId}/{projectId}")]
-    public async Task<IActionResult> RejectUserApplication(int victimId, int projectId)
+    [HttpPatch("RejectUserApplication/{applicantId}/{projectId}")]
+    public async Task<IActionResult> RejectUserApplication(int applicantId, int projectId)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
         {
             return Unauthorized("Invalid token");
         }
+        var userId = int.Parse(userIdString);
 
-        var projectMember = await _context.ProjectMembers
-            .FirstOrDefaultAsync(pm => pm.UserId == int.Parse(userId) && pm.ProjectId == projectId);
-        if (projectMember == null || projectMember.Role != "Owner")
+        var project = await _context.Projects
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId && p.OwnerId == userId);
+        if (project == null)
         {
             return Unauthorized("Only owners can reject applicants");
         }
 
-        var projectApplication = await _context.ProjectApplication.FirstOrDefaultAsync(pa => pa.ProjectId == projectId);
+        var projectApplication = await _context.ProjectApplication
+            .FirstOrDefaultAsync(pa => pa.ProjectId == projectId && pa.UserId == applicantId);
         if (projectApplication == null)
         {
-            return NotFound("Project not found");
+            return NotFound("Project applicantion not found");
         }
 
         projectApplication.Status = "Rejected";
         await _context.SaveChangesAsync();
+
+        await _notificationService.ApplicationDecisionNotification(applicantId, project.Title, false);
 
         return Ok("Successfully rejected user");
     }
