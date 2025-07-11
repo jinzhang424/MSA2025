@@ -3,6 +3,7 @@ import { FiFolder, FiUsers, FiFileText, FiTrendingUp } from 'react-icons/fi';
 import type { User } from '../../types/dashboard';
 import { getUserStats, type UserStats } from '../../api/Project';
 import { getRecentApplications, type RecentApplications } from '../../api/ProjectApplication';
+import { getNotifications, type Notification } from '../../api/Notifications';
 
 interface DashboardOverviewProps {
     user: User;
@@ -13,6 +14,8 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [recentApplications, setRecentApplications] = useState<RecentApplications[]>([]);
     const [recentLoading, setRecentLoading] = useState<boolean>(true);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [notificationsLoading, setNotificationsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -37,13 +40,24 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                 const data = await getRecentApplications(3, user.token);
                 setRecentApplications(data);
             } catch (error) {
-                console.error('Error fetching recent applications:', error);
+                console.error('Error fetching your applications:', error);
             } finally {
                 setRecentLoading(false);
             }
         };
         fetchRecentApplications();
     }, [user.token]);
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            setNotificationsLoading(true);
+            const data = await getNotifications(user.token, 3)
+            setNotifications(data)
+            setNotificationsLoading(false);
+        }
+
+        fetchNotifications();
+    }, [user.token])
 
     if (loading) {
         return <div className="p-8 text-center text-gray-500">Loading dashboard...</div>;
@@ -53,30 +67,6 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
         return <div className="p-8 text-center text-gray-500">No stats available</div>;
     }
 
-    let upcomingDeadlines = [
-        {
-            id: 1,
-            projectName: 'E-commerce Platform',
-            deadline: '2025-07-15',
-            daysLeft: 9,
-            type: 'created'
-        },
-        {
-            id: 2,
-            projectName: 'Mobile Learning App',
-            deadline: '2025-07-20',
-            daysLeft: 14,
-            type: 'joined'
-        },
-        {
-            id: 3,
-            projectName: 'Data Analytics Dashboard',
-            deadline: '2025-07-25',
-            daysLeft: 19,
-            type: 'joined'
-        }
-    ];
-
     return (
         <div className="space-y-6">
             {/* Welcome Section */}
@@ -85,7 +75,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     Welcome back, {user.firstName}! 👋
                 </h2>
                 <p className="text-purple-100">
-                    You have {stats.pendingApplications} pending applications and {upcomingDeadlines.length} upcoming deadlines.
+                    You have {stats.pendingApplications} pending applications and {notifications.length} upcoming deadlines.
                 </p>
             </div>
 
@@ -145,17 +135,17 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Recent Applications */}
+                {/* Your Applications */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                     <div className="p-6 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900">Recent Applications</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Your Applications</h3>
                     </div>
                     <div className="p-6">
                         <div className="space-y-4">
                             {recentLoading ? (
-                                <div className="text-center text-gray-400">Loading recent applications...</div>
+                                <div className="text-center text-gray-400">Loading your applications...</div>
                             ) : recentApplications.length === 0 ? (
-                                <div className="text-center text-gray-400">No recent applications found.</div>
+                                <div className="text-center text-gray-400">No applications found.</div>
                             ) : recentApplications.map((application) => (
                                 <div key={application.id} className="flex items-start space-x-3">
                                     <div className="w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
@@ -198,39 +188,34 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     </div>
                 </div>
 
-                {/* Upcoming Deadlines */}
+                {/* Recent Events */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                     <div className="p-6 border-b border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900">Upcoming Deadlines</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Recent Events</h3>
                     </div>
-                    <div className="p-6">
-                        <div className="space-y-4">
-                            {upcomingDeadlines.map((deadline) => (
-                                <div key={deadline.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                    <div>
-                                        <h4 className="text-sm font-medium text-gray-900">
-                                            {deadline.projectName}
-                                        </h4>
-                                        <p className="text-xs text-gray-500">
-                                            {deadline.type === 'created' ? 'Created by you' : 'Joined project'}
-                                        </p>
+                    {notifications.length === 0 ? (
+                        <div className="text-center text-gray-400 p-6">No recent events.</div>
+                    ) : (
+                        <div className="p-6">
+                            <div className="space-y-4">
+                                {notifications.map((notification) => (
+                                    <div key={notification.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <h4 className="text-sm font-medium text-gray-900">
+                                                {notification.title}
+                                            </h4>
+                                            <p className='text-gray-500 text-sm'>{notification.content}   </p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xs text-gray-500">
+                                                {new Date(notification.createdAt).toLocaleDateString()}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className={`text-sm font-medium ${
-                                            deadline.daysLeft <= 7 ? 'text-red-600' :
-                                            deadline.daysLeft <= 14 ? 'text-orange-600' :
-                                            'text-green-600'
-                                        }`}>
-                                            {deadline.daysLeft} days left
-                                        </p>
-                                        <p className="text-xs text-gray-500">
-                                            {new Date(deadline.deadline).toLocaleDateString()}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>

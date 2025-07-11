@@ -16,9 +16,8 @@ public class NotificationController : ControllerBase
         _context = context;
     }
 
-    // Get unread notifications, newest first
-    [HttpGet("GetUnreadNotifications")]
-    public async Task<IActionResult> GetUnreadNotifications()
+    [HttpGet("GetNotifications/{limit}")]
+    public async Task<IActionResult> GetNotifications(int limit)
     {
         var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (userIdString == null)
@@ -26,8 +25,17 @@ public class NotificationController : ControllerBase
         var userId = int.Parse(userIdString);
 
         var notifications = await _context.Notification
-            .Where(n => n.UserId == userId && !n.IsRead)
+            .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
+            .Take(limit)
+            .Select(n => new
+            {
+                id = n.Id,
+                title = n.Title,
+                content = n.Content,
+                createdAt = n.CreatedAt,
+                isRead = n.IsRead
+            })
             .ToListAsync();
 
         return Ok(notifications);

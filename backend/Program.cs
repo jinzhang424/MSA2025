@@ -61,6 +61,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<JwtTokenService>();
+builder.Services.AddScoped<NotificationService>();
 
 var app = builder.Build();
     

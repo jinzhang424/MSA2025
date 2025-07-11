@@ -1,6 +1,5 @@
 import axios from "axios"
 import type { User } from "../types/dashboard";
-import type { AxiosResponse } from "axios";
 
 export interface UserModel {
     FirstName: string,
@@ -24,17 +23,16 @@ export const register = async (user: UserModel) => {
     }
 }
 
-export const login = async (email: String, password: String) : Promise<AxiosResponse<User> | null> => {
+export const login = async (email: String, password: String) : Promise<User | null> => {
     try {
-        return await axios.post("/api/Auth/Login", {
+        const res =  await axios.post("/api/Auth/Login", {
             Email: email,
             Password: password
         });
-    } catch (e) {
-        if (e instanceof Error) {
-            throw new Error(e.message);
-        }
 
+        return res.data as User
+    } catch (e) {
+        console.error(e)
         return null;
     }
 }

@@ -104,7 +104,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                     </p>
                     {filter === 'All' && (
                         <Link
-                            to="/projects"
+                            to="/discover-projects"
                             className="inline-flex items-center px-4 py-2 bg-purple-950 text-white rounded-lg hover:bg-purple-900 transition-colors"
                         >
                             Discover Projects

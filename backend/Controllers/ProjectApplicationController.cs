@@ -103,7 +103,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         }
 
         var fullName = $"{user.FirstName} {user.LastName}";
-        await _notificationService.SubmitApplicationNotification(userId, fullName, project.Title);
+        await _notificationService.SubmitApplicationNotification(project.OwnerId, fullName, project.Title);
 
         return Ok("Successfully applied to project");
     }
