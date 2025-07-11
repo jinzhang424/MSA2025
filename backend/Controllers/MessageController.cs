@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using backend.Service;
+using Microsoft.AspNetCore.SignalR;
 
 namespace backend.Controllers;
 
@@ -12,15 +13,17 @@ public class MessageController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly JwtTokenService _jwtService;
+    private readonly IHubContext<ChatHub> _hubContext;
 
-    public MessageController(ApplicationDbContext context, JwtTokenService jwtService)
+    public MessageController(ApplicationDbContext context, JwtTokenService jwtService, IHubContext<ChatHub> hubContext)
     {
         _context = context;
         _jwtService = jwtService;
+        _hubContext = hubContext;
     }
 
     [HttpPost("SendMessages")]
-    public IActionResult SendMessage([FromBody] MessageDto messageDto)
+    public async Task<IActionResult> SendMessage([FromBody] MessageDto messageDto)
     {
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdString == null)
@@ -45,7 +48,23 @@ public class MessageController : ControllerBase
         };
 
         _context.Messages.Add(message);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
+
+        // Broadcast to SignalR group
+        var sender = await _context.Users.FindAsync(userId);
+        await _hubContext.Clients.Group(messageDto.ChatroomId.ToString()).SendAsync(
+            "ReceiveMessage",
+            new {
+                messageId = message.MessageId,
+                senderId = message.SenderId,
+                senderFirstName = sender?.FirstName,
+                senderLastName = sender?.LastName,
+                content = message.Content,
+                chatroomId = message.ChatroomId,
+                createdAt = message.CreatedAt
+            }
+        );
+
         return Ok("Successfully sent message");
     }
 
@@ -77,6 +96,7 @@ public class MessageController : ControllerBase
                 senderFirstName = m.Sender.FirstName,
                 senderLastName = m.Sender.LastName,
                 content = m.Content,
+                chatroomId = m.ChatroomId,
                 createdAt = m.CreatedAt
             })
             .ToList();

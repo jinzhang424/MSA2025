@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { FiSend, FiSearch, FiPaperclip, FiUsers, FiMessageCircle } from 'react-icons/fi';
+import { FiSend, FiSearch, FiUsers, FiMessageCircle } from 'react-icons/fi';
 import { type User } from '../../types/dashboard';
 import { FaChevronLeft } from "react-icons/fa6";
 import { getChatroomListings, type ChatRoomListing } from '../../api/Chatroom';
 import { getChatroomMessages, sendMessage, type Message, type MessageDto } from '../../api/Message';
+import { createSignalRConnection } from '../../utils/signalr';
 
 interface ChatProps {
     user: User;
@@ -21,6 +22,64 @@ const Chat = ({ user }: ChatProps) => {
     const [isSending, setIsSending] = useState(false);
 
     const [messages, setMessages] = useState<Message[]>([]);
+    const connectionRef = useRef<any>(null);
+    const currentChatroomRef = useRef<number | null>(null);
+
+    // Initialize SignalR connection once
+    useEffect(() => {
+        const connection = createSignalRConnection(user.token);
+
+        connection.on('ReceiveMessage', (message: Message) => {
+            console.log('Received message:', message);
+            // Only add message if it's for the currently selected chatroom
+            if (message.chatroomId === currentChatroomRef.current) {
+                setMessages(prev => [...prev, message]);
+            }
+        });
+
+        connection
+            .start()
+            .then(() => {
+                console.log('SignalR connected');
+            })
+            .catch(console.error);
+
+        connectionRef.current = connection;
+
+        return () => {
+            if (connectionRef.current) {
+                connectionRef.current.stop();
+            }
+        };
+    }, [user.token]);
+
+    // Handle chatroom selection and group management
+    useEffect(() => {
+        const connection = connectionRef.current;
+        if (!connection || !selectedChat) return;
+
+        // Leave previous chatroom if any
+        if (currentChatroomRef.current && currentChatroomRef.current !== selectedChat) {
+            connection.invoke('LeaveChatroom', currentChatroomRef.current.toString())
+                .catch(console.error);
+        }
+
+        // Join new chatroom
+        connection.invoke('JoinChatroom', selectedChat.toString())
+            .then(() => {
+                console.log(`Joined chatroom ${selectedChat}`);
+                currentChatroomRef.current = selectedChat;
+            })
+            .catch(console.error);
+
+        return () => {
+            if (currentChatroomRef.current) {
+                connection.invoke('LeaveChatroom', currentChatroomRef.current.toString())
+                    .catch(console.error);
+                currentChatroomRef.current = null;
+            }
+        };
+    }, [selectedChat]);
 
     useEffect(() => {
         const fetchChatRooms = async () => {
@@ -50,18 +109,22 @@ const Chat = ({ user }: ChatProps) => {
         e.preventDefault();
         if (!newMessage.trim() || !selectedChat) return;
 
-        setIsSending(true)
+        setIsSending(true);
 
+        const messageContent = newMessage;
         const message: MessageDto = {
             chatroomId: selectedChat,
-            content: newMessage,
+            content: messageContent,
         };
 
         const success = await sendMessage(user.token, message);
         if (!success) {
             alert("Error while sending chat message");
+        } else {
+            setNewMessage("");
         }
-        setIsSending(false)
+        
+        setIsSending(false);
     };
 
     const formatTime = (timestamp: string) => {
