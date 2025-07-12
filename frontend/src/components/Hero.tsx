@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CgChevronDown } from "react-icons/cg";
+import { Link } from "react-router";
 
 const Hero = () => {
     const [scrollOffset, setScrollOffset] = useState(0) 
+    const nextSectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -16,6 +18,13 @@ const Hero = () => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
+    const scrollToNextSection = () => {
+        nextSectionRef.current?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+    };
 
     return (
         <div>
@@ -115,10 +124,16 @@ const Hero = () => {
                         </h2>
                     </div>
 
-                    {/* Get started */}
+                    {/* Learn More */}
                     <div className="flex flex-col space-y-2 sm:space-y-3 justify-center items-center">
-                        <button className="peer p-2 sm:p-3 pl-4 sm:pl-6 md:pl-7 pr-4 sm:pr-6 md:pr-7 border-2 border-navy text-white bg-navy rounded-sm hover:cursor-pointer font-semibold drop-shadow-xs text-sm sm:text-base">
-                            <p>Get Started</p>
+                        <button 
+                            onClick={() => window.scrollTo({ 
+                                top: window.innerHeight, 
+                                behavior: "smooth"
+                            })} 
+                            className="peer p-2 sm:p-3 pl-4 sm:pl-6 md:pl-7 pr-4 sm:pr-6 md:pr-7 border-2 border-navy text-white bg-navy rounded-sm hover:cursor-pointer font-semibold drop-shadow-xs text-sm sm:text-base hover:bg-navy/95"
+                        >
+                            Learn More
                         </button>
                         <CgChevronDown 
                             size={window.innerWidth < 640 ? 20 : 24} 

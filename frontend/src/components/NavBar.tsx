@@ -2,12 +2,14 @@ import { Link } from "react-router"
 import BGFadeButton from "./buttons/BGFadeButton"
 import { RiMenuLine } from "react-icons/ri";
 import { ImCompass } from "react-icons/im";
-import { IoCreateOutline } from "react-icons/io5"
 import { AiOutlineTeam } from "react-icons/ai"
 import { RiLoginBoxLine } from "react-icons/ri";
 import { MdOutlinePersonAddAlt1 } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
 
 export default function NavBar() {
     const [openMenu, setOpenMenu] = useState(false);
@@ -20,22 +22,19 @@ export default function NavBar() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const user = useSelector((state: RootState) => state.user);
+
     const navbarLinks = [
         {
             icon: <ImCompass className="mr-4" size={20}/>,
-            header: "Discover",
+            header: "Discover Projects",
             to: "/discover-projects"
         },
-        {
-            icon: <IoCreateOutline className="mr-4" size={20}/>,
-            header: "Create Project",
-            to: "/create-project"
-        },
-        {
-            icon: <AiOutlineTeam className="mr-4" size={20}/>,
-            header: "About Us",
-            to: "/about-us"
-        },
+        // {
+        //     icon: <AiOutlineTeam className="mr-4" size={20}/>,
+        //     header: "About Us",
+        //     to: "/about-us"
+        // },
     ]
 
     const useMenu = windowWidth < 1200;
@@ -71,18 +70,26 @@ export default function NavBar() {
                                     {linkInfo.header}
                                 </Link>
                             ))}
+                            
                         </div>
 
-                        <div className="flex flex-col items-center font-semibold justify-end">
-                            <Link to="/login" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
-                                <RiLoginBoxLine className="mr-4" size={24}/>
-                                Login
+                        {user.token? (
+                            <Link to="/dashboard" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300 font-semibold">
+                                <MdOutlineSpaceDashboard className="mr-4" size={24}/>
+                                Dashboard
                             </Link>
-                            <Link to="/register" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
-                                <MdOutlinePersonAddAlt1 className="mr-4" size={24}/>
-                                Join Us
-                            </Link>
-                        </div>
+                        ) : (
+                            <div className="flex flex-col items-center font-semibold justify-end">
+                                <Link to="/login" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
+                                    <RiLoginBoxLine className="mr-4" size={24}/>
+                                    Login
+                                </Link>
+                                <Link to="/register" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
+                                    <MdOutlinePersonAddAlt1 className="mr-4" size={24}/>
+                                    Join Us
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </nav>
@@ -91,7 +98,7 @@ export default function NavBar() {
             <nav className="absolute grid grid-cols-3 items-center justify-between w-full p-5 pl-7 pr-7 z-10">
                 <h1 className="text-3xl font-bold text-white">CoCreate</h1>
 
-                <div className="flex font-semibold text-white justify-around items-center">
+                <div className="flex font-semibold text-white gap-8 justify-center items-center">
                     {navbarLinks.map((linkInfo, i) => (
                         <Link to={linkInfo.to} className="hover:underline underline-offset-2" key={i}>
                             {linkInfo.header}
@@ -100,19 +107,27 @@ export default function NavBar() {
                 </div>
 
                 <div className="flex items-center space-x-4 font-semibold justify-end">
-                    <BGFadeButton 
-                        className="p-2 pl-5 pr-5" 
-                        onClick={() => navigate("/login")}
-                    >
-                        Login
-                    </BGFadeButton>
-                    <BGFadeButton 
-                        className="p-2 pl-5 pr-5" 
-                        bgFade={true}
-                        onClick={() => navigate("/register")}
-                    >
-                        Join Us
-                    </BGFadeButton>
+                    {user.token ? (
+                        <BGFadeButton className="p-2 pl-5 pr-5" onClick={() => navigate("/dashboard")}>
+                            Dashboard
+                        </BGFadeButton>
+                    ) : (
+                        <div className="flex items-center space-x-4 font-semibold justify-end">
+                            <BGFadeButton 
+                                className="p-2 pl-5 pr-5" 
+                                onClick={() => navigate("/login")}
+                            >
+                                Login
+                            </BGFadeButton>
+                            <BGFadeButton 
+                                className="p-2 pl-5 pr-5" 
+                                bgFade={true}
+                                onClick={() => navigate("/register")}
+                            >
+                                Join Us
+                            </BGFadeButton>
+                        </div>
+                    )}
                 </div>
             </nav>
          )
