@@ -207,24 +207,24 @@ const Chat = ({ user }: ChatProps) => {
                                         <h3 className="font-semibold text-gray-900 truncate">
                                             {chat.name}
                                         </h3>
-                                        <div className="flex items-center space-x-2">
-                                            {chat.lastMessage && (
-                                                <span className="text-xs text-gray-500">
-                                                    {formatTime(chat.lastMessage.createdAt)}
-                                                </span>
-                                            )}
-                                        </div>
                                     </div>
                                     {chat.lastMessage && (
                                         <p className="text-sm text-gray-600 truncate">
                                             {chat.lastMessage.senderId === user.id ? 'You: ' : ''}{`${chat.lastMessage.senderFirstName}: ${chat.lastMessage.content}`}
                                         </p>
                                     )}
-                                    {chat.isGroup && (
-                                        <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-md">
-                                            Project Chat
-                                        </span>
-                                    )}
+                                    <div className='flex sm:flex-row flex-col'>
+                                        {chat.lastMessage && (
+                                            <span className="text-xs text-gray-500">
+                                                {formatTime(chat.lastMessage.createdAt)}
+                                            </span>
+                                        )}
+                                        {/* {chat.isGroup && (
+                                            <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-sm">
+                                                Project Chat
+                                            </span>
+                                        )} */}
+                                    </div>
                                 </div>
                             </div>
                         </div>
