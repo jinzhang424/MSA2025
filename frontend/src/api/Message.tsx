@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export interface MessageDto {
     chatroomId: number;
@@ -22,7 +23,8 @@ export const sendMessage = async (token: string, messageDto: MessageDto): Promis
         });
 
         return true;
-    } catch (e) {
+    } catch (e: any) {
+        toast.error(e.reponse?.data);
         console.error(e);
         return false;
     }
@@ -36,6 +38,7 @@ export const getChatroomMessages = async (token: string, chatroomId: number): Pr
 
         return res.data as Message[];
     } catch (e) {
+        toast.error("Error occured while loading messages");
         console.error(e);
         return null;
     }
