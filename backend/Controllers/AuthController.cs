@@ -1,6 +1,7 @@
 using backend.Service;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
@@ -19,11 +20,17 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("RegisterUser")]
-    public IActionResult RegisterUser([FromBody] UserRegisterDto userDto)
+    public async Task<IActionResult> RegisterUser([FromBody] UserRegisterDto userDto)
     {
         if (string.IsNullOrEmpty(userDto.FirstName) || string.IsNullOrEmpty(userDto.LastName) || string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
         {
             return BadRequest("All fields are required.");
+        }
+
+        var emailExists = await _context.Users.AnyAsync(u => u.Email == userDto.Email);
+        if (emailExists)
+        {
+            return Conflict("Email is already registered.");
         }
 
         var user = new User
@@ -36,8 +43,8 @@ public class AuthController : ControllerBase
         var hasher = new PasswordHasher<User>();
         user.PasswordHash = hasher.HashPassword(user, userDto.Password);
 
-        _context.Users.Add(user);
-        _context.SaveChanges();
+        await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
 
         return Ok("User registered successfully");
     }

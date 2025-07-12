@@ -7,8 +7,9 @@ import { login } from '../api/Auth';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../store/userSlice';
 import { useNavigate } from 'react-router';
-import Spinner from '../components/animation/Spinner';
 import type { User } from '../types/dashboard';
+import SubmitButton from '../components/buttons/SubmitButton';
+import { ToastContainer } from 'react-toastify';
 
 interface LoginFormData {
     email: string;
@@ -45,8 +46,6 @@ const LoginPage = () => {
             }));
 
             navigate("/dashboard")
-        } else {
-            alert("Error occurred while signing please try again")
         }
 
         setIsSigningIn(false)
@@ -54,6 +53,7 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen bg-purple-950 bg-gradient-to-br from-orange-300 flex items-center justify-center p-4">
+            <ToastContainer/>
             {/* Back to home button */}
             <BackLink to="/">
                 Back to home
@@ -125,19 +125,13 @@ const LoginPage = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <button
-                            type="submit"
-                            className="w-full bg-purple-950 text-white py-3 px-4 rounded-md font-semibold hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-950 focus:ring-offset-2 transition-all duration-200 transform active:scale-105 cursor-pointer"
-                        >
+                        <SubmitButton isLoading={isSigningIn} className='w-full py-3'>
                             {isSigningIn ? (
-                                <span className="flex items-center justify-center">
-                                    <Spinner/>
-                                    Signing In...
-                                </span>
+                                'Signing In...'
                             ) : (
                                 'Sign In'
                             )}
-                        </button>
+                        </SubmitButton>
                     </form>
 
                     {/* Sign Up Link */}

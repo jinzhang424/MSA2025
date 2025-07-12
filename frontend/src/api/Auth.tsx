@@ -1,5 +1,6 @@
 import axios from "axios"
 import type { User } from "../types/dashboard";
+import { toast } from "react-toastify";
 
 export interface UserModel {
     FirstName: string,
@@ -14,11 +15,11 @@ export const register = async (user: UserModel) => {
         await axios.post("/api/Auth/RegisterUser", {
             ...user
         });
-    } catch (e) {
-        if (e instanceof Error) {
-            throw new Error(e.message);
-        }
 
+        toast.success("Successfully registered account")
+    } catch (e: any) {
+        console.log("Error while registering", e)
+        toast.error(e.response?.data)
         return null;
     }
 }
@@ -31,8 +32,9 @@ export const login = async (email: String, password: String) : Promise<User | nu
         });
 
         return res.data as User
-    } catch (e) {
-        console.error(e)
+    } catch (e: any) {
+        console.error("Error while signing in", e);
+        toast.error(e.response?.data);
         return null;
     }
 }
