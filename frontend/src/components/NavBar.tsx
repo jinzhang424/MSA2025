@@ -8,6 +8,9 @@ import { RiLoginBoxLine } from "react-icons/ri";
 import { MdOutlinePersonAddAlt1 } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/store";
 
 export default function NavBar() {
     const [openMenu, setOpenMenu] = useState(false);
@@ -19,6 +22,8 @@ export default function NavBar() {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
+    const user = useSelector((state: RootState) => state.user);
 
     const navbarLinks = [
         {
@@ -36,6 +41,13 @@ export default function NavBar() {
             header: "About Us",
             to: "/about-us"
         },
+        ...(user.token
+            ? [{
+                icon: <MdOutlineSpaceDashboard className="mr-4" size={20}/>,
+                header: "Dashboard",
+                to: "/dashboard"
+            }]
+            : [])
     ]
 
     const useMenu = windowWidth < 1200;
@@ -71,6 +83,7 @@ export default function NavBar() {
                                     {linkInfo.header}
                                 </Link>
                             ))}
+                            
                         </div>
 
                         <div className="flex flex-col items-center font-semibold justify-end">
