@@ -1,13 +1,14 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export interface ApplicationFormData {
     coverMessage: string,
     availability: string,
 }
 
-export const sendApplication = async (application: ApplicationFormData, projectId: number, token: string) => {
+export const sendApplication = async (application: ApplicationFormData, projectId: number, token: string): Promise<Boolean> => {
     try {
-        const res = await axios.post(`/api/ProjectApplication/ApplyForProject/${projectId}`, {
+        await axios.post(`/api/ProjectApplication/ApplyForProject/${projectId}`, {
             CoverMessage: application.coverMessage,
             Availability: application.availability
         }, {
@@ -15,9 +16,12 @@ export const sendApplication = async (application: ApplicationFormData, projectI
                 Authorization: `Bearer ${token}`
             }
         });
-        return res.data;
-    } catch (e) {
-        throw Error("Failed to send project application");
+
+        return true
+    } catch (e: any) {
+        console.log("Error while sending application", e)
+        toast.error(e.message ?? "Unknown error occurred. Please try again");
+        return false
     }
 }
 

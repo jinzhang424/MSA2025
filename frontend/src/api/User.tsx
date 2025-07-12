@@ -21,7 +21,7 @@ export const updateProfile = async (profileData: ProfileData, token: string): Pr
         return true;
     } catch (e: any) {
         console.error(e)
-        toast.error(e.message ?? "An error occurred");
+        toast.error(e.message ?? "Unknown error occurred. Please try again");
         return false;
     }
 }

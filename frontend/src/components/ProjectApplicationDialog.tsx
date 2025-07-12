@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import { type RootState } from '../store/store';
 import { sendApplication } from '../api/ProjectApplication';
 import { type ApplicationFormData } from '../api/ProjectApplication';
+import { ToastContainer } from 'react-toastify';
+import SubmitButton from './buttons/SubmitButton';
 
 interface ProjectApplicationDialogProps {
     projectId: number,
@@ -33,22 +35,13 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         setIsSubmitting(true);
-
-        try {
-            console.log('Application submitted:', {
-                projectId: projectId,
-                ...formData
-            });
-
-            await sendApplication(formData, projectId, user.token);
+        const success = await sendApplication(formData, projectId, user.token);
+        if (success) {
             setSubmitted(true);
-        } catch (error) {
-            alert("Error occurred while sending application");
-            console.error('Error submitting application:', error);
-        } finally {
-            setIsSubmitting(false);
         }
+        setIsSubmitting(false)
     };
 
     const openDialog = () => {
@@ -72,6 +65,7 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
             </button>
 
             <div ref={dialogRef} className={`absolute flex justify-center inset-0 top-0 mx-auto w-full ${!open && 'opacity-0 pointer-events-none'} duration-300`}>
+                <ToastContainer/>
                 {/* Black Tint */}
                 <div className='absolute inset-0 bg-black/60' onClick={() => closeDialog()}/>
                 
@@ -117,27 +111,13 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
                             />
                         </div>
 
-                        {/* Submit Button */}
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
+                        <SubmitButton
+                            isLoading={isSubmitting}
                             className="mt-4 inline-flex items-center px-6 py-3 bg-purple-950 text-white rounded-md font-semibold hover:bg-purple-900 duration-200 disabled:opacity-50 w-full justify-center cursor-pointer"
                         >
-                            {isSubmitting ? (
-                                <span className="flex items-center">
-                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                                    </svg>
-                                    Submitting Application...
-                                </span>
-                            ) : (
-                                <>
-                                    <FiSend size={18} className="mr-2" />
-                                    Submit Application
-                                </>
-                            )}
-                        </button>
+                            <FiSend size={18} className="mr-2" />
+                            Submit Application
+                        </SubmitButton>
                     </form>
                 </div>
             </div>
