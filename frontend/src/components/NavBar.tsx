@@ -2,7 +2,6 @@ import { Link } from "react-router"
 import BGFadeButton from "./buttons/BGFadeButton"
 import { RiMenuLine } from "react-icons/ri";
 import { ImCompass } from "react-icons/im";
-import { IoCreateOutline } from "react-icons/io5"
 import { AiOutlineTeam } from "react-icons/ai"
 import { RiLoginBoxLine } from "react-icons/ri";
 import { MdOutlinePersonAddAlt1 } from "react-icons/md";
@@ -28,19 +27,14 @@ export default function NavBar() {
     const navbarLinks = [
         {
             icon: <ImCompass className="mr-4" size={20}/>,
-            header: "Discover",
+            header: "Discover Projects",
             to: "/discover-projects"
         },
-        {
-            icon: <IoCreateOutline className="mr-4" size={20}/>,
-            header: "Create Project",
-            to: "/create-project"
-        },
-        {
-            icon: <AiOutlineTeam className="mr-4" size={20}/>,
-            header: "About Us",
-            to: "/about-us"
-        },
+        // {
+        //     icon: <AiOutlineTeam className="mr-4" size={20}/>,
+        //     header: "About Us",
+        //     to: "/about-us"
+        // },
     ]
 
     const useMenu = windowWidth < 1200;
@@ -104,7 +98,7 @@ export default function NavBar() {
             <nav className="absolute grid grid-cols-3 items-center justify-between w-full p-5 pl-7 pr-7 z-10">
                 <h1 className="text-3xl font-bold text-white">CoCreate</h1>
 
-                <div className="flex font-semibold text-white justify-around items-center">
+                <div className="flex font-semibold text-white gap-8 justify-center items-center">
                     {navbarLinks.map((linkInfo, i) => (
                         <Link to={linkInfo.to} className="hover:underline underline-offset-2" key={i}>
                             {linkInfo.header}

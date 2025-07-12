@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { FaPlus } from "react-icons/fa6";
 import { IoClose } from "react-icons/io5";
-import SimpleHero from '../components/SimpleHero';
 import { IoChevronDown } from 'react-icons/io5';
-import Footer from '../components/Footer';
-import { createProject } from '../api/Project';
+import { createProject } from '../../api/Project';
 import { useSelector } from 'react-redux';
-import { type RootState } from '../store/store';
-import { type ProjectCreationProps } from '../api/Project';
+import { type RootState } from '../../store/store';
+import { type ProjectCreationProps } from '../../api/Project';
 
-const ProjectCreationPage = () => {
+const CreateProject = () => {
     const [formData, setFormData] = useState<ProjectCreationProps>({
         title: '',
         description: '',
@@ -86,13 +84,13 @@ const ProjectCreationPage = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen">
-            <SimpleHero 
-                heading='Create a Project'
-                subheading='Share your project idea and find the perfect team to bring it to life'
-            />
-            
-            {/* Creation project */}
-            <div className="container mx-auto px-6 py-12 sm:px-20 sm:py-16">
+            <div>
+                <h2 className="text-xl font-semibold text-gray-900">My Projects</h2>
+                <p className="text-gray-600 mt-1">Projects you've created and are managing</p>
+            </div>
+
+            {/* Create Project */}
+            <div className="bg-white rounded-lg border border-gray-200 p-6 mt-8">
 
                 <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
                 <form onSubmit={handleSubmit}>
@@ -262,9 +260,7 @@ const ProjectCreationPage = () => {
                     </form>
                 </div>
             </div>
-
-            <Footer/>
         </div>
     )
 };
-export default ProjectCreationPage;
+export default CreateProject;

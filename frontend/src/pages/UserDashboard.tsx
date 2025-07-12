@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { type RootState } from '../store/store';
 import { logout } from '../store/userSlice';
 import { useNavigate } from 'react-router';
+import { MdOutlineCreate } from "react-icons/md";
+import CreateProject from '../components/dashboard/CreateProject';
 
 function UserDashboard() {
     const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
@@ -22,6 +24,7 @@ function UserDashboard() {
 
     const sidebarItems = [
         { id: 'overview', label: 'Overview', icon: FiHome },
+        { id: 'create-project', label: 'Create Project', icon: MdOutlineCreate},
         { id: 'my-projects', label: 'My Projects', icon: FiFolder },
         { id: 'joined-projects', label: 'Joined Projects', icon: FiUsers },
         { id: 'applications', label: 'Applications', icon: FiFileText },
@@ -43,6 +46,8 @@ function UserDashboard() {
                 return <Chat user={user} />;
             case 'settings':
                 return <Settings user={user} />;
+            case 'create-project':
+                return <CreateProject/>
             default:
                 return <DashboardOverview user={user} />;
         }
