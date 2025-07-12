@@ -245,10 +245,10 @@ const Chat = ({ user }: ChatProps) => {
                 }
             </div>
 
-            {true ? (
+            {isLoadingMessages ? (
                 <div className='relative z-10 flex justify-center text-gray-400 w-full h-full bg-white'>
                     <div className='flex relative top-5/12 item-center gap-4'>
-                        <Spinner isLoading={true} className='text-gray-400'/>
+                        <Spinner isLoading={isLoadingMessages} className='text-gray-400'/>
                         Loading chats...
                     </div>
                 </div>
