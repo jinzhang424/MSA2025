@@ -41,13 +41,6 @@ export default function NavBar() {
             header: "About Us",
             to: "/about-us"
         },
-        ...(user.token
-            ? [{
-                icon: <MdOutlineSpaceDashboard className="mr-4" size={20}/>,
-                header: "Dashboard",
-                to: "/dashboard"
-            }]
-            : [])
     ]
 
     const useMenu = windowWidth < 1200;
@@ -86,16 +79,23 @@ export default function NavBar() {
                             
                         </div>
 
-                        <div className="flex flex-col items-center font-semibold justify-end">
-                            <Link to="/login" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
-                                <RiLoginBoxLine className="mr-4" size={24}/>
-                                Login
+                        {user.token? (
+                            <Link to="/dashboard" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300 font-semibold">
+                                <MdOutlineSpaceDashboard className="mr-4" size={24}/>
+                                Dashboard
                             </Link>
-                            <Link to="/register" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
-                                <MdOutlinePersonAddAlt1 className="mr-4" size={24}/>
-                                Join Us
-                            </Link>
-                        </div>
+                        ) : (
+                            <div className="flex flex-col items-center font-semibold justify-end">
+                                <Link to="/login" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
+                                    <RiLoginBoxLine className="mr-4" size={24}/>
+                                    Login
+                                </Link>
+                                <Link to="/register" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300">
+                                    <MdOutlinePersonAddAlt1 className="mr-4" size={24}/>
+                                    Join Us
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </nav>
@@ -113,19 +113,27 @@ export default function NavBar() {
                 </div>
 
                 <div className="flex items-center space-x-4 font-semibold justify-end">
-                    <BGFadeButton 
-                        className="p-2 pl-5 pr-5" 
-                        onClick={() => navigate("/login")}
-                    >
-                        Login
-                    </BGFadeButton>
-                    <BGFadeButton 
-                        className="p-2 pl-5 pr-5" 
-                        bgFade={true}
-                        onClick={() => navigate("/register")}
-                    >
-                        Join Us
-                    </BGFadeButton>
+                    {user.token ? (
+                        <BGFadeButton className="p-2 pl-5 pr-5" onClick={() => navigate("/dashboard")}>
+                            Dashboard
+                        </BGFadeButton>
+                    ) : (
+                        <div className="flex items-center space-x-4 font-semibold justify-end">
+                            <BGFadeButton 
+                                className="p-2 pl-5 pr-5" 
+                                onClick={() => navigate("/login")}
+                            >
+                                Login
+                            </BGFadeButton>
+                            <BGFadeButton 
+                                className="p-2 pl-5 pr-5" 
+                                bgFade={true}
+                                onClick={() => navigate("/register")}
+                            >
+                                Join Us
+                            </BGFadeButton>
+                        </div>
+                    )}
                 </div>
             </nav>
          )
