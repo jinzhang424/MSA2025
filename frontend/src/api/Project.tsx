@@ -34,8 +34,9 @@ export const createProject = async (projectData: ProjectCreationProps, token: st
 export interface ProjectPageProps {
     title: string,
     description: string,
-    image: string,
+    imageUrl: string,
     category: string,
+    spotsTaken: number,
     totalSpots: number,
     skills: string[],
     teamLead: {
@@ -65,25 +66,9 @@ export const getProject = async (projectId: string, token: string): Promise<Proj
         console.log("res: ", res)
 
         // Map backend response to ProjectPageProps
-        const data = res.data;
-        const project: ProjectPageProps = {
-            title: data.title,
-            description: data.description,
-            image: data.imageUrl || '',
-            category: data.category,
-            totalSpots: data.totalSpots,
-            skills: data.skills || [],
-            teamLead: {
-                firstName: data.teamLead?.firstName || '',
-                lastName: data.teamLead?.lastName,
-                image: data.teamLead?.image || undefined,
-                role: data.teamLead?.role || ''
-            },
-            teamMembers: data.teamMembers || [],
-            duration: data.duration || ''
-        };
-        console.log("Project page data: ", project)
-        return project;
+        const data = res.data as ProjectPageProps;
+        console.log("Project page data: ", data)
+        return data;
     } catch (e) {
         console.error(e);
         throw Error("Error while getting project.");
