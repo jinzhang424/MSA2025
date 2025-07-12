@@ -1,9 +1,10 @@
 import axios from "axios"
+import { toast } from "react-toastify";
 import type { PasswordData, ProfileData } from "../components/dashboard/Settings"
 
 export const updateProfile = async (profileData: ProfileData, token: string): Promise<Boolean> => {
     try {
-        await axios.patch("/api/User/UpdateProfile", {
+        const res = await axios.patch("/api/User/UpdateProfile", {
             FirstName: profileData.firstName,
             LastName: profileData.lastName,
             Bio: profileData.bio,
@@ -15,9 +16,12 @@ export const updateProfile = async (profileData: ProfileData, token: string): Pr
                 Authorization: `Bearer ${token}`,
             }
         });
+
+        toast.success(res.data)
         return true;
-    } catch (e) {
-        console.error(e);
+    } catch (e: any) {
+        console.error(e)
+        toast.error(e.message ?? "An error occurred");
         return false;
     }
 }

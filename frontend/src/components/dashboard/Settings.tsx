@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { FiCamera, FiSave, FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiSave, FiEye, FiEyeOff } from 'react-icons/fi';
 import type { User } from '../../types/dashboard';
 import { updatePassword, updateProfile } from '../../api/User';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../store/userSlice';
+import { ToastContainer } from 'react-toastify';
+import Spinner from '../animation/Spinner';
+import SubmitButton from '../buttons/SubmitButton';
 
 interface SettingsProps {
     user: User;
@@ -44,6 +47,7 @@ const Settings = ({ user }: SettingsProps) => {
     });
     const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined);
     const [newSkill, setNewSkill] = useState('');
+    const [isUpdating, setIsUpdating] = useState(false);
     
     const dispatch = useDispatch();
 
@@ -83,6 +87,7 @@ const Settings = ({ user }: SettingsProps) => {
     const handleProfileSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
+        setIsUpdating(true)
         dispatch(setCredentials({
             id: user.id,
             firstName: profileData.firstName,
@@ -92,13 +97,8 @@ const Settings = ({ user }: SettingsProps) => {
             token: user.token,
             skills: profileData.skills
         })) 
-        const success = await updateProfile(profileData, user.token);
-        if (success) {
-            
-            alert('Profile updated successfully!');
-        } else {
-            alert('Error updating profile');
-        }
+        await updateProfile(profileData, user.token);
+        setIsUpdating(false)
     };
 
     const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -123,7 +123,8 @@ const Settings = ({ user }: SettingsProps) => {
     };
 
     return (
-        <div className="space-y-6">
+        <div>
+            <ToastContainer className="absolute"/>
             {/* Header */}
             <div>
                 <h2 className="text-xl font-semibold text-gray-900">Settings</h2>
@@ -131,7 +132,7 @@ const Settings = ({ user }: SettingsProps) => {
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-gray-200">
+            <div className="border-b border-gray-200 mt-6">
                 <nav className="-mb-px flex space-x-8">
                     {[
                         { id: 'profile', label: 'Profile' },
@@ -296,13 +297,10 @@ const Settings = ({ user }: SettingsProps) => {
 
                         {/* Submit Button */}
                         <div className="flex justify-end">
-                            <button
-                                type="submit"
-                                className="inline-flex items-center px-6 py-3 bg-purple-950 text-white rounded-md hover:bg-purple-900 transition-colors font-semibold"
-                            >
+                            <SubmitButton isLoading={isUpdating} className='px-6 py-3'>
                                 <FiSave size={20} className="mr-2" />
                                 Save Changes
-                            </button>
+                            </SubmitButton>
                         </div>
                     </form>
                 </div>
@@ -395,13 +393,11 @@ const Settings = ({ user }: SettingsProps) => {
 
                         {/* Submit Button */}
                         <div className="flex justify-end">
-                            <button
-                                type="submit"
-                                className="inline-flex items-center px-6 py-3 bg-purple-950 text-white rounded-md hover:bg-purple-900 transition-colors"
+                            <SubmitButton isLoading={isUpdating} className="px-6 py-3"
                             >
-                                <FiSave size={16} className="mr-2" />
+                                <FiSave size={20} className="mr-2" />
                                 Update Password
-                            </button>
+                            </SubmitButton>
                         </div>
                     </form>
                 </div>

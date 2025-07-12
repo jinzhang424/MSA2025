@@ -14,7 +14,7 @@ function ReadyToStart() {
             </div>
 
             <div className="flex gap-8 justify-center grid-cols-2 flex-wrap items-center">
-                <BGFadeButton bgFade={true} className="p-4 pl-5 pr-5 w-44" onClick={() => navigate('/register')}>
+                <BGFadeButton className="px-8 py-3" onClick={() => navigate('/register')}>
                     Join Now
                 </BGFadeButton>
             </div>
