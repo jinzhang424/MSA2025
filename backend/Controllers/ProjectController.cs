@@ -285,15 +285,8 @@ public class ProjectController : ControllerBase
     [HttpGet("GetAllProjectsCardData")]
     public async Task<IActionResult> GetAllProjectsCardData()
     {
-        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdString == null)
-        {
-            return Unauthorized("Invalid Token");
-        }
-
-        var userId = int.Parse(userIdString);
         var projects = await _context.Projects
-            .Where(p => p.OwnerId != userId) // Stops the user from seeing their own project in the discovery
+            .Where(p => p.Status == "Active")
             .Include(p => p.ProjectMembers)
             .ToListAsync();
 
