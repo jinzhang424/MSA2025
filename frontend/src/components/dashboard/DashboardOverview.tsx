@@ -148,16 +148,15 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                                 <div className="text-center text-gray-400">No applications found.</div>
                             ) : recentApplications.map((application) => (
                                 <div key={application.id} className="flex items-start space-x-3">
-                                    <div className="w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
-                                        <span className="text-white font-semibold text-sm">
-                                            {application.applicantName.split(' ').map(n => n[0]).join('')}
-                                        </span>
-                                    </div>
-                                    
+                                    <img 
+                                        className='w-24'
+                                        src={application.projectImageUrl || "project-img-replacement.png"} 
+                                        alt={application.projectName} 
+                                    />  
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center justify-between">
                                             <h4 className="text-sm font-medium text-gray-900">
-                                                {application.applicantName}
+                                                Applied to: {application.projectName}
                                             </h4>
                                             <span className={`px-2 py-1 rounded-md text-xs font-medium ${
                                                 application.status === 'Pending' ? 'bg-yellow-100 text-orange-700' :
@@ -167,7 +166,6 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                                                 {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-gray-600 mt-1">Applied to: {application.projectName}</p>
                                         <div className={`flex flex-wrap gap-1 mt-2 ${application.skills.length === 0 && "hidden"}`}>
                                             {application.skills.slice(0, 2).map((skill) => (
                                                 <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">

@@ -28,7 +28,7 @@ export const sendApplication = async (application: ApplicationFormData, projectI
 export interface RecentApplications {
     id: number,
     applicantName: string,
-    applicantImageUrl: string,
+    projectImageUrl: string,
     projectName: string,
     time: string,
     status: string,

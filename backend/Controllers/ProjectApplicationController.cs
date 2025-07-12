@@ -24,6 +24,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         await _context.SaveChangesAsync();
     }
 
+    // Gets a user's recent application data
     [HttpGet("GetRecentApplications/{limit}")]
     public async Task<IActionResult> GetRecentApplications(int limit)
     {
@@ -35,15 +36,10 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
 
         var userId = int.Parse(userIdString);
 
-        var userProjectIds = await _context.Projects
-            .Where(p => p.OwnerId == userId)
-            .Select(pm => pm.ProjectId)
-            .ToListAsync();
-
         var applications = await _context.ProjectApplication
             .Include(pa => pa.User)
             .Include(pa => pa.Project)
-            .Where(pa => userProjectIds.Contains(pa.ProjectId))
+            .Where(pa => pa.UserId == userId)
             .OrderByDescending(pa => pa.DateApplied)
             .Take(limit)
             .ToListAsync();
@@ -51,7 +47,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         var result = applications.Select(pa => new
         {
             applicantName = pa.User.FirstName + " " + pa.User.LastName,
-            applicantImageUrl = pa.User.ProfileImage,
+            projectImageUrl = pa.Project.ImageUrl,
             projectName = pa.Project.Title,
             time = pa.DateApplied.ToString("yyyy-MM-dd HH:mm"),
             status = pa.Status,
