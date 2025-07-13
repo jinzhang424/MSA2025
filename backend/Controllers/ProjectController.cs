@@ -130,6 +130,7 @@ public class ProjectController : ControllerBase
             description = project.Description,
             imageUrl = project.ImageUrl ?? "",
             category = project.Category,
+            spotsTaken = project.ProjectMembers.Count(),
             totalSpots = project.TotalSpots,
             skills = project.Skills ?? new List<string>(),
             teamLead,

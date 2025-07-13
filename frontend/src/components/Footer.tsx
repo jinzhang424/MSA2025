@@ -30,7 +30,6 @@ function Footer() {
                     {/* Platform Links */}
                     <FooterLinkSection title="Platform">
                         <Link className="hover:underline" to="">Discover Projects</Link>
-                        <Link className="hover:underline" to="">Create Project</Link>
                         <Link className="hover:underline" to="">About Us</Link>
                     </FooterLinkSection>
 

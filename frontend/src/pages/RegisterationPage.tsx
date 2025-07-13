@@ -4,7 +4,8 @@ import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md';
 import BackLink from '../components/BackLink';
 import { register } from '../api/Auth';
-import Spinner from '../components/animation/Spinner';
+import { ToastContainer } from 'react-toastify';
+import SubmitButton from '../components/buttons/SubmitButton';
 
 interface RegisterFormData {
     firstName: string;
@@ -112,24 +113,19 @@ const RegisterationPage = () => {
 
         setIsSubmitting(true);
         
-        try {
-            await register({
-                FirstName: formData.firstName,
-                LastName: formData.lastName,
-                Email: formData.email,
-                Password: formData.password
-            });
-            alert("Successfully registerd");
-        } catch (error) {
-            console.error('Registration failed:', error);
-            alert('Registration failed. Please try again.');
-        } finally {
-            setIsSubmitting(false);
-        }
+        await register({
+            FirstName: formData.firstName,
+            LastName: formData.lastName,
+            Email: formData.email,
+            Password: formData.password
+        });
+
+        setIsSubmitting(false);
     };
 
     return (
         <div className="relative h-full bg-purple-950 bg-gradient-to-br from-orange-300 lg:p-24 py-20 px-8">
+            <ToastContainer/>
             {/* Back to home button */}
             <BackLink to="/">
                 Back to home
@@ -315,21 +311,13 @@ const RegisterationPage = () => {
                             </div>
                         </div>
 
-                        {/* Submit Button */}
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="w-full bg-purple-950 text-white py-3 px-4 rounded-md font-semibold hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-950 focus:ring-offset-2 transition-all duration-200 transform active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                        >
+                        <SubmitButton isLoading={isSubmitting} className='w-full py-3'>
                             {isSubmitting ? (
-                                <span className="flex items-center justify-center">
-                                    <Spinner/>
-                                    Creating Account...
-                                </span>
+                                'Creating Account...'
                             ) : (
                                 'Create Account'
                             )}
-                        </button>
+                        </SubmitButton>
                     </form>
 
                     {/* Sign In Link */}

@@ -1,13 +1,14 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export interface ApplicationFormData {
     coverMessage: string,
     availability: string,
 }
 
-export const sendApplication = async (application: ApplicationFormData, projectId: number, token: string) => {
+export const sendApplication = async (application: ApplicationFormData, projectId: number, token: string): Promise<Boolean> => {
     try {
-        const res = await axios.post(`/api/ProjectApplication/ApplyForProject/${projectId}`, {
+        await axios.post(`/api/ProjectApplication/ApplyForProject/${projectId}`, {
             CoverMessage: application.coverMessage,
             Availability: application.availability
         }, {
@@ -15,16 +16,19 @@ export const sendApplication = async (application: ApplicationFormData, projectI
                 Authorization: `Bearer ${token}`
             }
         });
-        return res.data;
-    } catch (e) {
-        throw Error("Failed to send project application");
+
+        return true
+    } catch (e: any) {
+        console.log("Error while sending application", e)
+        toast.error(e.response?.message ?? "Unknown error ocurred while applying for project");
+        return false
     }
 }
 
 export interface RecentApplications {
     id: number,
     applicantName: string,
-    applicantImageUrl: string,
+    projectImageUrl: string,
     projectName: string,
     time: string,
     status: string,
@@ -41,7 +45,8 @@ export const getRecentApplications = async (limit: number, token:string) : Promi
 
         console.log(res);
         return res.data as RecentApplications[];
-    } catch (e) {
+    } catch (e: any) {
+        toast.error(e.response?.message ?? "Unknown error ocurred while getting recent applications");
         return [];
     }
 }
@@ -67,7 +72,8 @@ export const getProjectPendingApplications = async (projectId: number, token: st
 
         console.log("Get Project Applications data:", res);
         return res.data as ProjectApplication[];
-    } catch (e) {
+    } catch (e: any) {
+        toast.error(e.response?.message ?? "Unknown error ocurred while getting pending applications");
         console.error(e);
         return [];
     }
@@ -81,7 +87,8 @@ export const acceptUserApplication = async (userId: number, projectId: number, t
             }
         });
         return res.status === 200;
-    } catch (e) {
+    } catch (e: any) {
+        toast.error(e.response?.message ?? "Unknown error ocurred while accepting user application");
         console.error(e);
         return false;
     }
@@ -95,7 +102,8 @@ export const rejectUserApplication = async (victimId: number, projectId: number,
             }
         });
         return res.status === 200;
-    } catch (e) {
+    } catch (e: any) {
+        toast.error(e.response?.message ?? "Unknown error ocurred while rejecting user application.");
         console.error(e);
         return false;
     }
@@ -120,7 +128,8 @@ export const GetOutgoingApplications = async (token: string): Promise<UserOutgoi
         });
 
         return res.data as UserOutgoingApplication[];
-    } catch (e) {
+    } catch (e:any) {
+        toast.error(e.response?.data || "Unknown error ocurred while getting your applications")
         console.error(e);
         return [];
     }
@@ -148,7 +157,8 @@ export const GetIncomingApplications = async (token: string): Promise<UserIncomi
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data as UserIncomingApplication[];
-    } catch (e) {
+    } catch (e: any) {
+        toast.error(e.response?.data || "Unknown error ocurred while getting incoming applications")
         console.error(e);
         return [];
     }
