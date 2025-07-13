@@ -47,6 +47,7 @@ const Settings = ({ user }: SettingsProps) => {
     const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined);
     const [newSkill, setNewSkill] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isNotMatching, setIsNotMatching] = useState(false);
     
     const dispatch = useDispatch();
 
@@ -104,7 +105,7 @@ const Settings = ({ user }: SettingsProps) => {
         e.preventDefault();
         
         if (passwordData.newPassword !== passwordData.confirmPassword) {
-            alert('New passwords do not match!');
+            setIsNotMatching(true);
             return;
         }
 
@@ -116,6 +117,8 @@ const Settings = ({ user }: SettingsProps) => {
                 newPassword: '',
                 confirmPassword: ''
             });
+
+            setIsNotMatching(false);
         }
     };
 
@@ -374,7 +377,9 @@ const Settings = ({ user }: SettingsProps) => {
                                     id="confirmPassword"
                                     name="confirmPassword"
                                     required
-                                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent transition-all duration-200"
+                                    className={`w-full px-4 py-3 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent transition-all duration-200 ${isNotMatching 
+                                            ? 'border-red-300 focus:ring-red-500' 
+                                            : 'border-gray-300 focus:ring-purple-950'}`}
                                     value={passwordData.confirmPassword}
                                     onChange={handlePasswordChange}
                                 />
@@ -386,6 +391,7 @@ const Settings = ({ user }: SettingsProps) => {
                                     {showPasswords.confirm ? <FiEyeOff size={20} /> : <FiEye size={20} />}
                                 </button>
                             </div>
+                            {isNotMatching && <p className='mt-1 text-sm text-red-600'>Passwords do not match</p>}
                         </div>
 
                         {/* Submit Button */}
