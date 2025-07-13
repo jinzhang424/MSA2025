@@ -1,4 +1,5 @@
 import axios from "axios"
+import { toast } from "react-toastify"
 
 export interface Notification {
     id: number,
@@ -18,9 +19,10 @@ export const getNotifications = async (token: string, limit:number): Promise<Not
 
         console.log(res)
         return res.data as Notification[]
-    } catch (e) {
+    } catch (e: any) {
         console.error("Error while getting unread notifications");
-        return []
+        toast.error(e.response?.message || "Error occurred while getting recent events")
+        return[]
     }
 }
 

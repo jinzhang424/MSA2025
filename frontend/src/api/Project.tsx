@@ -157,6 +157,7 @@ export const getUserStats = async (token: string): Promise<UserStats> => {
         return res.data as UserStats;
     } catch (e: any) {
         console.error(e);
+        toast.error(e.response?.message || "Error occurred while getting your project stats")
         return {
             myProjects: -1,
             joinedProjects: -1,

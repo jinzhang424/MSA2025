@@ -4,6 +4,8 @@ import type { User } from '../../types/dashboard';
 import { getUserStats, type UserStats } from '../../api/Project';
 import { getRecentApplications, type RecentApplications } from '../../api/ProjectApplication';
 import { getNotifications, type Notification } from '../../api/Notifications';
+import { ToastContainer } from 'react-toastify';
+import SpinnerLoader from '../loaders/SpinnerLoader';
 
 interface DashboardOverviewProps {
     user: User;
@@ -13,7 +15,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
     const [stats, setStats] = useState<UserStats | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [recentApplications, setRecentApplications] = useState<RecentApplications[]>([]);
-    const [recentLoading, setRecentLoading] = useState<boolean>(true);
+    const [applicationsLoading, setApplicationsLoading] = useState<boolean>(true);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [notificationsLoading, setNotificationsLoading] = useState<boolean>(true);
 
@@ -35,14 +37,14 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
 
     useEffect(() => {
         const fetchRecentApplications = async () => {
-            setRecentLoading(true);
+            setApplicationsLoading(true);
             try {
                 const data = await getRecentApplications(3, user.token);
                 setRecentApplications(data);
             } catch (error) {
                 console.error('Error fetching your applications:', error);
             } finally {
-                setRecentLoading(false);
+                setApplicationsLoading(false);
             }
         };
         fetchRecentApplications();
@@ -69,6 +71,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
 
     return (
         <div className="space-y-6">
+            <div className='absolute'><ToastContainer/></div>
             {/* Welcome Section */}
             <div className="bg-gradient-to-r from-purple-950 to-orange-400 rounded-lg p-6 text-white">
                 <h2 className="text-2xl font-bold mb-2">
@@ -142,8 +145,8 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     </div>
                     <div className="p-6">
                         <div className="space-y-4">
-                            {recentLoading ? (
-                                <div className="text-center text-gray-400">Loading your applications...</div>
+                            {applicationsLoading ? (
+                                <SpinnerLoader className="w-full justify-center">Loading your applications...</SpinnerLoader>
                             ) : recentApplications.length === 0 ? (
                                 <div className="text-center text-gray-400">No applications found.</div>
                             ) : recentApplications.map((application) => (
@@ -191,7 +194,9 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     <div className="p-6 border-b border-gray-200">
                         <h3 className="text-lg font-semibold text-gray-900">Recent Events</h3>
                     </div>
-                    {notifications.length === 0 ? (
+                    {notificationsLoading ? (
+                        <SpinnerLoader className='text-wrap w-full justify-center mt-6'>Loading recent events...</SpinnerLoader>
+                    ) : notifications.length === 0 ? (
                         <div className="text-center text-gray-400 p-6">No recent events.</div>
                     ) : (
                         <div className="p-6">
