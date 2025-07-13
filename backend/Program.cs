@@ -19,6 +19,8 @@ builder.Services.AddCors(options =>
 });
 
 // JWT Configuration
+var jwtSecret = builder.Configuration["Jwt:Secret"]!;
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(o =>
     {
@@ -29,7 +31,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!)
+                Encoding.UTF8.GetBytes(jwtSecret)
             )
         };
         
@@ -55,8 +57,10 @@ builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
 // Configure EF Core with PostgreSQL
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString(connectionString)));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
