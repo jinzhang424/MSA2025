@@ -5,7 +5,7 @@ import { FaChevronLeft } from "react-icons/fa6";
 import { getChatroomListings, type ChatRoomListing } from '../../api/Chatroom';
 import { getChatroomMessages, sendMessage, type Message, type MessageDto } from '../../api/Message';
 import { createSignalRConnection } from '../../utils/signalr';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import Spinner from '../animation/Spinner';
 
 interface ChatProps {
@@ -45,7 +45,10 @@ const Chat = ({ user }: ChatProps) => {
             .then(() => {
                 console.log('SignalR connected');
             })
-            .catch(console.error);
+            .catch((e: any) => {
+                toast.error("Error connecting to chat");
+                console.error("SignalR Connection error", e);
+            });
 
         connectionRef.current = connection;
 

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export interface Participants {
     userId: number
@@ -26,7 +27,8 @@ export const getChatroomListings = async (token: string): Promise<ChatRoomListin
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data as ChatRoomListing[];
-    } catch (e) {
+    } catch (e: any) {
+        toast.error(e.response?.data || "Error getting chat listings")
         console.error(e);
         return [];
     }
