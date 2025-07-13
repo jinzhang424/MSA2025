@@ -1,4 +1,5 @@
 import axios from "axios"
+import { toast } from "react-toastify";
 
 export interface ProjectCreationProps {
     title: string, 
@@ -25,9 +26,11 @@ export const createProject = async (projectData: ProjectCreationProps, token: st
                 Authorization: `Bearer ${token}`
             }
         })
-    } catch (e) {
-        console.log(e)
-        throw Error("Error occurred while creating project");
+
+        toast.success("Successfully created a project");
+    } catch (e: any) {
+        console.error(e)
+        toast.error(e.response?.data || "Unknown error occurred while creating a project.");
     }
 }
 
@@ -69,9 +72,9 @@ export const getProject = async (projectId: string, token: string): Promise<Proj
         const data = res.data as ProjectPageProps;
         console.log("Project page data: ", data)
         return data;
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
-        throw Error("Error while getting project.");
+        throw Error(e.response?.data)
     }
 };
 
@@ -99,8 +102,9 @@ export const getProjectCardData = async (token: string): Promise<ProjectCardProp
 
         console.log("Project card data: ", data)
         return data as ProjectCardProps[];
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
+        toast.error(e.response?.data || "Unknown error occurred while loading projects.");
         return [];
     }
 };
@@ -127,10 +131,10 @@ export const getUserProjectCardData = async (token: string): Promise<UserProject
         });
         const data = res.data;
 
-        console.log("Project card data: ", data)
         return data as UserProjectCardProps[];
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
+        toast.error(e.response?.data || "Unknown error occurred while getting user project card data.");
         return [];
     }
 };
@@ -151,9 +155,8 @@ export const getUserStats = async (token: string): Promise<UserStats> => {
         });
         console.log("User stats data", res)
         return res.data as UserStats;
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
-        // Return -1 if error
         return {
             myProjects: -1,
             joinedProjects: -1,
@@ -187,8 +190,9 @@ export const getProjectMembers = async (projectId: number, token: string): Promi
         });
 
         return res.data as ProjectMemberData[];
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
+        toast.error(e.response?.data || "Unknown error occurred while getting project members.");
         return [];
     }
 }
@@ -201,8 +205,9 @@ export const removeUserFromProject = async (victimId: number, projectId: number,
             }
         });
         return true;
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
+        toast.error(e.response?.data || "Unknown error occurred while removing user from project.");
         return false;
     }
 };
@@ -228,8 +233,9 @@ export const getJoinedProjectsCardData = async (token: string) => {
             }
         });
         return res.data as JoinedProjectsCardData[];
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
+        toast.error(e.response?.data || "Unknown error occurred while getting joined projects.");
         return [];
     }
 }

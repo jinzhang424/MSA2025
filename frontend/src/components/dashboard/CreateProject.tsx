@@ -6,6 +6,7 @@ import { createProject } from '../../api/Project';
 import { useSelector } from 'react-redux';
 import { type RootState } from '../../store/store';
 import { type ProjectCreationProps } from '../../api/Project';
+import SubmitButton from '../buttons/SubmitButton';
 
 const CreateProject = () => {
     const [formData, setFormData] = useState<ProjectCreationProps>({
@@ -19,6 +20,7 @@ const CreateProject = () => {
     });
 
   const [skillInput, setSkillInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const user = useSelector((state: RootState) => state.user);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -71,6 +73,7 @@ const CreateProject = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true)
 
         try {
             console.log("Create project form data: ", formData);
@@ -79,7 +82,9 @@ const CreateProject = () => {
         } catch (e) {
             console.log(e);
             alert('Error occurred while creating project');
-        }     
+        }
+
+        setIsSubmitting(false)
     };
 
     return (
@@ -253,9 +258,9 @@ const CreateProject = () => {
                             </div>
 
                             {/* Submit Button */}
-                            <button type="submit" className="w-full duration-200 bg-purple-950 text-white py-3 px-6 rounded-md hover:bg-purple-800 mt-4">
-                                    Create Project
-                            </button>
+                            <SubmitButton className="w-full duration-200 bg-purple-950 text-white py-3 px-6 rounded-md hover:bg-purple-800 mt-4" isLoading={isSubmitting}>
+                                Create Project
+                            </SubmitButton>
                         </div>
                     </form>
                 </div>

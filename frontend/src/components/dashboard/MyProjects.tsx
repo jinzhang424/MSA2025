@@ -6,6 +6,7 @@ import { HiOutlineCog6Tooth } from "react-icons/hi2";
 import ProjectManagementDialog from './ProjectManagementDialog';
 import { getUserProjectCardData, type UserProjectCardProps } from '../../api/Project';
 import SpinnerLoader from '../loaders/SpinnerLoader';
+import { ToastContainer } from 'react-toastify';
 
 interface MyProjectsProps {
     user: User;
@@ -57,6 +58,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
 
     return (
         <div className="space-y-6">
+            <ToastContainer/>
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>

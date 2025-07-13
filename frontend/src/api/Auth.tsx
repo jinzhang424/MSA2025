@@ -19,7 +19,7 @@ export const register = async (user: UserModel) => {
         toast.success("Successfully registered account")
     } catch (e: any) {
         console.log("Error while registering", e)
-        toast.error(e.response?.data)
+        toast.error(e.response?.data || "Unknown error occurred while registering.")
         return null;
     }
 }
@@ -34,7 +34,7 @@ export const login = async (email: String, password: String) : Promise<User | nu
         return res.data as User
     } catch (e: any) {
         console.error("Error while signing in", e);
-        toast.error(e.response?.data);
+        toast.error(e.response?.data || "Unknown error occurred while logging in");
         return null;
     }
 }

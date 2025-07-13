@@ -5,7 +5,6 @@ import { updatePassword, updateProfile } from '../../api/User';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../store/userSlice';
 import { ToastContainer } from 'react-toastify';
-import Spinner from '../animation/Spinner';
 import SubmitButton from '../buttons/SubmitButton';
 
 interface SettingsProps {
@@ -117,8 +116,6 @@ const Settings = ({ user }: SettingsProps) => {
                 newPassword: '',
                 confirmPassword: ''
             });
-        } else {
-            alert('Error while updating password');
         }
     };
 

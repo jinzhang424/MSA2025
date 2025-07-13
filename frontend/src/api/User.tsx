@@ -21,7 +21,7 @@ export const updateProfile = async (profileData: ProfileData, token: string): Pr
         return true;
     } catch (e: any) {
         console.error(e)
-        toast.error(e.message ?? "Unknown error occurred. Please try again");
+        toast.error(e.response?.data || "Unknown error occurred while updating profile.");
         return false;
     }
 }
@@ -37,8 +37,9 @@ export const updatePassword = async (passwordData: PasswordData, token: string) 
             }
         });
         return true;
-    } catch (e) {
+    } catch (e: any) {
         console.error(e);
+        toast.error(e.response?.data || "Unknown error occurred while updating password");
         return false;
     }
 }
