@@ -122,11 +122,9 @@ const Applications = ({ user }: ApplicationsProps) => {
 
             {/* Content */}
             {isLoading ? (
-                <div className='flex justify-center mt-24 w-full'>
-                    <SpinnerLoader>
-                        Loading applications...
-                    </SpinnerLoader>
-                </div>
+                <SpinnerLoader className='flex mt-12 justify-center w-full'>
+                    Loading applications...
+                </SpinnerLoader>
             ) : (
                 <>
                     {activeTab === 'outgoing' ? (

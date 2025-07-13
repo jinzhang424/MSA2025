@@ -6,7 +6,7 @@ import { getChatroomListings, type ChatRoomListing } from '../../api/Chatroom';
 import { getChatroomMessages, sendMessage, type Message, type MessageDto } from '../../api/Message';
 import { createSignalRConnection } from '../../utils/signalr';
 import { toast, ToastContainer } from 'react-toastify';
-import Spinner from '../animation/Spinner';
+import SpinnerLoader from '../loaders/SpinnerLoader';
 
 interface ChatProps {
     user: User;
@@ -185,10 +185,9 @@ const Chat = ({ user }: ChatProps) => {
                 {/* Chat List */}
                 {isLoadingChatList ? 
                     (
-                        <div className='flex mt-16 mx-auto items-center gap-3 text-gray-400'>
-                            <Spinner isLoading={isLoadingChatList} className='text-gray-400'/>
-                            Loading chats...
-                        </div>
+                        <SpinnerLoader className='flex mt-8 justify-center w-full'>
+                            Loading chat list...
+                        </SpinnerLoader>
                     ) : (
                         <div className="flex-1 overflow-y-auto">
                             {filteredChats.map((chat) => (
@@ -249,12 +248,9 @@ const Chat = ({ user }: ChatProps) => {
             </div>
 
             {isLoadingMessages ? (
-                <div className='relative z-10 flex justify-center text-gray-400 w-full h-full bg-white'>
-                    <div className='flex relative top-5/12 item-center gap-4'>
-                        <Spinner isLoading={isLoadingMessages} className='text-gray-400'/>
-                        Loading chats...
-                    </div>
-                </div>
+                <SpinnerLoader className='flex mt-12=6 justify-center w-full'>
+                    Loading chat...
+                </SpinnerLoader>
             ) : (
                 <>
                     {/* Chat Area */}

@@ -5,6 +5,7 @@ import { type User } from '../../types/dashboard';
 import { HiOutlineCog6Tooth } from "react-icons/hi2";
 import ProjectManagementDialog from './ProjectManagementDialog';
 import { getUserProjectCardData, type UserProjectCardProps } from '../../api/Project';
+import SpinnerLoader from '../loaders/SpinnerLoader';
 
 interface MyProjectsProps {
     user: User;
@@ -92,7 +93,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
 
             {/* Projects Grid */}
             {isLoading ? (
-                <div className="text-center py-12 text-gray-500">Loading projects...</div>
+                <SpinnerLoader className='mt-16 w-full justify-center'>Loading projects</SpinnerLoader>
             ) : filteredProjects.length === 0 ? (
                 <div className="text-center py-12">
                     <FiFolder size={48} className="mx-auto text-gray-400 mb-4" />
