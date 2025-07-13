@@ -8,6 +8,7 @@ import ProjectApplicationDialog from '../components/ProjectApplicationDialog';
 import { getProject, type ProjectPageProps } from '../api/Project';
 import { useSelector } from 'react-redux';
 import { type RootState } from '../store/store';
+import { FaRegFaceDizzy } from "react-icons/fa6";
 
 const ProjectPage = () => {
     const { id } = useParams<{ id: string; }>();
@@ -18,12 +19,13 @@ const ProjectPage = () => {
     useEffect(() => {
         const fetchProject = async () => {
             setIsLoading(true);
-            const result = await getProject(id!, user.token);
-            if (!(result instanceof Error)) {
+            try {
+                const result = await getProject(id!, user.token);
                 setProject(result);
-            } else {
+            } catch (e) {
                 setProject(null);
             }
+
             setIsLoading(false);
         };
         fetchProject();
@@ -43,17 +45,18 @@ const ProjectPage = () => {
     if (!project || !id) {
         return (
             <div className="bg-gray-50 min-h-screen py-12 px-6">
-                <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-sm p-8 text-center">
-                <h1 className="text-2xl font-bold mb-4">Project Not Found</h1>
+                <div className="flex flex-col justify-center items-center max-w-5xl mx-auto bg-white p-8 text-center">
+                    <FaRegFaceDizzy size={72}/>
+                    <h1 className="text-2xl font-bold mb-4">Project Not Found</h1>
 
-                <p className="text-gray-600 mb-6">
-                    The project you're looking for doesn't exist or has been removed.
-                </p>
+                    <p className="text-gray-600 mb-6">
+                        The project you're looking for doesn't exist or has been removed.
+                    </p>
 
-                <Link to="/discover-projects" className="inline-flex items-center text-purple-navy hover:text-purple-950">
-                    <BsArrowLeft className="group-hover:-translate-x-1 duration-300 h-4 w-4 mr-2" />
-                    Back to projects
-                </Link>
+                    <Link to="/discover-projects" className="inline-flex items-center text-purple-navy hover:text-purple-950">
+                        <BsArrowLeft className="group-hover:-translate-x-1 duration-300 h-4 w-4 mr-2" />
+                        Back to projects
+                    </Link>
                 </div>
             </div>
         )
@@ -66,8 +69,8 @@ const ProjectPage = () => {
                 {/* Breadcrumb */}
                 <div className="mb-6">
                 <Link to="/discover-projects" className="group inline-flex items-center text-gray-600 hover:text-navy">
-                    <BsArrowLeft className="group-hover:-translate-x-1 duration-300 h-4 w-4 mr-2" />
-                    Back to projects
+                    <BsArrowLeft className="group-hover:-translate-x-2 duration-300 h-4 w-4" />
+                    <p className='ml-2'>Back to projects</p>
                 </Link>
 
                 </div>
