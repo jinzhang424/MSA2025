@@ -15,9 +15,9 @@ interface ProjectManagementDialogProps {
 const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagementDialogProps) => {
     const [activeTab, setActiveTab] = useState<'members' | 'applicants'>('members');
     const [members, setMembers] = useState<ProjectMemberData[]>([]);
-    const [isLoadingMembers, setIsLoadingMembers] = useState(false);
+    // const [isLoadingMembers, setIsLoadingMembers] = useState(false);
     const [applicants, setApplicants] = useState<ProjectApplication[]>([]);
-    const [isLoadingApplicants, setIsLoadingApplicants] = useState(false);
+    // const [isLoadingApplicants, setIsLoadingApplicants] = useState(false);
 
     const user = useSelector((state: RootState) => state.user);
 
@@ -26,10 +26,10 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
     useEffect(() => {
         const fetchMembers = async () => {
             if (isOpen) {
-                setIsLoadingMembers(true);
+                // setIsLoadingMembers(true);
                 const data = await getProjectMembers(project.projectId, user.token);
                 setMembers(data);
-                setIsLoadingMembers(false);
+                // setIsLoadingMembers(false);
             }
         };
         fetchMembers();
@@ -38,10 +38,10 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
     useEffect(() => {
         const fetchApplicants = async () => {
             if (isOpen) {
-                setIsLoadingApplicants(true);
+                // setIsLoadingApplicants(true);
                 const data = await getProjectPendingApplications(project.projectId, user.token);
                 setApplicants(data);
-                setIsLoadingApplicants(false);
+                // setIsLoadingApplicants(false);
             }
         };
         fetchApplicants();

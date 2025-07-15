@@ -8,7 +8,7 @@ FROM node:20 AS frontend-base
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY .eslint.config.js index.html vite.config.js ./
+COPY eslint.config.js index.html vite.config.ts ./
 COPY tsconfig*.json ./
 COPY public ./public
 COPY src ./src
@@ -42,4 +42,4 @@ WORKDIR /app
 RUN npm install -g serve
 COPY --from=frontend-build /app/dist ./dist
 EXPOSE 3000
-CMD ["serve", "-s", "dist", "-l", "3000"]
+CMD ["serve", "-s", "dist", "-l", "5173"]
