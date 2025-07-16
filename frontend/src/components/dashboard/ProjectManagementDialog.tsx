@@ -5,6 +5,7 @@ import { getProjectMembers, type ProjectMemberData } from '../../api/Project';
 import { acceptUserApplication, getProjectPendingApplications, rejectUserApplication, type ProjectApplication } from '../../api/ProjectApplication';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
+import { useTokenQuery } from '../../hooks/useTokenQuery';
 
 interface ProjectManagementDialogProps {
     project: UserProjectCardProps;
@@ -21,19 +22,15 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
     const user = useSelector((state: RootState) => state.user);
 
-    console.log(project)
-
-    useEffect(() => {
-        const fetchMembers = async () => {
-            if (isOpen) {
-                // setIsLoadingMembers(true);
-                const data = await getProjectMembers(project.projectId, user.token);
-                setMembers(data);
-                // setIsLoadingMembers(false);
-            }
-        };
-        fetchMembers();
-    }, [isOpen, project.projectId]);
+    const fetchMembers = async () => {
+        if (isOpen) {
+            // setIsLoadingMembers(true);
+            const data = await getProjectMembers(project.projectId, user.token);
+            setMembers(data);
+            // setIsLoadingMembers(false);
+        }
+    };
+    useTokenQuery(fetchMembers)
 
     useEffect(() => {
         const fetchApplicants = async () => {

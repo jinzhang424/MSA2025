@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
 import { getJoinedProjectsCardData, removeUserFromProject, type JoinedProjectsCardData } from '../../api/Project';
 import SpinnerLoader from '../loaders/SpinnerLoader';
+import { useTokenQuery } from '../../hooks/useTokenQuery';
 
 interface JoinedProjectsProps {
     user: User;
@@ -15,15 +16,13 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
     const [joinedProjects, setJoinedProjects] = useState<JoinedProjectsCardData[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchProjects = async () => {
-            setIsLoading(true);
-            const data = await getJoinedProjectsCardData(user.token);
-            setJoinedProjects(data);
-            setIsLoading(false);
-        };
-        fetchProjects();
-    }, [user.token]);
+    const fetchProjects = async () => {
+        setIsLoading(true);
+        const data = await getJoinedProjectsCardData(user.token);
+        setJoinedProjects(data);
+        setIsLoading(false);
+    };
+    useTokenQuery(fetchProjects)
 
     const filteredProjects = joinedProjects.filter(member => 
         filter === 'All' || member.status === filter

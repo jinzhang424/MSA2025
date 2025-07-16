@@ -7,6 +7,7 @@ import { getChatroomMessages, sendMessage, type Message, type MessageDto } from 
 import { createSignalRConnection } from '../../utils/signalr';
 import { toast, ToastContainer } from 'react-toastify';
 import SpinnerLoader from '../loaders/SpinnerLoader';
+import { useTokenQuery } from '../../hooks/useTokenQuery';
 
 interface ChatProps {
     user: User;
@@ -87,15 +88,14 @@ const Chat = ({ user }: ChatProps) => {
         };
     }, [selectedChat]);
 
-    useEffect(() => {
-        const fetchChatRooms = async () => {
-            setIsLoadingChatList(true);
-            const data = await getChatroomListings(user.token);
-            setChatRooms(data);
-            setIsLoadingChatList(false);
-        };
-        fetchChatRooms();
-    }, [user.token]);
+    const fetchChatRooms = async () => {
+        setIsLoadingChatList(true);
+        const data = await getChatroomListings(user.token);
+        setChatRooms(data);
+        setIsLoadingChatList(false);
+    };
+
+    useTokenQuery(fetchChatRooms)
 
     const filteredChats = chatRooms.filter(chat =>
         chat.name.toLowerCase().includes(searchQuery.toLowerCase())

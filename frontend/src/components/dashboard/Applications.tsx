@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FiClock, FiCheck, FiX, FiEye, FiUser } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
 import { GetOutgoingApplications, type UserOutgoingApplication, GetIncomingApplications, type UserIncomingApplication, rejectUserApplication, acceptUserApplication } from '../../api/ProjectApplication';
 import SpinnerLoader from '../loaders/SpinnerLoader';
 import { ToastContainer } from 'react-toastify';
+import { useTokenQuery } from '../../hooks/useTokenQuery';
 
 interface ApplicationsProps {
     user: User;
@@ -16,29 +17,26 @@ const Applications = ({ user }: ApplicationsProps) => {
     const [isLoading, setIsLoading] = useState(true);
     const [incomingApplications, setIncomingApplications] = useState<UserIncomingApplication[]>([]);
 
-    useEffect(() => {
-        const fetchOutgoingApplications = async () => {
-            setIsLoading(true);
+    const fetchOutgoingApplications = async () => {
+        setIsLoading(true);
 
-            const data = await GetOutgoingApplications(user.token);
-            setOutgoingApplications(data);
-            
-            setIsLoading(false);
-        };
-        fetchOutgoingApplications();
-    }, [user.token]);
+        const data = await GetOutgoingApplications(user.token);
+        setOutgoingApplications(data);
+        
+        setIsLoading(false);
+    };
 
-    useEffect(() => {
-        const fetchIncomingApplications = async () => {
-            setIsLoading(true);
+    const fetchIncomingApplications = async () => {
+        setIsLoading(true);
 
-            const data = await GetIncomingApplications(user.token);
-            setIncomingApplications(data);
+        const data = await GetIncomingApplications(user.token);
+        setIncomingApplications(data);
 
-            setIsLoading(false);
-        };
-        fetchIncomingApplications();
-    }, [user.token]);
+        setIsLoading(false);
+    };
+
+    useTokenQuery(fetchOutgoingApplications)
+    useTokenQuery(fetchIncomingApplications)
 
     const getStatusIcon = (status: string) => {
         switch (status) {
