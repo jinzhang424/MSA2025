@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FiPlus, FiUsers, FiFolder } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
