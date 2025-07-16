@@ -12,6 +12,7 @@ COPY eslint.config.js index.html vite.config.ts ./
 COPY tsconfig*.json ./
 COPY public ./public
 COPY src ./src
+COPY .env ./.env
 
 ###################################################
 # Stage: frontend-dev
