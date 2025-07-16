@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export interface MessageDto {
     chatroomId: number;
     content: string;
@@ -18,7 +20,7 @@ export interface Message {
 
 export const sendMessage = async (token: string, messageDto: MessageDto): Promise<boolean> => {
     try {
-        await axios.post('/api/Message/SendMessages', messageDto, {
+        await axios.post(`${API_BASE_URL}/api/Message/SendMessages`, messageDto, {
             headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -32,7 +34,7 @@ export const sendMessage = async (token: string, messageDto: MessageDto): Promis
 
 export const getChatroomMessages = async (token: string, chatroomId: number): Promise<Message[] | null> => {
     try {
-        const res = await axios.get(`/api/Message/GetChatroomMessages/${chatroomId}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/Message/GetChatroomMessages/${chatroomId}`, {
             headers: { Authorization: `Bearer ${token}` }
         });
 

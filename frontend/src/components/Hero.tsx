@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CgChevronDown } from "react-icons/cg";
-import { Link } from "react-router";
 
 const Hero = () => {
     const [scrollOffset, setScrollOffset] = useState(0) 
-    const nextSectionRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -18,13 +16,6 @@ const Hero = () => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
-
-    const scrollToNextSection = () => {
-        nextSectionRef.current?.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start'
-        });
-    };
 
     return (
         <div>

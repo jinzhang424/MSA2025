@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FiFolder, FiUsers, FiFileText, FiTrendingUp } from 'react-icons/fi';
 import type { User } from '../../types/dashboard';
 import { getUserStats, type UserStats } from '../../api/Project';
@@ -6,6 +6,7 @@ import { getRecentApplications, type RecentApplications } from '../../api/Projec
 import { getNotifications, type Notification } from '../../api/Notifications';
 import { ToastContainer } from 'react-toastify';
 import SpinnerLoader from '../loaders/SpinnerLoader';
+import { useTokenQuery } from '../../hooks/useTokenQuery';
 
 interface DashboardOverviewProps {
     user: User;
@@ -19,47 +20,40 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [notificationsLoading, setNotificationsLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        const fetchStats = async () => {
-            setLoading(true);
-            try {
-                const data = await getUserStats(user.token);
-                setStats(data);
-            } catch (error) {
-                console.error('Error fetching user stats:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchStats();
-    }, [user.token]);
-
-    useEffect(() => {
-        const fetchRecentApplications = async () => {
-            setApplicationsLoading(true);
-            try {
-                const data = await getRecentApplications(3, user.token);
-                setRecentApplications(data);
-            } catch (error) {
-                console.error('Error fetching your applications:', error);
-            } finally {
-                setApplicationsLoading(false);
-            }
-        };
-        fetchRecentApplications();
-    }, [user.token]);
-
-    useEffect(() => {
-        const fetchNotifications = async () => {
-            setNotificationsLoading(true);
-            const data = await getNotifications(user.token, 3)
-            setNotifications(data)
-            setNotificationsLoading(false);
+    const fetchStats = async () => {
+        setLoading(true);
+        try {
+            const data = await getUserStats(user.token);
+            setStats(data);
+        } catch (error) {
+            console.error('Error fetching user stats:', error);
+        } finally {
+            setLoading(false);
         }
+    };
 
-        fetchNotifications();
-    }, [user.token])
+    const fetchRecentApplications = async () => {
+        setApplicationsLoading(true);
+        try {
+            const data = await getRecentApplications(3, user.token);
+            setRecentApplications(data);
+        } catch (error) {
+            console.error('Error fetching your applications:', error);
+        } finally {
+            setApplicationsLoading(false);
+        }
+    };
+
+    const fetchNotifications = async () => {
+        setNotificationsLoading(true);
+        const data = await getNotifications(user.token, 3)
+        setNotifications(data)
+        setNotificationsLoading(false);
+    }
+
+    useTokenQuery(fetchStats);
+    useTokenQuery(fetchRecentApplications);
+    useTokenQuery(fetchNotifications);
 
     if (loading) {
         return <div className="p-8 text-center text-gray-500">Loading dashboard...</div>;

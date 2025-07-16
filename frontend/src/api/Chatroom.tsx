@@ -1,6 +1,8 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export interface Participants {
     userId: number
     image: string,
@@ -23,7 +25,7 @@ export interface ChatRoomListing {
 
 export const getChatroomListings = async (token: string): Promise<ChatRoomListing[]> => {
     try {
-        const res = await axios.get('/api/Chatroom/GetChatroomListings', {
+        const res = await axios.get(`${API_BASE_URL}/api/Chatroom/GetChatroomListings`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data as ChatRoomListing[];

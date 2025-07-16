@@ -5,6 +5,7 @@ import { getProjectMembers, type ProjectMemberData } from '../../api/Project';
 import { acceptUserApplication, getProjectPendingApplications, rejectUserApplication, type ProjectApplication } from '../../api/ProjectApplication';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
+import { useTokenQuery } from '../../hooks/useTokenQuery';
 
 interface ProjectManagementDialogProps {
     project: UserProjectCardProps;
@@ -15,33 +16,29 @@ interface ProjectManagementDialogProps {
 const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagementDialogProps) => {
     const [activeTab, setActiveTab] = useState<'members' | 'applicants'>('members');
     const [members, setMembers] = useState<ProjectMemberData[]>([]);
-    const [isLoadingMembers, setIsLoadingMembers] = useState(false);
+    // const [isLoadingMembers, setIsLoadingMembers] = useState(false);
     const [applicants, setApplicants] = useState<ProjectApplication[]>([]);
-    const [isLoadingApplicants, setIsLoadingApplicants] = useState(false);
+    // const [isLoadingApplicants, setIsLoadingApplicants] = useState(false);
 
     const user = useSelector((state: RootState) => state.user);
 
-    console.log(project)
-
-    useEffect(() => {
-        const fetchMembers = async () => {
-            if (isOpen) {
-                setIsLoadingMembers(true);
-                const data = await getProjectMembers(project.projectId, user.token);
-                setMembers(data);
-                setIsLoadingMembers(false);
-            }
-        };
-        fetchMembers();
-    }, [isOpen, project.projectId]);
+    const fetchMembers = async () => {
+        if (isOpen) {
+            // setIsLoadingMembers(true);
+            const data = await getProjectMembers(project.projectId, user.token);
+            setMembers(data);
+            // setIsLoadingMembers(false);
+        }
+    };
+    useTokenQuery(fetchMembers)
 
     useEffect(() => {
         const fetchApplicants = async () => {
             if (isOpen) {
-                setIsLoadingApplicants(true);
+                // setIsLoadingApplicants(true);
                 const data = await getProjectPendingApplications(project.projectId, user.token);
                 setApplicants(data);
-                setIsLoadingApplicants(false);
+                // setIsLoadingApplicants(false);
             }
         };
         fetchApplicants();

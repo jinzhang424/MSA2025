@@ -2,7 +2,6 @@ import { Link } from "react-router"
 import BGFadeButton from "./buttons/BGFadeButton"
 import { RiMenuLine } from "react-icons/ri";
 import { ImCompass } from "react-icons/im";
-import { AiOutlineTeam } from "react-icons/ai"
 import { RiLoginBoxLine } from "react-icons/ri";
 import { MdOutlinePersonAddAlt1 } from "react-icons/md";
 import { useEffect, useState } from "react";

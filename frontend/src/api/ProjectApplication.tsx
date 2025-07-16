@@ -1,6 +1,8 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export interface ApplicationFormData {
     coverMessage: string,
     availability: string,
@@ -8,7 +10,7 @@ export interface ApplicationFormData {
 
 export const sendApplication = async (application: ApplicationFormData, projectId: number, token: string): Promise<Boolean> => {
     try {
-        await axios.post(`/api/ProjectApplication/ApplyForProject/${projectId}`, {
+        await axios.post(`${API_BASE_URL}/api/ProjectApplication/ApplyForProject/${projectId}`, {
             CoverMessage: application.coverMessage,
             Availability: application.availability
         }, {
@@ -37,7 +39,7 @@ export interface RecentApplications {
 
 export const getRecentApplications = async (limit: number, token:string) : Promise<RecentApplications[]>  => {
     try {
-        const res = await axios.get(`/api/ProjectApplication/GetRecentApplications/${limit}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/ProjectApplication/GetRecentApplications/${limit}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -64,7 +66,7 @@ export interface ProjectApplication {
 
 export const getProjectPendingApplications = async (projectId: number, token: string): Promise<ProjectApplication[]> => {
     try {
-        const res = await axios.get(`/api/ProjectApplication/GetProjectPendingApplications/${projectId}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/ProjectApplication/GetProjectPendingApplications/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -81,7 +83,7 @@ export const getProjectPendingApplications = async (projectId: number, token: st
 
 export const acceptUserApplication = async (userId: number, projectId: number, token: string): Promise<boolean> => {
     try {
-        const res = await axios.put(`/api/ProjectApplication/AcceptUserApplication/${userId}/${projectId}`, null, {
+        const res = await axios.put(`${API_BASE_URL}/api/ProjectApplication/AcceptUserApplication/${userId}/${projectId}`, null, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -96,7 +98,7 @@ export const acceptUserApplication = async (userId: number, projectId: number, t
 
 export const rejectUserApplication = async (victimId: number, projectId: number, token: string): Promise<boolean> => {
     try {
-        const res = await axios.patch(`/api/ProjectApplication/RejectUserApplication/${victimId}/${projectId}`, {
+        const res = await axios.patch(`${API_BASE_URL}/api/ProjectApplication/RejectUserApplication/${victimId}/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -123,7 +125,7 @@ export interface UserOutgoingApplication {
 
 export const GetOutgoingApplications = async (token: string): Promise<UserOutgoingApplication[]> => {
     try {
-        const res = await axios.get('/api/ProjectApplication/GetOutgoingApplications', {
+        const res = await axios.get(`${API_BASE_URL}/api/ProjectApplication/GetOutgoingApplications`, {
             headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -153,7 +155,7 @@ export interface UserIncomingApplication {
 
 export const GetIncomingApplications = async (token: string): Promise<UserIncomingApplication[]> => {
     try {
-        const res = await axios.get('/api/ProjectApplication/GetIncomingApplications', {
+        const res = await axios.get(`${API_BASE_URL}/api/ProjectApplication/GetIncomingApplications`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data as UserIncomingApplication[];

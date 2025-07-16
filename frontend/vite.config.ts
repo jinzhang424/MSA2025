@@ -6,9 +6,10 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    host: '0.0.0.0', // Allow external connections in Docker
     proxy: {
-      '/chathub': 'http://localhost:5152',
-      '/api': 'http://localhost:5152',
+      '/chathub': 'http://backend:5152',
+      '/api': 'http://backend:5152',
     }
   }
 });

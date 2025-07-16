@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FiPlus, FiUsers, FiFolder } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
@@ -7,6 +7,7 @@ import ProjectManagementDialog from './ProjectManagementDialog';
 import { getUserProjectCardData, type UserProjectCardProps } from '../../api/Project';
 import SpinnerLoader from '../loaders/SpinnerLoader';
 import { ToastContainer } from 'react-toastify';
+import { useTokenQuery } from '../../hooks/useTokenQuery';
 
 interface MyProjectsProps {
     user: User;
@@ -19,15 +20,13 @@ const MyProjects = ({ user }: MyProjectsProps) => {
     const [myProjects, setMyProjects] = useState<UserProjectCardProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchProjects = async () => {
-            setIsLoading(true);
-            const projects = await getUserProjectCardData(user.token);
-            setMyProjects(projects);
-            setIsLoading(false);
-        };
-        fetchProjects();
-    }, [user.token]);
+    const fetchProjects = async () => {
+        setIsLoading(true);
+        const projects = await getUserProjectCardData(user.token);
+        setMyProjects(projects);
+        setIsLoading(false);
+    };
+    useTokenQuery(fetchProjects)
 
     const filteredProjects = myProjects.filter(project => 
         filter === 'All' || project.status === filter

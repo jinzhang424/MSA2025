@@ -1,6 +1,8 @@
 import axios from "axios"
 import { toast } from "react-toastify";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export interface ProjectCreationProps {
     title: string, 
     description: string,
@@ -13,7 +15,7 @@ export interface ProjectCreationProps {
 
 export const createProject = async (projectData: ProjectCreationProps, token: string): Promise<void> => {
     try {
-        await axios.post("/api/Project/CreateProject", {
+        await axios.post(`${API_BASE_URL}/api/Project/CreateProject`, {
             Title: projectData.title,
             Description: projectData.description,
             Skills: projectData.skills,
@@ -60,7 +62,7 @@ export interface ProjectPageProps {
 
 export const getProject = async (projectId: string, token: string): Promise<ProjectPageProps> => {
     try {
-        const res = await axios.get(`/api/Project/GetProjectPageData/${projectId}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/Project/GetProjectPageData/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -93,7 +95,7 @@ export interface ProjectCardProps {
 export const getProjectCardData = async (token: string): Promise<ProjectCardProps[]> => {
     console.log(token);
     try {
-        const res = await axios.get('/api/Project/GetAllProjectsCardData', {
+        const res = await axios.get(`${API_BASE_URL}/api/Project/GetAllProjectsCardData`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -124,7 +126,7 @@ export interface UserProjectCardProps {
 
 export const getUserProjectCardData = async (token: string): Promise<UserProjectCardProps[]> => {
     try {
-        const res = await axios.get('/api/Project/GetAllUserProjects', {
+        const res = await axios.get(`${API_BASE_URL}/api/Project/GetAllUserProjects`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -148,7 +150,7 @@ export interface UserStats {
 
 export const getUserStats = async (token: string): Promise<UserStats> => {
     try {
-        const res = await axios.get('/api/Project/GetUserStats', {
+        const res = await axios.get(`${API_BASE_URL}/api/Project/GetUserStats`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -184,7 +186,7 @@ export interface ProjectMemberData {
 
 export const getProjectMembers = async (projectId: number, token: string): Promise<ProjectMemberData[]> => {
     try {
-        const res = await axios.get(`/api/Project/GetProjectMembers/${projectId}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/Project/GetProjectMembers/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -200,7 +202,7 @@ export const getProjectMembers = async (projectId: number, token: string): Promi
 
 export const removeUserFromProject = async (victimId: number, projectId: number, token: string): Promise<boolean> => {
     try {
-        await axios.delete(`/api/Project/RemoveUserFromProject/${victimId}/${projectId}`, {
+        await axios.delete(`${API_BASE_URL}/api/Project/RemoveUserFromProject/${victimId}/${projectId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -228,7 +230,7 @@ export interface JoinedProjectsCardData {
 
 export const getJoinedProjectsCardData = async (token: string) => {
     try {
-        const res = await axios.get('/api/Project/GetJoinedProjects', {
+        const res = await axios.get(`${API_BASE_URL}/api/Project/GetJoinedProjects`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

@@ -44,7 +44,7 @@ const Settings = ({ user }: SettingsProps) => {
         new: false,
         confirm: false
     });
-    const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined);
+    // const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined);
     const [newSkill, setNewSkill] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
     const [isNotMatching, setIsNotMatching] = useState(false);
@@ -160,19 +160,11 @@ const Settings = ({ user }: SettingsProps) => {
                         {/* Profile Picture */}
                         <div className="flex items-center space-x-6">
                             <div className="relative">
-                                {profilePicture ? (
-                                    <img
-                                        src={profilePicture}
-                                        alt="Profile"
-                                        className="w-24 h-24 rounded-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-24 h-24 bg-purple-950 rounded-full flex items-center justify-center">
-                                        <span className="text-white font-semibold text-xl">
-                                            {profileData.firstName[0]}{profileData.lastName[0]}
-                                        </span>
-                                    </div>
-                                )}
+                                <div className="w-24 h-24 bg-purple-950 rounded-full flex items-center justify-center">
+                                    <span className="text-white font-semibold text-xl">
+                                        {profileData.firstName[0]}{profileData.lastName[0]}
+                                    </span>
+                                </div>
                                 {/* Profile picture change TBD */}
                                 {/* <label className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
                                     <FiCamera size={16} className="text-gray-600" />
