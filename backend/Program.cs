@@ -60,7 +60,7 @@ builder.Services.AddSignalR();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString(connectionString)));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

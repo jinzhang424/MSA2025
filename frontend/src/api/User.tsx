@@ -2,9 +2,11 @@ import axios from "axios"
 import { toast } from "react-toastify";
 import type { PasswordData, ProfileData } from "../components/dashboard/Settings"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export const updateProfile = async (profileData: ProfileData, token: string): Promise<Boolean> => {
     try {
-        const res = await axios.patch("/api/User/UpdateProfile", {
+        const res = await axios.patch(`${API_BASE_URL}/api/User/UpdateProfile`, {
             FirstName: profileData.firstName,
             LastName: profileData.lastName,
             Bio: profileData.bio,
@@ -28,7 +30,7 @@ export const updateProfile = async (profileData: ProfileData, token: string): Pr
 
 export const updatePassword = async (passwordData: PasswordData, token: string) : Promise<Boolean> => {
     try {
-        await axios.patch("/api/User/UpdatePassword", {
+        await axios.patch(`${API_BASE_URL}/api/User/UpdatePassword`, {
             OldPassword: passwordData.oldPassword,
             NewPassword: passwordData.newPassword,
         }, {

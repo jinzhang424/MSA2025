@@ -27,4 +27,4 @@ WORKDIR /app
 COPY --from=backend-base /app/out ./
 EXPOSE 5152
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENTRYPOINT ["dotnet", "backend.dll"]
+ENTRYPOINT ["dotnet", "backend.dll", "--urls", "http://0.0.0.0:5152"]

@@ -3,11 +3,13 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: backend-production
+      target: backend-dev
     ports:
       - "5152:5152"
+    volumes:
+      - ./backend:/app
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Development
       - Jwt__Secret=${JWT_SECRET}
       - ConnectionStrings__DefaultConnection=${DATABASE_URL}
 
@@ -15,6 +17,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: frontend-production
+      target: frontend-dev
     ports:
       - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend

@@ -1,6 +1,8 @@
 import axios from "axios"
 import { toast } from "react-toastify"
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export interface Notification {
     id: number,
     title: string,
@@ -11,7 +13,7 @@ export interface Notification {
 
 export const getNotifications = async (token: string, limit:number): Promise<Notification[]> => {
     try {
-        const res = await axios.get(`/api/Notification/GetNotifications/${limit}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/Notification/GetNotifications/${limit}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -28,7 +30,7 @@ export const getNotifications = async (token: string, limit:number): Promise<Not
 
 export const markAsRead = async (id: number, token: string) => {
     try {
-        await axios.patch(`/api/Notification/MarkAsRead/${id}`, null, {
+        await axios.patch(`${API_BASE_URL}/api/Notification/MarkAsRead/${id}`, null, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

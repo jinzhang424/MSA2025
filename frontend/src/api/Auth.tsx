@@ -2,6 +2,8 @@ import axios from "axios"
 import type { User } from "../types/dashboard";
 import { toast } from "react-toastify";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export interface UserModel {
     FirstName: string,
     LastName: string,
@@ -12,7 +14,7 @@ export interface UserModel {
 export const register = async (user: UserModel) => {
     console.log(user)
     try {
-        await axios.post("/api/Auth/RegisterUser", {
+        await axios.post(`${API_BASE_URL}/api/Auth/RegisterUser`, {
             ...user
         });
 
@@ -26,7 +28,7 @@ export const register = async (user: UserModel) => {
 
 export const login = async (email: String, password: String) : Promise<User | null> => {
     try {
-        const res =  await axios.post("/api/Auth/Login", {
+        const res =  await axios.post(`${API_BASE_URL}/api/Auth/Login`, {
             Email: email,
             Password: password
         });

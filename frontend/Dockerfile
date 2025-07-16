@@ -41,5 +41,5 @@ FROM node:20 AS frontend-production
 WORKDIR /app
 RUN npm install -g serve
 COPY --from=frontend-build /app/dist ./dist
-EXPOSE 3000
+EXPOSE 5173
 CMD ["serve", "-s", "dist", "-l", "5173"]
