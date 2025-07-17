@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { RiLoginBoxLine } from 'react-icons/ri';
@@ -7,9 +7,9 @@ import { login } from '../api/Auth';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../store/userSlice';
 import { useNavigate } from 'react-router';
-import type { User } from '../types/dashboard';
 import SubmitButton from '../components/buttons/SubmitButton';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import { useMutation } from '@tanstack/react-query';
 
 interface LoginFormData {
     email: string;
@@ -22,7 +22,6 @@ const LoginPage = () => {
         password: '',
     });
     const [showPassword, setShowPassword] = useState(false);
-    const [isSigningIn, setIsSigningIn] = useState(false);
     const dispatch = useDispatch()
     const navigate = useNavigate();
 
@@ -34,21 +33,23 @@ const LoginPage = () => {
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        setIsSigningIn(true)
-        
-        const user: User | null = await login(formData.email, formData.password)
-        if (user !== null) {
+    const mutation = useMutation({
+        mutationFn: login,
+        onSuccess: (user) => {
             dispatch(setCredentials({
                 ...user
             }));
 
             navigate("/dashboard")
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data || "Unknown error occurred while logging in.");
         }
+    })
 
-        setIsSigningIn(false)
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        mutation.mutate({email: formData.email, password: formData.password})
     };
 
     return (
@@ -125,12 +126,8 @@ const LoginPage = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <SubmitButton isLoading={isSigningIn} className='w-full py-3'>
-                            {isSigningIn ? (
-                                'Signing In...'
-                            ) : (
-                                'Sign In'
-                            )}
+                        <SubmitButton isLoading={mutation.isPending} className='w-full py-3'>
+                            Sign In
                         </SubmitButton>
                     </form>
 
