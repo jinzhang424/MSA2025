@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
-export interface ProjectCreationProps {
+export interface CreateProjectParams {
     title: string, 
     description: string,
     category: string,
@@ -13,27 +13,22 @@ export interface ProjectCreationProps {
     duration: string;
 }
 
-export const createProject = async (projectData: ProjectCreationProps, token: string): Promise<void> => {
-    try {
-        await axios.post(`${API_BASE_URL}/api/Project/CreateProject`, {
-            Title: projectData.title,
-            Description: projectData.description,
-            Skills: projectData.skills,
-            Category: projectData.category,
-            TotalSpots: projectData.totalSpots,
-            Duration: projectData.duration,
-            imageUrl: projectData.imageUrl
-        }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
+export const createProject = async (projectData: CreateProjectParams, token: string): Promise<void> => {
+    const res = await axios.post(`${API_BASE_URL}/api/Project/CreateProject`, {
+        Title: projectData.title,
+        Description: projectData.description,
+        Skills: projectData.skills,
+        Category: projectData.category,
+        TotalSpots: projectData.totalSpots,
+        Duration: projectData.duration,
+        imageUrl: projectData.imageUrl
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
 
-        toast.success("Successfully created a project");
-    } catch (e: any) {
-        console.error(e)
-        toast.error(e.response?.data || "Unknown error occurred while creating a project.");
-    }
+    return res.data;
 }
 
 export interface ProjectPageProps {
