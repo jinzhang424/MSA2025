@@ -6,12 +6,14 @@ using backend.Service;
 var builder = WebApplication.CreateBuilder(args);
 
 // Allow CORS
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins(allowedOrigins ?? Array.Empty<string>())
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
