@@ -223,7 +223,7 @@ const Chat = ({ user }: ChatProps) => {
                                             </div>
                                             {chat.lastMessage && (
                                                 <p className="text-sm text-gray-600 truncate">
-                                                    {chat.lastMessage.senderId === user.id ? 'You' : '${chat.lastMessage.senderFirstName}'}{`: ${chat.lastMessage.content}`}
+                                                    {chat.lastMessage.senderId === user.id ? 'You' : `${chat.lastMessage.senderFirstName}`}{`: ${chat.lastMessage.content}`}
                                                 </p>
                                             )}
                                             <div className='flex sm:flex-row flex-col'>
