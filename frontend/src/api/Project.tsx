@@ -136,24 +136,13 @@ export interface UserStats {
 }
 
 export const getUserStats = async (token: string): Promise<UserStats> => {
-    try {
-        const res = await axios.get(`${API_BASE_URL}/api/Project/GetUserStats`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        console.log("User stats data", res)
-        return res.data as UserStats;
-    } catch (e: any) {
-        console.error(e);
-        toast.error(e.response?.message || "Error occurred while getting your project stats")
-        return {
-            myProjects: -1,
-            joinedProjects: -1,
-            pendingApplications: -1,
-            completedProjects: -1
-        };
-    }
+    const res = await axios.get(`${API_BASE_URL}/api/Project/GetUserStats`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return res.data as UserStats;
 };
 
 export interface ProjectMemberData {
