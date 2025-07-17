@@ -9,6 +9,7 @@ import { type CreateProjectParams } from '../../api/Project';
 import SubmitButton from '../buttons/SubmitButton';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 const CreateProject = () => {
     const [formData, setFormData] = useState<CreateProjectParams>({
@@ -89,6 +90,7 @@ const CreateProject = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen">
+            <ToastContainer/>
             <div>
                 <h2 className="text-xl font-semibold text-gray-900">My Projects</h2>
                 <p className="text-gray-600 mt-1">Projects you've created and are managing</p>
