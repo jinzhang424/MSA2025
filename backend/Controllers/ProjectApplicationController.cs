@@ -263,49 +263,49 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
     }
 
     [Authorize]
-[HttpGet("GetIncomingApplications")]
-public async Task<IActionResult> GetIncomingApplications()
-{
-    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    if (userIdString == null)
+    [HttpGet("GetIncomingApplications")]
+    public async Task<IActionResult> GetIncomingApplications()
     {
-        return Unauthorized("Invalid Token");
-    }
-
-    int userId = int.Parse(userIdString);
-
-    // Get all project IDs owned by the current user
-    var ownedProjectIds = await _context.Projects
-        .Where(p => p.OwnerId == userId)
-        .Select(p => p.ProjectId)
-        .ToListAsync();
-
-    // Get all applications to those projects
-    var applications = await _context.ProjectApplication
-        .Include(pa => pa.User)
-        .Include(pa => pa.Project)
-        .Where(pa => ownedProjectIds.Contains(pa.ProjectId))
-        .OrderByDescending(pa => pa.DateApplied)
-        .ToListAsync();
-
-    var result = applications.Select(pa => new
-    {
-        applicant = new
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
         {
-            userId = pa.User.UserId,
-            firstName = pa.User.FirstName,
-            lastName = pa.User.LastName,
-            email = pa.User.Email,
-            profilePicture = pa.User.ProfileImage,
-            skills = pa.User.Skills ?? new List<string>()
-        },
-        projectId = pa.ProjectId,
-        projectTitle = pa.Project.Title,
-        status = pa.Status,
-        dateApplied = pa.DateApplied.ToString("yyyy-MM-dd"),
-        coverMessage = pa.CoverMessage
-    }).ToList();
+            return Unauthorized("Invalid Token");
+        }
 
-    return Ok(result);
-}
+        int userId = int.Parse(userIdString);
+
+        // Get all project IDs owned by the current user
+        var ownedProjectIds = await _context.Projects
+            .Where(p => p.OwnerId == userId)
+            .Select(p => p.ProjectId)
+            .ToListAsync();
+
+        // Get all applications to those projects
+        var applications = await _context.ProjectApplication
+            .Include(pa => pa.User)
+            .Include(pa => pa.Project)
+            .Where(pa => ownedProjectIds.Contains(pa.ProjectId) && pa.Status == "Pending")
+            .OrderByDescending(pa => pa.DateApplied)
+            .ToListAsync();
+
+        var result = applications.Select(pa => new
+        {
+            applicant = new
+            {
+                userId = pa.User.UserId,
+                firstName = pa.User.FirstName,
+                lastName = pa.User.LastName,
+                email = pa.User.Email,
+                profilePicture = pa.User.ProfileImage,
+                skills = pa.User.Skills ?? new List<string>()
+            },
+            projectId = pa.ProjectId,
+            projectTitle = pa.Project.Title,
+            status = pa.Status,
+            dateApplied = pa.DateApplied.ToString("yyyy-MM-dd"),
+            coverMessage = pa.CoverMessage
+        }).ToList();
+
+        return Ok(result);
+    }
 }

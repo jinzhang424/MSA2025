@@ -77,9 +77,6 @@ const Applications = ({ user }: ApplicationsProps) => {
             setIncomingApplications(incomingApplications
                 .filter((prev) => !(prev.applicant.userId === applicantId && prev.projectId === projectId))
             )
-            alert(`Successfully ${action}ed applicant`)
-        } else {
-            alert(`Error ${action}ing applicant`)
         }
     };
 
