@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { MdOutlinePersonAddAlt1 } from 'react-icons/md';
 import BackLink from '../components/BackLink';
 import { register } from '../api/Auth';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import SubmitButton from '../components/buttons/SubmitButton';
+import { useMutation } from '@tanstack/react-query';
 
 interface RegisterFormData {
     firstName: string;
@@ -37,7 +38,7 @@ const RegisterationPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
 
     const validateForm = (): boolean => {
         const newErrors: ValidationErrors = {};
@@ -103,24 +104,27 @@ const RegisterationPage = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        if (!validateForm()) {
-            console.log("Invalid form")
-            return;
+    const mutation = useMutation({
+        mutationFn: register,
+        onSuccess: () => {
+            toast.success("Successfully registered account");
+            navigate("/login")
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data || "Unknown error occurred while registering.");
         }
+    });
 
-        setIsSubmitting(true);
-        
-        await register({
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+
+        mutation.mutate({
             FirstName: formData.firstName,
             LastName: formData.lastName,
             Email: formData.email,
-            Password: formData.password
+            Password: formData.password,
         });
-
-        setIsSubmitting(false);
     };
 
     return (
@@ -311,8 +315,8 @@ const RegisterationPage = () => {
                             </div>
                         </div>
 
-                        <SubmitButton isLoading={isSubmitting} className='w-full py-3'>
-                            {isSubmitting ? (
+                        <SubmitButton isLoading={mutation.isPending} className='w-full py-3'>
+                            {mutation.isPending ? (
                                 'Creating Account...'
                             ) : (
                                 'Create Account'

@@ -12,18 +12,8 @@ export interface UserModel {
 }
 
 export const register = async (user: UserModel) => {
-    console.log(user)
-    try {
-        await axios.post(`${API_BASE_URL}/api/Auth/RegisterUser`, {
-            ...user
-        });
-
-        toast.success("Successfully registered account")
-    } catch (e: any) {
-        console.log("Error while registering", e)
-        toast.error(e.response?.data || "Unknown error occurred while registering.")
-        return null;
-    }
+    const res = await axios.post(`${API_BASE_URL}/api/Auth/RegisterUser`, {...user});
+    return res.data;
 }
 
 export const login = async (email: String, password: String) : Promise<User | null> => {
