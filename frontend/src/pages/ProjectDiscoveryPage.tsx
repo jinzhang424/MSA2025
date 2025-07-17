@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IoClose } from "react-icons/io5";
 import ProjectCard from '../components/ProjectCard';
 import SimpleHero from '../components/SimpleHero';
 import { BsFilterRight } from "react-icons/bs";
 import Footer from '../components/Footer';
 import { getProjectCardData } from '../api/Project';
-import { type ProjectCardProps } from '../api/Project';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store/store';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 
 const CATEGORIES = ['All', 'Software Development', 'Web Design', 'Mobile App', 'Graphic Design', 'UI/UX', 'Data Science', 'Game Development'];
 
@@ -15,27 +16,24 @@ const ProjectDiscoveryPage = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(false);
-    const [projects, setProjects] = useState<ProjectCardProps[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
     const user = useSelector((state: RootState) => state.user);
+    const {isPending, isError, data, error} = useQuery({ 
+        queryKey: ['projects', user.token], 
+        queryFn: () => getProjectCardData(user.token)
+    })
 
-    useEffect(() => {
-        const fetchProjects = async () => {
-            setIsLoading(true);
-            const data = await getProjectCardData(user.token);
-            setProjects(data);
-            setIsLoading(false);
-        };
-        fetchProjects();
-    }, []);
+    if (isError) {
+        toast.error(error.message || "Unknown error occurred while getting projects")
+    }
 
-    const filteredProjects = projects.filter(project => {
-        const matchesCategory = selectedCategory === 'All' || project.category === selectedCategory;
-        const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) || project.description.toLowerCase().includes(searchQuery.toLowerCase()) || project.skills.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
-        return matchesCategory && matchesSearch;
-    });
-
+    const filteredProjects = data 
+        ? data.filter(project => {
+            const matchesCategory = selectedCategory === 'All' || project.category === selectedCategory;
+            const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) || project.description.toLowerCase().includes(searchQuery.toLowerCase()) || project.skills.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+            return matchesCategory && matchesSearch;
+        }) : []
+    
     return (
         <div className="bg-gray-50 min-h-screen">
             <SimpleHero heading='Discover Projects' subheading='Find remote collaboration opportunities that match your skills and interests'/>
@@ -104,7 +102,7 @@ const ProjectDiscoveryPage = () => {
 
                 {/* Project Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {isLoading ? (
+                    {isPending ? (
                         <div className="col-span-full text-center py-12 text-gray-500">Loading projects...</div>
                     ) : (
                         filteredProjects.map(project => 
@@ -114,7 +112,7 @@ const ProjectDiscoveryPage = () => {
                 </div>
 
                 {/* Empty state */}
-                {!isLoading && filteredProjects.length === 0 && <div className="text-center py-16">
+                {!isPending && filteredProjects.length === 0 && <div className="text-center py-16">
                     <div className="text-gray-400 mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

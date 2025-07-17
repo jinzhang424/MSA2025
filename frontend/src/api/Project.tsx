@@ -125,20 +125,12 @@ export interface UserProjectCardProps {
 }
 
 export const getUserProjectCardData = async (token: string): Promise<UserProjectCardProps[]> => {
-    try {
-        const res = await axios.get(`${API_BASE_URL}/api/Project/GetAllUserProjects`, {
+    const res = await axios.get(`${API_BASE_URL}/api/Project/GetAllUserProjects`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        const data = res.data;
-
-        return data as UserProjectCardProps[];
-    } catch (e: any) {
-        console.error(e);
-        toast.error(e.response?.data || "Unknown error occurred while getting user project card data.");
-        return [];
-    }
+    return res.data;
 };
 
 export interface UserStats {
