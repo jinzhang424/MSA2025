@@ -3,14 +3,14 @@ import type { User } from "../types/dashboard";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
-export interface UserModel {
+export interface UserParams {
     FirstName: string,
     LastName: string,
     Email: string,
     Password: string
 }
 
-export const register = async (user: UserModel) => {
+export const register = async (user: UserParams) => {
     const res = await axios.post(`${API_BASE_URL}/api/Auth/RegisterUser`, {...user});
     return res.data;
 }
