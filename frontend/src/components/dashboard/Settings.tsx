@@ -4,8 +4,9 @@ import type { User } from '../../types/dashboard';
 import { updatePassword, updateProfile } from '../../api/User';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../store/userSlice';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import SubmitButton from '../buttons/SubmitButton';
+import { useMutation } from '@tanstack/react-query';
 
 interface SettingsProps {
     user: User;
@@ -46,7 +47,6 @@ const Settings = ({ user }: SettingsProps) => {
     });
     // const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined);
     const [newSkill, setNewSkill] = useState('');
-    const [isUpdating, setIsUpdating] = useState(false);
     const [isNotMatching, setIsNotMatching] = useState(false);
     
     const dispatch = useDispatch();
@@ -84,22 +84,46 @@ const Settings = ({ user }: SettingsProps) => {
         }));
     };
 
+    const profileSubmit = useMutation({
+        mutationFn: () => updateProfile(profileData, user.token),
+        onSuccess: () => {
+            dispatch(setCredentials({
+                id: user.id,
+                firstName: profileData.firstName,
+                lastName: profileData.lastName,
+                email: profileData.email,
+                bio: profileData.bio,
+                token: user.token,
+                skills: profileData.skills
+            }))
+            toast.success("Successfully updated profile");
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while updating profile");
+            console.error("Error while updating profile");
+        }
+    })
+
     const handleProfileSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        setIsUpdating(true)
-        dispatch(setCredentials({
-            id: user.id,
-            firstName: profileData.firstName,
-            lastName: profileData.lastName,
-            email: profileData.email,
-            bio: profileData.bio,
-            token: user.token,
-            skills: profileData.skills
-        })) 
-        await updateProfile(profileData, user.token);
-        setIsUpdating(false)
+        profileSubmit.mutate();
     };
+
+    const passwordSubmit = useMutation({
+        mutationFn: () => updatePassword(passwordData, user.token),
+        onSuccess: () => {
+            toast.success('Password updated successfully!');
+            setPasswordData({
+                oldPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            });
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while updating password");
+            console.error("Error while updating password", e.message)
+        }
+    })
 
     const handlePasswordSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -109,17 +133,7 @@ const Settings = ({ user }: SettingsProps) => {
             return;
         }
 
-        const success = await updatePassword(passwordData, user.token);
-        if (success) {
-            alert('Password updated successfully!');
-            setPasswordData({
-                oldPassword: '',
-                newPassword: '',
-                confirmPassword: ''
-            });
-
-            setIsNotMatching(false);
-        }
+        passwordSubmit.mutate();
     };
 
     return (
@@ -289,7 +303,7 @@ const Settings = ({ user }: SettingsProps) => {
 
                         {/* Submit Button */}
                         <div className="flex justify-end">
-                            <SubmitButton isLoading={isUpdating} className='px-6 py-3'>
+                            <SubmitButton isLoading={profileSubmit.isPending} className='px-6 py-3'>
                                 <FiSave size={20} className="mr-2" />
                                 Save Changes
                             </SubmitButton>
@@ -388,7 +402,7 @@ const Settings = ({ user }: SettingsProps) => {
 
                         {/* Submit Button */}
                         <div className="flex justify-end">
-                            <SubmitButton isLoading={isUpdating} className="px-6 py-3"
+                            <SubmitButton isLoading={passwordSubmit.isPending} className="px-6 py-3"
                             >
                                 <FiSave size={20} className="mr-2" />
                                 Update Password
