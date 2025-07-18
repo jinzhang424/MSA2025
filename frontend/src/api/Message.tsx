@@ -18,18 +18,12 @@ export interface Message {
     createdAt: string;
 }
 
-export const sendMessage = async (token: string, messageDto: MessageDto): Promise<boolean> => {
-    try {
-        await axios.post(`${API_BASE_URL}/api/Message/SendMessages`, messageDto, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+export const sendMessage = async (token: string, messageDto: MessageDto) => {
+    const res = await axios.post(`${API_BASE_URL}/api/Message/SendMessages`, messageDto, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
 
-        return true;
-    } catch (e: any) {
-        toast.error(e.reponse?.data);
-        console.error(e);
-        return false;
-    }
+    return res.data;
 };
 
 export const getChatroomMessages = async (token: string, chatroomId: number): Promise<Message[] | null> => {

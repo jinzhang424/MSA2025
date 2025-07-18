@@ -2,12 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import { FiSend, FiSearch, FiUsers, FiMessageCircle } from 'react-icons/fi';
 import { type User } from '../../types/dashboard';
 import { FaChevronLeft } from "react-icons/fa6";
-import { getChatroomListings, type ChatRoomListing } from '../../api/Chatroom';
+import { getChatroomListings } from '../../api/Chatroom';
 import { getChatroomMessages, sendMessage, type Message, type MessageDto } from '../../api/Message';
 import { createSignalRConnection } from '../../utils/signalr';
 import { toast, ToastContainer } from 'react-toastify';
 import SpinnerLoader from '../loaders/SpinnerLoader';
-import { useTokenQuery } from '../../hooks/useTokenQuery';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import formatTime from '../../utils/formatTime';
 
 interface ChatProps {
     user: User;
@@ -20,10 +21,7 @@ const Chat = ({ user }: ChatProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [openChat, setOpenChat] = useState(false);
 
-    const [chatRooms, setChatRooms] = useState<ChatRoomListing[]>([]);
-    const [isLoadingChatList, setIsLoadingChatList] = useState(true);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
-    const [isSending, setIsSending] = useState(false);
 
     const [messages, setMessages] = useState<Message[]>([]);
     const connectionRef = useRef<any>(null);
@@ -88,14 +86,20 @@ const Chat = ({ user }: ChatProps) => {
         };
     }, [selectedChat]);
 
-    const fetchChatRooms = async () => {
-        setIsLoadingChatList(true);
-        const data = await getChatroomListings(user.token);
-        setChatRooms(data);
-        setIsLoadingChatList(false);
-    };
+    const { 
+        data: chatRooms = [],
+        isError: isGetChatroomsError,
+        error: getChatroomsError,
+        isLoading: isLoadingChatrooms
+    } = useQuery({
+        queryKey: ["chatrooms"],
+        queryFn: () => getChatroomListings(user.token)
+    })
 
-    useTokenQuery(fetchChatRooms)
+    if (isGetChatroomsError) {
+        toast.error(getChatroomsError.message || "Unknown error ocurred while getting chatrooms");
+        console.error("Error ocurred while getting chatrooms", getChatroomsError)
+    }
 
     const filteredChats = chatRooms.filter(chat =>
         chat.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -103,19 +107,27 @@ const Chat = ({ user }: ChatProps) => {
 
     const selectedChatRoom = chatRooms.find(chatroom => chatroom.chatroomId === selectedChat);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
     useEffect(() => {
+        const scrollToBottom = () => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        };
+    
         scrollToBottom();
     }, [messages]);
+
+    const sendMsgMutation = useMutation({
+        mutationFn: (message: MessageDto) => sendMessage(user.token, message),
+        onSuccess: () => {
+            setNewMessage("");
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while sending message");
+        }
+    })
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newMessage.trim() || !selectedChat) return;
-
-        setIsSending(true);
 
         const messageContent = newMessage;
         const message: MessageDto = {
@@ -123,33 +135,7 @@ const Chat = ({ user }: ChatProps) => {
             content: messageContent,
         };
 
-        const success = await sendMessage(user.token, message);
-        if (success) {
-            setNewMessage("");
-        }
-        
-        setIsSending(false);
-    };
-
-    const formatTime = (timestamp: string) => {
-        const date = new Date(timestamp);
-        const now = new Date();
-        const isToday = date.toDateString() === now.toDateString();
-        
-        if (isToday) {
-            return date.toLocaleTimeString('en-US', { 
-                hour: 'numeric', 
-                minute: '2-digit',
-                hour12: true 
-            });
-        } else {
-            return date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit'
-            });
-        }
+        sendMsgMutation.mutate(message)
     };
 
     const handleSelectChat = async (chatId: number) => {
@@ -183,7 +169,7 @@ const Chat = ({ user }: ChatProps) => {
                 </div>
 
                 {/* Chat List */}
-                {isLoadingChatList ? 
+                {isLoadingChatrooms ? 
                     (
                         <SpinnerLoader className='flex mt-8 justify-center w-full'>
                             Loading chat list...
@@ -351,7 +337,7 @@ const Chat = ({ user }: ChatProps) => {
                                     </div>
                                     <button
                                         type="submit"
-                                        disabled={!newMessage.trim() || isSending}
+                                        disabled={!newMessage.trim() || sendMsgMutation.isPending}
                                         className="p-2 bg-purple-950 text-white rounded-full hover:bg-purple-900 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                     >
                                         <FiSend size={21} />
