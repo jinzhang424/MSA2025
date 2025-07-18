@@ -5,6 +5,7 @@ export interface User {
     email: string,
     bio: string,
     token: string,
+    profileImage?: string,
     skills: string[]
 }
 

@@ -38,6 +38,7 @@ public class AuthController : ControllerBase
             FirstName = userDto.FirstName,
             LastName = userDto.LastName,
             Email = userDto.Email,
+            ProfileImage = userDto.ProfileImage
         };
 
         var hasher = new PasswordHasher<User>();
@@ -78,6 +79,7 @@ public class AuthController : ControllerBase
             lastName = user.LastName,
             email = user.Email,
             bio = user.Bio,
+            profileImage = user.ProfileImage,
             token = _jwtService.GenerateJwtToken(user.UserId.ToString()),
             skills = user.Skills
         });

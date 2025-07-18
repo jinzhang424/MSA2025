@@ -66,10 +66,14 @@ function UserDashboard() {
                 <div className="flex p-4 border-b border-gray-200">
                     <div className="flex items-center gap-x-3 w-full">
                         {/* Profile picture */}
-                        <div className="flex-shrink-0 w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center">
-                            <span className="text-white font-semibold text-sm">
-                                {user?.firstName[0]?.toUpperCase()}{user?.lastName[0]?.toUpperCase()}
-                            </span>
+                        <div className="flex-shrink-0 w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center overflow-hidden">
+                            {user.profileImage ? (
+                                <img src={user.profileImage} alt={`${user?.firstName} ${user?.lastName}`}/>
+                            ) : (
+                                <span className="text-white font-semibold text-sm">
+                                    {user?.firstName[0]?.toUpperCase()}{user?.lastName[0]?.toUpperCase()}
+                                </span>
+                            )}
                         </div>
 
                         {/* Name and email */}
