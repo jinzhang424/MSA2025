@@ -176,20 +176,20 @@ export const getProjectMembers = async (projectId: number, token: string): Promi
     }
 }
 
-export const removeUserFromProject = async (victimId: number, projectId: number, token: string): Promise<boolean> => {
-    try {
-        await axios.delete(`${API_BASE_URL}/api/Project/RemoveUserFromProject/${victimId}/${projectId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        return true;
-    } catch (e: any) {
-        console.error(e);
-        toast.error(e.response?.data || "Unknown error occurred while removing user from project.");
-        return false;
-    }
-};
+interface ProjectActionParam {
+    userId: number, 
+    projectId: number, 
+    token: string
+}
+
+export const removeUserFromProject = async ({userId, projectId, token} : ProjectActionParam) => {
+    const res = await axios.delete(`${API_BASE_URL}/api/Project/RemoveUserFromProject/${userId}/${projectId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return res.data
+}
 
 export interface JoinedProjectsCardData {
     projectId: number,
