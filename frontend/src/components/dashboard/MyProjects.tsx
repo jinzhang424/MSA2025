@@ -7,7 +7,7 @@ import ProjectManagementDialog from './ProjectManagementDialog';
 import { getUserProjectCardData, type UserProjectCardProps } from '../../api/Project';
 import SpinnerLoader from '../loaders/SpinnerLoader';
 import { ToastContainer } from 'react-toastify';
-import { useTokenQuery } from '../../hooks/useTokenQuery';
+import { useQuery } from '@tanstack/react-query';
 
 interface MyProjectsProps {
     user: User;
@@ -17,16 +17,14 @@ const MyProjects = ({ user }: MyProjectsProps) => {
     const [filter, setFilter] = useState<'All' | 'Active' | 'Completed' | 'cancelled'>('All');
     const [selectedProject, setSelectedProject] = useState<UserProjectCardProps | null>(null);
     const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
-    const [myProjects, setMyProjects] = useState<UserProjectCardProps[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
-    const fetchProjects = async () => {
-        setIsLoading(true);
-        const projects = await getUserProjectCardData(user.token);
-        setMyProjects(projects);
-        setIsLoading(false);
-    };
-    useTokenQuery(fetchProjects)
+    const {
+        data: myProjects = [],
+        isLoading
+    } = useQuery({
+        queryKey: ["myProjects"],
+        queryFn: () => getUserProjectCardData(user.token)
+    })
 
     const filteredProjects = myProjects.filter(project => 
         filter === 'All' || project.status === filter

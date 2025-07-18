@@ -5,11 +5,14 @@ import { IoChevronDown } from 'react-icons/io5';
 import { createProject } from '../../api/Project';
 import { useSelector } from 'react-redux';
 import { type RootState } from '../../store/store';
-import { type ProjectCreationProps } from '../../api/Project';
+import { type CreateProjectParams } from '../../api/Project';
 import SubmitButton from '../buttons/SubmitButton';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
 const CreateProject = () => {
-    const [formData, setFormData] = useState<ProjectCreationProps>({
+    const [formData, setFormData] = useState<CreateProjectParams>({
         title: '',
         description: '',
         category: '',
@@ -20,7 +23,6 @@ const CreateProject = () => {
     });
 
   const [skillInput, setSkillInput] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const user = useSelector((state: RootState) => state.user);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -71,24 +73,24 @@ const CreateProject = () => {
         }
     };
 
+    const submit = useMutation({
+        mutationFn: (formData: CreateProjectParams) => createProject(formData, user.token),
+        onSuccess: () => {
+            toast.success("Sucessfully created project")
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while creating project")
+        }
+    })
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true)
-
-        try {
-            console.log("Create project form data: ", formData);
-            await createProject(formData, user.token);
-            alert('Project created successfully!');
-        } catch (e) {
-            console.log(e);
-            alert('Error occurred while creating project');
-        }
-
-        setIsSubmitting(false)
+        submit.mutate(formData);
     };
 
     return (
         <div className="bg-gray-50 min-h-screen">
+            <ToastContainer/>
             <div>
                 <h2 className="text-xl font-semibold text-gray-900">My Projects</h2>
                 <p className="text-gray-600 mt-1">Projects you've created and are managing</p>
@@ -258,7 +260,7 @@ const CreateProject = () => {
                             </div>
 
                             {/* Submit Button */}
-                            <SubmitButton className="w-full duration-200 bg-purple-950 text-white py-3 px-6 rounded-md hover:bg-purple-800 mt-4" isLoading={isSubmitting}>
+                            <SubmitButton className="w-full duration-200 bg-purple-950 text-white py-3 px-6 rounded-md hover:bg-purple-800 mt-4" isLoading={submit.isPending}>
                                 Create Project
                             </SubmitButton>
                         </div>

@@ -2,10 +2,15 @@ import { useState } from 'react';
 import { FiClock, FiCheck, FiX, FiEye, FiUser } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
-import { GetOutgoingApplications, type UserOutgoingApplication, GetIncomingApplications, type UserIncomingApplication, rejectUserApplication, acceptUserApplication } from '../../api/ProjectApplication';
+import { 
+    GetOutgoingApplications, 
+    GetIncomingApplications, 
+    rejectUserApplication, 
+    acceptUserApplication 
+} from '../../api/ProjectApplication';
 import SpinnerLoader from '../loaders/SpinnerLoader';
-import { ToastContainer } from 'react-toastify';
-import { useTokenQuery } from '../../hooks/useTokenQuery';
+import { toast, ToastContainer } from 'react-toastify';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 interface ApplicationsProps {
     user: User;
@@ -13,30 +18,38 @@ interface ApplicationsProps {
 
 const Applications = ({ user }: ApplicationsProps) => {
     const [activeTab, setActiveTab] = useState<'outgoing' | 'incoming'>('outgoing');
-    const [outgoingApplications, setOutgoingApplications] = useState<UserOutgoingApplication[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [incomingApplications, setIncomingApplications] = useState<UserIncomingApplication[]>([]);
 
-    const fetchOutgoingApplications = async () => {
-        setIsLoading(true);
+    const {
+        data: outgoingApplications = [],
+        isLoading: isOutgoingLoading,
+        isError: isOutgoingError,
+        error: outgoingError,
+    } = useQuery({
+        queryKey: ['outoingApplications', user.token],
+        queryFn: () => GetOutgoingApplications(user.token),
+        enabled: !!user.token
+    })
 
-        const data = await GetOutgoingApplications(user.token);
-        setOutgoingApplications(data);
-        
-        setIsLoading(false);
-    };
+    if (isOutgoingError) {
+        toast.error(outgoingError.message)
+        console.error("Error while fetching outgoing applications", outgoingError)
+    }
 
-    const fetchIncomingApplications = async () => {
-        setIsLoading(true);
+    const {
+        data: incomingApplications = [],
+        isLoading: isIncomingLoading,
+        isError: isIncomingError,
+        error: incomingError,
+    } = useQuery({
+        queryKey: ['outgoingApplications', user.token],
+        queryFn: () => GetIncomingApplications(user.token),
+        enabled: !!user.token
+    })
 
-        const data = await GetIncomingApplications(user.token);
-        setIncomingApplications(data);
-
-        setIsLoading(false);
-    };
-
-    useTokenQuery(fetchOutgoingApplications)
-    useTokenQuery(fetchIncomingApplications)
+    if (isIncomingError) {
+        toast.error(incomingError.message)
+        console.error("Error while fetching outgoing applications", outgoingError)
+    }
 
     const getStatusIcon = (status: string) => {
         switch (status) {
@@ -64,19 +77,33 @@ const Applications = ({ user }: ApplicationsProps) => {
         }
     };
 
-    const handleApplicationAction = async (applicantId: number, projectId: number, action: 'accept' | 'reject') => {
-        console.log("Applicant id", applicantId)
-        let success = false;
-        if (action == 'accept') {
-            success = await acceptUserApplication(applicantId, projectId, user.token);
-        } else {
-            success = await rejectUserApplication(applicantId, projectId, user.token);
+    const acceptMutation = useMutation({
+        mutationFn: acceptUserApplication,
+        onSuccess: () => {
+            toast.success("Successfully accepted applicant");
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while accepting applicant");
+            console.error("Error while accepting applicant", e.message);
         }
+    })
 
-        if (success) {
-            setIncomingApplications(incomingApplications
-                .filter((prev) => !(prev.applicant.userId === applicantId && prev.projectId === projectId))
-            )
+    const rejectMutation = useMutation({
+        mutationFn: rejectUserApplication,
+        onSuccess: () => {
+            toast.success("Successfully rejected applicant");
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while rejecting applicant");
+            console.error("Error while rejecting applicant", e.message);
+        }
+    })
+
+    const handleApplicationAction = async (applicantId: number, projectId: number, action: 'accept' | 'reject') => {
+        if (action == 'accept') {
+            acceptMutation.mutate({applicantId, projectId, token: user.token});
+        } else {
+            rejectMutation.mutate({applicantId, projectId, token: user.token});
         }
     };
 
@@ -116,7 +143,7 @@ const Applications = ({ user }: ApplicationsProps) => {
             </div>
 
             {/* Content */}
-            {isLoading ? (
+            {isOutgoingLoading || isIncomingLoading ? (
                 <SpinnerLoader className='flex mt-12 justify-center w-full'>
                     Loading applications...
                 </SpinnerLoader>

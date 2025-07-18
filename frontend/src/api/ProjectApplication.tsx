@@ -81,34 +81,28 @@ export const getProjectPendingApplications = async (projectId: number, token: st
     }
 };
 
-export const acceptUserApplication = async (userId: number, projectId: number, token: string): Promise<boolean> => {
-    try {
-        const res = await axios.put(`${API_BASE_URL}/api/ProjectApplication/AcceptUserApplication/${userId}/${projectId}`, null, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        return res.status === 200;
-    } catch (e: any) {
-        toast.error(e.response?.message ?? "Unknown error ocurred while accepting user application");
-        console.error(e);
-        return false;
-    }
+interface ApplicationActionParams {
+    applicantId: number, 
+    projectId: number, 
+    token: string
+}
+
+export const acceptUserApplication = async ({applicantId, projectId, token} : ApplicationActionParams) => {
+    const res = await axios.put(`${API_BASE_URL}/api/ProjectApplication/AcceptUserApplication/${applicantId}/${projectId}`, null, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return res.data;
 };
 
-export const rejectUserApplication = async (victimId: number, projectId: number, token: string): Promise<boolean> => {
-    try {
-        const res = await axios.patch(`${API_BASE_URL}/api/ProjectApplication/RejectUserApplication/${victimId}/${projectId}`, null, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        return res.status === 200;
-    } catch (e: any) {
-        toast.error(e.response?.message ?? "Unknown error ocurred while rejecting user application.");
-        console.error(e);
-        return false;
-    }
+export const rejectUserApplication = async ({applicantId, projectId, token} : ApplicationActionParams) => {
+    const res = await axios.patch(`${API_BASE_URL}/api/ProjectApplication/RejectUserApplication/${applicantId}/${projectId}`, null, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return res.data;
 };
 
 

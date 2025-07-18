@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FiX, FiUsers, FiUserCheck, FiMail, FiUser, FiStar } from 'react-icons/fi';
 import { removeUserFromProject, type UserProjectCardProps } from '../../api/Project';
-import { getProjectMembers, type ProjectMemberData } from '../../api/Project';
-import { acceptUserApplication, getProjectPendingApplications, rejectUserApplication, type ProjectApplication } from '../../api/ProjectApplication';
+import { getProjectMembers } from '../../api/Project';
+import { acceptUserApplication, getProjectPendingApplications, rejectUserApplication } from '../../api/ProjectApplication';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
-import { useTokenQuery } from '../../hooks/useTokenQuery';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 
 interface ProjectManagementDialogProps {
     project: UserProjectCardProps;
@@ -15,89 +16,100 @@ interface ProjectManagementDialogProps {
 
 const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagementDialogProps) => {
     const [activeTab, setActiveTab] = useState<'members' | 'applicants'>('members');
-    const [members, setMembers] = useState<ProjectMemberData[]>([]);
-    // const [isLoadingMembers, setIsLoadingMembers] = useState(false);
-    const [applicants, setApplicants] = useState<ProjectApplication[]>([]);
-    // const [isLoadingApplicants, setIsLoadingApplicants] = useState(false);
-
     const user = useSelector((state: RootState) => state.user);
 
-    const fetchMembers = async () => {
-        if (isOpen) {
-            // setIsLoadingMembers(true);
-            const data = await getProjectMembers(project.projectId, user.token);
-            setMembers(data);
-            // setIsLoadingMembers(false);
-        }
-    };
-    useTokenQuery(fetchMembers)
+    const {
+        data: members = [],
+        isError: isGetMembersError,
+        error: getMembersError,
+        refetch: refetchMembers
+    } = useQuery({
+        queryKey: ["members"],
+        queryFn: () => getProjectMembers(project.projectId, user.token)
+    })
 
-    useEffect(() => {
-        const fetchApplicants = async () => {
-            if (isOpen) {
-                // setIsLoadingApplicants(true);
-                const data = await getProjectPendingApplications(project.projectId, user.token);
-                setApplicants(data);
-                // setIsLoadingApplicants(false);
-            }
-        };
-        fetchApplicants();
-    }, [isOpen, project.projectId]);
+    if (isGetMembersError) {
+        toast.error("Unknown error occurred while getting project members");
+        console.error("Error while getting project members", getMembersError);
+    }
+
+    const {
+        data: applicants = [],
+        isError: isGetPendingAppsError,
+        error: getPendingAppsError,
+        refetch: refetchPendingApps
+    } = useQuery({
+        queryKey: ["applicants"],
+        queryFn: () => getProjectPendingApplications(project.projectId, user.token)
+    })
+
+    if (isGetPendingAppsError) {
+        toast.error("Unknown error occurred while getting project members");
+        console.error("Error while getting project members", getPendingAppsError);
+    }
+
+    const acceptApplication = useMutation({
+        mutationFn: (applicantId: number) => acceptUserApplication({
+            applicantId, 
+            projectId: project.projectId, 
+            token: user.token
+        }),
+        onSuccess: () => {
+            refetchMembers();
+            refetchPendingApps();
+            toast.success("Successfully accepted applicant");
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while accepting applicant")
+            console.error("Error while accepting applicant", e);
+        }
+    })
 
     const handleAcceptApplicant = async (applicantId: number) => {
-        console.log('Accept applicant:', applicantId);
-        const success = await acceptUserApplication(applicantId, project.projectId, user.token);
-        if (success) {
-            alert("Successfully accepted user");
-            const acceptedApplicant = applicants.find(a => a.userId === applicantId);
-
-            // Moving applicant from applicants to members
-            if (acceptedApplicant) {
-                setApplicants(prev => prev.filter(a => a.userId !== applicantId));
-                setMembers(prev => [
-                    ...prev,
-                    {
-                        projectId: project.projectId,
-                        userId: acceptedApplicant.userId,
-                        user: {
-                            id: acceptedApplicant.userId,
-                            firstName: acceptedApplicant.firstName,
-                            lastName: acceptedApplicant.lastName,
-                            email: acceptedApplicant.email,
-                            bio: "", // If you have bio, add it here
-                            skills: acceptedApplicant.skills,
-                        },
-                        role: "Member", // Or whatever role is appropriate
-                        joinedAt: new Date().toISOString(),
-                    }
-                ]);
-            }
-        } else {
-            alert("Error occurred while accepting user");
-        }
+        acceptApplication.mutate(applicantId);
     };
+
+    const rejectApplication = useMutation({
+        mutationFn: (applicantId: number) => rejectUserApplication({
+            applicantId, 
+            projectId: project.projectId, 
+            token: user.token
+        }),
+        onSuccess: () => {
+            refetchPendingApps();
+            toast.success("Successfully rejected applicant");
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while rejecting applicant")
+            console.error("Error while rejecting applicant", e);
+        }
+    })
 
     const handleRejectApplicant = async (applicantId: number) => {
         console.log('Reject applicant:', applicantId);
-        const success = await rejectUserApplication(applicantId, project.projectId, user.token);
-        if (success) {
-            setApplicants(prev => prev.filter(a => a.userId !== applicantId));
-            alert("Successfully rejected user");
-        } else {
-            alert("Error occurred while rejecting user");
-        }
+        rejectApplication.mutate(applicantId);
     };
+
+    const removeMember = useMutation({
+        mutationFn: (memberId: number) => removeUserFromProject({
+            userId: memberId, 
+            projectId: project.projectId, 
+            token: user.token
+        }),
+        onSuccess: () => {
+            refetchMembers();
+            toast.success("Successfully removed applicant");
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while removing member")
+            console.error("Error while removing member", e);
+        }
+    })
 
     const handleRemoveMember = async (memberId: number) => {
         if (window.confirm('Are you sure you want to remove this member from the project?')) {
-        const success = await removeUserFromProject(memberId, project.projectId, user.token);
-        if (success) {
-            setMembers(prev => prev.filter(m => m.userId !== memberId));
-            alert("Member successfully removed.");
-        } else {
-            alert("Error occurred while removing member.");
+            removeMember.mutate(memberId)
         }
-    }
     };
 
     const getRoleIcon = (role: string) => {

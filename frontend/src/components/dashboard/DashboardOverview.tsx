@@ -1,62 +1,73 @@
-import { useState } from 'react';
 import { FiFolder, FiUsers, FiFileText, FiTrendingUp } from 'react-icons/fi';
 import type { User } from '../../types/dashboard';
-import { getUserStats, type UserStats } from '../../api/Project';
-import { getRecentApplications, type RecentApplications } from '../../api/ProjectApplication';
-import { getNotifications, type Notification } from '../../api/Notifications';
-import { ToastContainer } from 'react-toastify';
+import { getUserStats } from '../../api/Project';
+import { getRecentApplications } from '../../api/ProjectApplication';
+import { getNotifications } from '../../api/Notifications';
+import { toast, ToastContainer } from 'react-toastify';
 import SpinnerLoader from '../loaders/SpinnerLoader';
-import { useTokenQuery } from '../../hooks/useTokenQuery';
+import { useQuery } from '@tanstack/react-query';
 
 interface DashboardOverviewProps {
     user: User;
 }
 
 const DashboardOverview = ({ user }: DashboardOverviewProps) => {
-    const [stats, setStats] = useState<UserStats | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [recentApplications, setRecentApplications] = useState<RecentApplications[]>([]);
-    const [applicationsLoading, setApplicationsLoading] = useState<boolean>(true);
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-    const [notificationsLoading, setNotificationsLoading] = useState<boolean>(true);
+    const {
+        data: stats, 
+        isError: isStatsError, 
+        error: statsError, 
+        isLoading: isStatsLoading
+    } = useQuery({
+        queryKey: ["stats", user.token],
+        queryFn: () => getUserStats(user.token)
+    })
 
-    const fetchStats = async () => {
-        setLoading(true);
-        try {
-            const data = await getUserStats(user.token);
-            setStats(data);
-        } catch (error) {
-            console.error('Error fetching user stats:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchRecentApplications = async () => {
-        setApplicationsLoading(true);
-        try {
-            const data = await getRecentApplications(3, user.token);
-            setRecentApplications(data);
-        } catch (error) {
-            console.error('Error fetching your applications:', error);
-        } finally {
-            setApplicationsLoading(false);
-        }
-    };
-
-    const fetchNotifications = async () => {
-        setNotificationsLoading(true);
-        const data = await getNotifications(user.token, 3)
-        setNotifications(data)
-        setNotificationsLoading(false);
+    if (isStatsError) {
+        toast.success(statsError.message)
+        console.error(statsError)
     }
 
-    useTokenQuery(fetchStats);
-    useTokenQuery(fetchRecentApplications);
-    useTokenQuery(fetchNotifications);
+    const {
+        data: recentApplications = [], 
+        isError: isRecentAppsError, 
+        error: recentAppsError, 
+        isLoading: isRecentAppsLoading
+    } = useQuery({
+        queryKey: ["recentApplications", 3, user.token],
+        queryFn: async ({ queryKey }) => {
+            const [, limit, token] = queryKey;
+            return await getRecentApplications(limit as number, token as string);
+        }
+    })
 
-    if (loading) {
-        return <div className="p-8 text-center text-gray-500">Loading dashboard...</div>;
+    if (isRecentAppsError) {
+        toast.error(recentAppsError.message)
+        console.error('Error fetching your applications:', recentAppsError);
+    }
+    
+    const {
+        data: notifications = [], 
+        isError: isNotifsError, 
+        error: errorNotifs, 
+        isLoading: isNotifsLoading
+    } = useQuery({
+        queryKey: ["notifications", 3, user.token],
+        queryFn: async ({ queryKey }) => {
+            const [, limit, token] = queryKey;
+            return await getNotifications(token as string, limit as number)
+        }
+    }) 
+
+    if (isNotifsError) {
+        toast.error(errorNotifs.message || "Unknown error while loading recent activity");
+        console.error("Error loading recent activity", errorNotifs)
+    }
+
+    if (isNotifsLoading || isRecentAppsLoading || isStatsLoading) {
+        return <div className="flex justify-center items-center p-8 text-center text-gray-500">
+            <SpinnerLoader/> 
+            <p className='ml-2'>Loading dashboard...</p>
+        </div>;
     }
 
     if (!stats) {
@@ -139,9 +150,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     </div>
                     <div className="p-6">
                         <div className="space-y-4">
-                            {applicationsLoading ? (
-                                <SpinnerLoader className="w-full justify-center">Loading your applications...</SpinnerLoader>
-                            ) : recentApplications.length === 0 ? (
+                            {recentApplications.length === 0 ? (
                                 <div className="text-center text-gray-400">No applications found.</div>
                             ) : recentApplications.map((application) => (
                                 <div key={application.id} className="flex items-start space-x-3">
@@ -188,9 +197,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     <div className="p-6 border-b border-gray-200">
                         <h3 className="text-lg font-semibold text-gray-900">Recent Events</h3>
                     </div>
-                    {notificationsLoading ? (
-                        <SpinnerLoader className='text-wrap w-full justify-center mt-6'>Loading recent events...</SpinnerLoader>
-                    ) : notifications.length === 0 ? (
+                    {notifications.length === 0 ? (
                         <div className="text-center text-gray-400 p-6">No recent events.</div>
                     ) : (
                         <div className="p-6">

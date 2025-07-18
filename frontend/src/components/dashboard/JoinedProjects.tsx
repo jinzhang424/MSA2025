@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
-import { getJoinedProjectsCardData, removeUserFromProject, type JoinedProjectsCardData } from '../../api/Project';
+import { getJoinedProjectsCardData, removeUserFromProject } from '../../api/Project';
 import SpinnerLoader from '../loaders/SpinnerLoader';
-import { useTokenQuery } from '../../hooks/useTokenQuery';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 
 interface JoinedProjectsProps {
     user: User;
@@ -13,16 +14,21 @@ interface JoinedProjectsProps {
 const JoinedProjects = ({ user }: JoinedProjectsProps) => {
     const [filter, setFilter] = useState<'All' | 'Active' | 'Completed'>('All');
 
-    const [joinedProjects, setJoinedProjects] = useState<JoinedProjectsCardData[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const {
+        data: joinedProjects = [], 
+        isLoading: isJoinedProjectsLoading,
+        isError: isJoinedProjectsError,
+        error: joinedProjectsError,
+        refetch: refetchJoinedProjects
+    } = useQuery({
+        queryKey: ["joinedProjects", user.token],
+        queryFn: () => getJoinedProjectsCardData(user.token)
+    })
 
-    const fetchProjects = async () => {
-        setIsLoading(true);
-        const data = await getJoinedProjectsCardData(user.token);
-        setJoinedProjects(data);
-        setIsLoading(false);
-    };
-    useTokenQuery(fetchProjects)
+    if (isJoinedProjectsError) {
+        toast.error(joinedProjectsError.message || "Unknown error occurred while fetching joined projects");
+        console.error("Error occurred while fetching joined projects", joinedProjectsError);
+    }
 
     const filteredProjects = joinedProjects.filter(member => 
         filter === 'All' || member.status === filter
@@ -52,16 +58,24 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
         }
     };
 
-    const handleLeaveProject = async (projectId: number, projectTitle: string) => {
-        if (window.confirm(`Are you sure you want to leave "${projectTitle}"?`)) {
-            const success = await removeUserFromProject(user.id, projectId, user.token);
-            if (success) {
-                setJoinedProjects((prev) => prev.filter(jp => jp.projectId !== projectId))
-                alert(`Successfully left ${projectTitle}`);
-            } else {
-                alert(`Error occurred while trying to leave ${projectTitle}`);
-            }
+    const leaveProject = useMutation({
+        mutationFn: removeUserFromProject,
+        onSuccess: () => {
+            refetchJoinedProjects();
+            toast.success("Successfully left from project");
+        },
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while leaving project");
+            console.error("Error while leaving project", e)
         }
+    })
+
+    const handleLeaveProject = async (projectId: number) => {
+        leaveProject.mutate({
+            userId: user.id, 
+            projectId: projectId, 
+            token: user.token
+        })
     };
 
     return (
@@ -92,7 +106,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
             </div>
 
             {/* Projects Grid */}
-            {isLoading ? (
+            {isJoinedProjectsLoading ? (
                 <SpinnerLoader className='flex mt-12 justify-center w-full'>
                     Loading joined projects...
                 </SpinnerLoader>
@@ -184,7 +198,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                                                         View Project
                                                     </Link>
                                                     <button
-                                                        onClick={() => handleLeaveProject(project.projectId, project.title)}
+                                                        onClick={() => handleLeaveProject(project.projectId)}
                                                         className="p-2 text-gray-500 hover:text-red-600 transition-colors"
                                                         title="Leave Project"
                                                     >
