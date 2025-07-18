@@ -14,6 +14,8 @@ import { logout } from '../store/userSlice';
 import { useNavigate } from 'react-router';
 import { MdOutlineCreate } from "react-icons/md";
 import CreateProject from '../components/dashboard/CreateProject';
+import { ImCompass } from "react-icons/im";
+import { DiscoverProjects } from './ProjectDiscoveryPage';
 
 function UserDashboard() {
     const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
@@ -24,6 +26,7 @@ function UserDashboard() {
 
     const sidebarItems = [
         { id: 'overview', label: 'Overview', icon: FiHome },
+        { id: 'discover-projects', label: 'Discover Projects', icon: ImCompass},
         { id: 'create-project', label: 'Create Project', icon: MdOutlineCreate},
         { id: 'my-projects', label: 'My Projects', icon: FiFolder },
         { id: 'joined-projects', label: 'Joined Projects', icon: FiUsers },
@@ -36,6 +39,8 @@ function UserDashboard() {
         switch (activeTab) {
             case 'overview':
                 return <DashboardOverview user={user} />;
+            case 'discover-projects':
+                return <DiscoverProjects isDashboardView={true}/>;
             case 'my-projects':
                 return <MyProjects user={user} />;
             case 'joined-projects':

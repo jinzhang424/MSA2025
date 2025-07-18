@@ -72,7 +72,16 @@ export interface ProjectApplicant {
   status: 'pending' | 'accepted' | 'rejected';
 }
 
-export type DashboardTab = 'overview' | 'my-projects' | 'joined-projects' | 'applications' | 'chat' | 'settings' | 'create-project';
+export type DashboardTab = 
+  'overview' | 
+  'discover-projects' |
+  'my-projects' | 
+  'joined-projects' | 
+  'applications' | 
+  'chat' | 
+  'settings' | 
+  'create-project'
+;
 
 export interface ChatMessage {
   id: number;
