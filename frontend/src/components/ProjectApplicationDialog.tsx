@@ -6,8 +6,9 @@ import { useSelector } from 'react-redux';
 import { type RootState } from '../store/store';
 import { sendApplication } from '../api/ProjectApplication';
 import { type ApplicationFormData } from '../api/ProjectApplication';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import SubmitButton from './buttons/SubmitButton';
+import { useMutation } from '@tanstack/react-query';
 
 interface ProjectApplicationDialogProps {
     projectId: number,
@@ -16,12 +17,11 @@ interface ProjectApplicationDialogProps {
 
 const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplicationDialogProps) => {
     const [open, setOpen] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const [formData, setFormData] = useState<ApplicationFormData>({
         coverMessage: '',
         availability: ''
     });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
     const dialogRef = useRef<HTMLDivElement>(null);
     const user = useSelector((state: RootState) => state.user)
 
@@ -33,15 +33,20 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
         }));
     };
 
+    const sendApplicationMutate = useMutation({
+        mutationFn: () => sendApplication(formData, projectId, user.token),
+        onError: (e) => {
+            toast.error(e.message || "Unknown error occurred while sending application");
+            console.error("Error while sending application", e);
+        },
+        onSuccess: () => {
+            setSubmitted(true)
+        }
+    })
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        setIsSubmitting(true);
-        const success = await sendApplication(formData, projectId, user.token);
-        if (success) {
-            setSubmitted(true);
-        }
-        setIsSubmitting(false)
+        sendApplicationMutate.mutate();
     };
 
     const openDialog = () => {
@@ -112,7 +117,7 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
                         </div>
 
                         <SubmitButton
-                            isLoading={isSubmitting}
+                            isLoading={sendApplicationMutate.isPending}
                             className="mt-4 inline-flex items-center px-6 py-3 bg-purple-950 text-white rounded-md font-semibold hover:bg-purple-900 duration-200 disabled:opacity-50 w-full justify-center cursor-pointer"
                         >
                             <FiSend size={18} className="mr-2" />

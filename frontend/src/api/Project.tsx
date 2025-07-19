@@ -13,7 +13,14 @@ export interface CreateProjectParams {
     duration: string;
 }
 
-export const createProject = async (projectData: CreateProjectParams, token: string): Promise<void> => {
+/**
+ * Sends a request to create a project
+ * 
+ * @param projectData The project details (see `CreateProjectParams` for full structure).
+ * @param token - user's jwt
+ * @returns - A response data
+ */
+export const createProject = async (projectData: CreateProjectParams, token: string) => {
     const res = await axios.post(`${API_BASE_URL}/api/Project/CreateProject`, {
         Title: projectData.title,
         Description: projectData.description,
@@ -55,24 +62,20 @@ export interface ProjectPageProps {
     duration: string,
 }
 
+/**
+ * Get's a projects info
+ * @param projectId project's id
+ * @param token user's jwt
+ * @returns data of the including basic info, teamLead and teamMembers project (see `ProjectPageProps` for full structure)
+ */
 export const getProject = async (projectId: string, token: string): Promise<ProjectPageProps> => {
-    try {
-        const res = await axios.get(`${API_BASE_URL}/api/Project/GetProjectPageData/${projectId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+    const res = await axios.get(`${API_BASE_URL}/api/Project/GetProjectPageData/${projectId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 
-        console.log("res: ", res)
-
-        // Map backend response to ProjectPageProps
-        const data = res.data as ProjectPageProps;
-        console.log("Project page data: ", data)
-        return data;
-    } catch (e: any) {
-        console.error(e);
-        throw Error(e.response?.data)
-    }
+    return res.data as ProjectPageProps;
 };
 
 export interface ProjectCardProps {
@@ -87,23 +90,19 @@ export interface ProjectCardProps {
     skills: string[]
 }
 
+/**
+ * Get's only the necessary data for a project card
+ * @param token user's jwt
+ * @returns A list of project card data (see `ProjectCardProps` for full structure)
+ */
 export const getProjectCardData = async (token: string): Promise<ProjectCardProps[]> => {
-    console.log(token);
-    try {
-        const res = await axios.get(`${API_BASE_URL}/api/Project/GetAllProjectsCardData`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        const data = res.data;
-
-        console.log("Project card data: ", data)
-        return data as ProjectCardProps[];
-    } catch (e: any) {
-        console.error(e);
-        toast.error(e.response?.data || "Unknown error occurred while loading projects.");
-        return [];
-    }
+    const res = await axios.get(`${API_BASE_URL}/api/Project/GetAllProjectsCardData`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    
+    return res.data as ProjectCardProps[];
 };
 
 export interface UserProjectCardProps {
@@ -119,6 +118,11 @@ export interface UserProjectCardProps {
     status: 'All' | 'Active' | 'Completed' | 'cancelled'
 }
 
+/**
+ * Get's the project card data for projects that the user created
+ * @param token user's jwt
+ * @returns An array of project card data
+ */
 export const getUserProjectCardData = async (token: string): Promise<UserProjectCardProps[]> => {
     const res = await axios.get(`${API_BASE_URL}/api/Project/GetAllUserProjects`, {
             headers: {
@@ -135,6 +139,11 @@ export interface UserStats {
     completedProjects: number
 }
 
+/**
+ * Get's a user's stats
+ * @param token user's jwt
+ * @returns User stats (see `UserStats` for full structure)
+ */
 export const getUserStats = async (token: string): Promise<UserStats> => {
     const res = await axios.get(`${API_BASE_URL}/api/Project/GetUserStats`, {
         headers: {
@@ -160,6 +169,12 @@ export interface ProjectMemberData {
     joinedAt: string
 }
 
+/**
+ * Gets the members of a project
+ * @param projectId a project's id
+ * @param token user's jwt
+ * @returns a list of project member data
+ */
 export const getProjectMembers = async (projectId: number, token: string): Promise<ProjectMemberData[]> => {
     try {
         const res = await axios.get(`${API_BASE_URL}/api/Project/GetProjectMembers/${projectId}`, {
@@ -182,6 +197,13 @@ interface ProjectActionParam {
     token: string
 }
 
+/**
+ * Removes a user from the project
+ * @param userId user's id
+ * @param projectId project's id
+ * @param token user's token 
+ * @returns axios response data
+ */
 export const removeUserFromProject = async ({userId, projectId, token} : ProjectActionParam) => {
     const res = await axios.delete(`${API_BASE_URL}/api/Project/RemoveUserFromProject/${userId}/${projectId}`, {
         headers: {
@@ -204,17 +226,16 @@ export interface JoinedProjectsCardData {
     role: string,
 }
 
+/**
+ * Gets card data for projects that the user has joined
+ * @param token user's token
+ * @returns a list of card data for projects
+ */
 export const getJoinedProjectsCardData = async (token: string) => {
-    try {
-        const res = await axios.get(`${API_BASE_URL}/api/Project/GetJoinedProjects`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        return res.data as JoinedProjectsCardData[];
-    } catch (e: any) {
-        console.error(e);
-        toast.error(e.response?.data || "Unknown error occurred while getting joined projects.");
-        return [];
-    }
+    const res = await axios.get(`${API_BASE_URL}/api/Project/GetJoinedProjects`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return res.data as JoinedProjectsCardData[];
 }

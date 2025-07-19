@@ -1,35 +1,23 @@
-import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router';
 import { LuClock4 } from "react-icons/lu";
 import { FiUsers } from "react-icons/fi";
 // import { FaRegMessage } from "react-icons/fa6";
 import { BsArrowLeft } from "react-icons/bs";
 import ProjectApplicationDialog from '../components/ProjectApplicationDialog';
-import { getProject, type ProjectPageProps } from '../api/Project';
+import { getProject } from '../api/Project';
 import { useSelector } from 'react-redux';
 import { type RootState } from '../store/store';
 import { FaRegFaceDizzy } from "react-icons/fa6";
+import { useQuery } from '@tanstack/react-query';
 
 const ProjectPage = () => {
     const { id } = useParams<{ id: string; }>();
-    const [project, setProject] = useState<ProjectPageProps | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
     const user = useSelector((state: RootState) => state.user);
 
-    useEffect(() => {
-        const fetchProject = async () => {
-            setIsLoading(true);
-            try {
-                const result = await getProject(id!, user.token);
-                setProject(result);
-            } catch (e) {
-                setProject(null);
-            }
-
-            setIsLoading(false);
-        };
-        fetchProject();
-    }, [id, user.token]);
+    const {data: project, isLoading} = useQuery({
+        queryKey: ['getProject', id],
+        queryFn: () => getProject(id!, user.token)
+    })
     
     // Loading state
     if (isLoading) {

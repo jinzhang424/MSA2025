@@ -12,6 +12,11 @@ export interface RegisterParams {
     Password: string
 }
 
+/**
+ * 
+ * @param user A user object that contains data about the user
+ * @returns An axios response data
+ */
 export const register = async (user: RegisterParams) => {
     // Generate avatar SVG using user's name as seed for consistency
     const profileSvg = createAvatar(funEmoji, {
@@ -34,8 +39,26 @@ export interface LoginParams {
   password: string;
 }
 
+/**
+ * 
+ * @param email - user's email
+ * @param password - user's password
+ * @returns returns a User object with the following parameters:
+ * ```
+ * {
+ *  id: number,
+    firstName: string,
+    lastName: string,
+    email: string,
+    bio: string,
+    token: string,
+    profileImage?: string,
+    skills: string[]
+ * }
+ * ```
+ */
 export const login = async ({email, password}: LoginParams) : Promise<User> => {
-    const res =  await axios.post(`http://localhost:5152/api/Auth/Login`, {
+    const res =  await axios.post(`${API_BASE_URL}/api/Auth/Login`, {
         Email: email,
         Password: password
     });

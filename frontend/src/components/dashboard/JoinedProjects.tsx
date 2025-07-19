@@ -11,9 +11,15 @@ interface JoinedProjectsProps {
     user: User;
 }
 
+/**
+ * 
+ * Shows all the projects the user has joined and allows the user to manage them (e.g. leave project)
+ * @returns the JoinedProjects ui
+ */
 const JoinedProjects = ({ user }: JoinedProjectsProps) => {
     const [filter, setFilter] = useState<'All' | 'Active' | 'Completed'>('All');
 
+    // Getting the projects the user has joined
     const {
         data: joinedProjects = [], 
         isLoading: isJoinedProjectsLoading,
@@ -34,6 +40,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
         filter === 'All' || member.status === filter
     );
 
+    // Determining the status color 
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'Active':
@@ -47,6 +54,7 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
         }
     };
 
+    // Determining the role color
     const getRoleColor = (role: string) => {
         switch (role) {
             case 'Lead':

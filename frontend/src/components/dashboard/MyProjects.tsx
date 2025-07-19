@@ -13,6 +13,9 @@ interface MyProjectsProps {
     user: User;
 }
 
+/**
+ * Allows the user to see all their
+ */
 const MyProjects = ({ user }: MyProjectsProps) => {
     const [filter, setFilter] = useState<'All' | 'Active' | 'Completed' | 'cancelled'>('All');
     const [selectedProject, setSelectedProject] = useState<UserProjectCardProps | null>(null);

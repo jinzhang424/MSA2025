@@ -9,22 +9,16 @@ namespace backend.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/Message")]
-public class MessageController : ControllerBase
+public class MessageController(ApplicationDbContext context, JwtTokenService jwtService, IHubContext<ChatHub> hubContext) : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    private readonly JwtTokenService _jwtService;
-    private readonly IHubContext<ChatHub> _hubContext;
-
-    public MessageController(ApplicationDbContext context, JwtTokenService jwtService, IHubContext<ChatHub> hubContext)
-    {
-        _context = context;
-        _jwtService = jwtService;
-        _hubContext = hubContext;
-    }
+    private readonly ApplicationDbContext _context = context;
+    private readonly JwtTokenService _jwtService = jwtService;
+    private readonly IHubContext<ChatHub> _hubContext = hubContext;
 
     [HttpPost("SendMessages")]
     public async Task<IActionResult> SendMessage([FromBody] MessageDto messageDto)
     {
+        // Ensuring the token is valid
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdString == null)
         {
@@ -71,6 +65,7 @@ public class MessageController : ControllerBase
     [HttpGet("GetChatroomMessages/{chatroomId}")]
     public IActionResult GetMessages(int chatroomId)
     {
+        // Ensuring the token is valid
         var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdString == null)
         {
@@ -86,6 +81,7 @@ public class MessageController : ControllerBase
             return Unauthorized("Insufficient permission to view this chatroom's messages");
         }
 
+        // Getting the messages and returning them in the expected structure
         var messages = _context.Messages
             .Where(m => m.ChatroomId == chatroomId)
             .OrderBy(m => m.CreatedAt)

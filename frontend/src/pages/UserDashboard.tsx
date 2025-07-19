@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { FiHome, FiFolder, FiUsers, FiFileText, FiSettings, FiMessageCircle } from 'react-icons/fi';
 import { HiOutlineLogout } from 'react-icons/hi';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
@@ -16,9 +15,29 @@ import { MdOutlineCreate } from "react-icons/md";
 import CreateProject from '../components/dashboard/CreateProject';
 import { ImCompass } from "react-icons/im";
 import { DiscoverProjects } from './ProjectDiscoveryPage';
+import { setActiveTab } from '../store/dashboardSlice';
+import ProfileImage from '../components/ProfileImage';
+import SideBarButton from '../components/buttons/SideBarButton';
 
+/**
+ * UserDashboard is the main dashboard view for authenticated users
+ * 
+ * It features a responsive sidebar that allows navigation between different dashboard tabs:
+ * - Overview
+ * - Discover Projects
+ * - Create Project
+ * - My Projects
+ * - Joined Projects
+ * - Applications
+ * - Chat
+ * - Settings
+ * 
+ * Each of these tabs are dynamically re-rendered when a user selects a tab
+ * 
+ * @returns The rendered dashboard component
+ */
 function UserDashboard() {
-    const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
+    const activeTab = useSelector((state: RootState) => state.dashboard.activeTab);
     const user = useSelector((state: RootState) => state.user);
 
     const dispatch = useDispatch();
@@ -58,6 +77,9 @@ function UserDashboard() {
         }
     };
 
+    /**
+     * Clears the user redux state
+     */
     const handleLogout = () => {
         dispatch(logout());
         navigate("/login");
@@ -70,16 +92,11 @@ function UserDashboard() {
                 {/* Header */}
                 <div className="flex p-4 border-b border-gray-200">
                     <div className="flex items-center gap-x-3 w-full">
-                        {/* Profile picture */}
-                        <div className="flex-shrink-0 w-10 h-10 bg-purple-950 rounded-full flex items-center justify-center overflow-hidden">
-                            {user.profileImage ? (
-                                <img src={user.profileImage} alt={`${user?.firstName} ${user?.lastName}`}/>
-                            ) : (
-                                <span className="text-white font-semibold text-sm">
-                                    {user?.firstName[0]?.toUpperCase()}{user?.lastName[0]?.toUpperCase()}
-                                </span>
-                            )}
-                        </div>
+                        <ProfileImage 
+                            profileImage={user.profileImage}
+                            firstName={user.firstName}
+                            lastName={user.lastName}
+                        />
 
                         {/* Name and email */}
                         <div className='hidden lg:block flex-1 min-w-0'>
@@ -98,19 +115,19 @@ function UserDashboard() {
                             const Icon = item.icon;
                             return (
                                 <li key={item.id}>
-                                    <button
-                                        onClick={() => setActiveTab(item.id as DashboardTab)}
-                                        className={`w-full flex items-center lg:px-4 lg:justify-normal justify-center px-2 py-2 rounded-lg text-left transition-colors ${
+                                    <SideBarButton
+                                        onClick={() => dispatch(setActiveTab(item.id as DashboardTab))}
+                                        className={`text-left transition-colors ${
                                             activeTab === item.id
                                                 ? 'bg-purple-950 text-white'
                                                 : 'text-gray-700 hover:bg-gray-200'
                                         }`}
                                     >
                                         <Icon size={20} />
-                                        <span className='ml-3 hidden lg:block font-semibold'>
+                                        <span className='font-semibold'>
                                             {item.label}
                                         </span>
-                                    </button>
+                                    </SideBarButton>
                                 </li>
                             );
                         })}
@@ -119,15 +136,13 @@ function UserDashboard() {
 
                 {/* Logout */}
                 <div className="p-4 border-t border-gray-200">
-                    <button
+                    <SideBarButton 
+                        className="text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors" 
                         onClick={handleLogout}
-                        className="w-full flex items-center lg:px-4 lg:justify-normal justify-center px-2 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
                     >
                         <HiOutlineLogout size={20} />
-                        <span className='ml-3 hidden lg:block'>
-                            Logout
-                        </span>
-                    </button>
+                        Logout
+                    </SideBarButton>
                 </div>
             </div>
 

@@ -19,6 +19,7 @@ interface ApplicationsProps {
 const Applications = ({ user }: ApplicationsProps) => {
     const [activeTab, setActiveTab] = useState<'outgoing' | 'incoming'>('outgoing');
 
+    // Getting outgoing applications
     const {
         data: outgoingApplications = [],
         isLoading: isOutgoingLoading,
@@ -34,7 +35,8 @@ const Applications = ({ user }: ApplicationsProps) => {
         toast.error(outgoingError.message)
         console.error("Error while fetching outgoing applications", outgoingError)
     }
-
+    
+    // Getting incoming applications
     const {
         data: incomingApplications = [],
         isLoading: isIncomingLoading,

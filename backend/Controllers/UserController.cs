@@ -15,50 +15,6 @@ public class UserController(ApplicationDbContext context) : ControllerBase
 {
     private readonly ApplicationDbContext _context = context;
 
-    [HttpGet("GetUserInfo")]
-    public async Task<IActionResult> GetUserInfo()
-    {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
-        {
-            return Unauthorized("Invalid token");
-        }
-
-        var userInfo = await _context.Users
-            .Where(u => u.UserId == int.Parse(userId))
-            .Select(u => new UserInfoDto
-            {
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                Email = u.Email
-            })
-            .FirstOrDefaultAsync();
-
-        return Ok(userInfo);
-    }
-
-    [HttpGet("DeleteUserInfo")]
-    public async Task<IActionResult> DeleteUser()
-    {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
-        {
-            return Unauthorized("Invalid token");
-        }
-
-        var user = await _context.Users
-            .FirstOrDefaultAsync(u => u.UserId == int.Parse(userId));
-        if (user == null)
-        {
-            return NotFound("Account not found");
-        }
-
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
-
-        return Ok("Successfully deleted account");
-    }
-
     [HttpPatch("UpdateProfile")]
     public async Task<IActionResult> UpdateProfile([FromBody] UserInfoDto userInfoDto)
     {
@@ -69,12 +25,14 @@ public class UserController(ApplicationDbContext context) : ControllerBase
         }
         var userId = int.Parse(userIdString);
 
+        // Getting the user
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
         if (user == null)
         {
             return NotFound("User not found");
         }
 
+        // Update the details
         user.FirstName = userInfoDto.FirstName;
         user.LastName = userInfoDto.LastName;
         user.Bio = userInfoDto.Bio;
@@ -97,12 +55,14 @@ public class UserController(ApplicationDbContext context) : ControllerBase
         }
         var userId = int.Parse(userIdString);
 
+        // Getting the user
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
         if (user == null)
         {
             return NotFound("User not found");
         }
 
+        // Verifying the password
         var hasher = new PasswordHasher<User>();
         var result = hasher.VerifyHashedPassword(user, user.PasswordHash, passwordDto.OldPassword);
         if (result == PasswordVerificationResult.Failed)
@@ -110,6 +70,7 @@ public class UserController(ApplicationDbContext context) : ControllerBase
             return BadRequest("Old password is incorrect");
         }
 
+        // Hashing and udpating the password
         user.PasswordHash = hasher.HashPassword(user, passwordDto.NewPassword);
         await _context.SaveChangesAsync();
 

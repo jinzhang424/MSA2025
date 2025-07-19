@@ -26,6 +26,11 @@ export interface PasswordData {
     confirmPassword: string;
 }
 
+/**
+ * 
+ * Allows user to change their profile and password
+ * @returns the settings ui
+ */
 const Settings = ({ user }: SettingsProps) => {
     const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
     const [profileData, setProfileData] = useState<ProfileData>({

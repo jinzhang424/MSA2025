@@ -9,6 +9,12 @@ interface SimpleHeroProps{
     subheading?: string
 }
 
+/**
+ * 
+ * @param heading - heading of the hero
+ * @param subheading- subheading of the hero 
+ * @returns - A hero with a gradient background and centered text.
+ */
 function SimpleHero({ heading, subheading } : SimpleHeroProps) {
     const user = useSelector((state: RootState) => state.user);
     const navigate = useNavigate()

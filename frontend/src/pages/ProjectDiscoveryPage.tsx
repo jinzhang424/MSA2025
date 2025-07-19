@@ -16,12 +16,21 @@ interface DiscoverProjectsProps {
     isDashboardView?: boolean
 }
 
+/**
+ * The discover projects main section that displays project cards for users. Allows users to fiter based on categories
+ * @param isDashboardView - A boolean value that adjusts the header based on whether want the dashboard view or normal view
+ * @returns 
+ */
 const DiscoverProjects = ({isDashboardView = false}: DiscoverProjectsProps) => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
     const [showFilters, setShowFilters] = useState(false);
 
     const user = useSelector((state: RootState) => state.user);
+
+    /**
+     * Fetches the projects.
+     */
     const {isPending, isError, data, error} = useQuery({ 
         queryKey: ['projects', user.token], 
         queryFn: () => getProjectCardData(user.token)
@@ -31,10 +40,19 @@ const DiscoverProjects = ({isDashboardView = false}: DiscoverProjectsProps) => {
         toast.error(error.message || "Unknown error occurred while getting projects")
     }
 
+    /**
+     * Filters projects based on the user has search the category selected
+     */
     const filteredProjects = data 
         ? data.filter(project => {
             const matchesCategory = selectedCategory === 'All' || project.category === selectedCategory;
-            const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) || project.description.toLowerCase().includes(searchQuery.toLowerCase()) || project.skills.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
+            const matchesSearch = project.title
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase()) 
+                    || project.description
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) 
+                    || project.skills.some((skill: string) => skill.toLowerCase().includes(searchQuery.toLowerCase()));
             return matchesCategory && matchesSearch;
         }) : []
 
@@ -145,9 +163,11 @@ const DiscoverProjects = ({isDashboardView = false}: DiscoverProjectsProps) => {
     )
 }
 
+/**
+ * 
+ * @returns The project discovery page
+ */
 const ProjectDiscoveryPage = () => {
-    
-    
     return (
         <div className="bg-gray-50 min-h-screen">
             <SimpleHero heading='Discover Projects' subheading='Find remote collaboration opportunities that match your skills and interests'/>

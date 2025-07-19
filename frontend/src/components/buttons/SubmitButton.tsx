@@ -7,6 +7,13 @@ interface SubmitButtonProps {
     children?: ReactNode,
 }
 
+/**
+ * 
+ * @param isLoading determines if the loader should be shown or ont 
+ * @param children children components
+ * @param className 
+ * @returns A button with a loader that appears when isLoading = true
+ */
 function SubmitButton({isLoading = false, children, className,} : SubmitButtonProps) {
   return (
     <button

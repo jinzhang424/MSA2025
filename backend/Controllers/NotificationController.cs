@@ -19,11 +19,13 @@ public class NotificationController : ControllerBase
     [HttpGet("GetNotifications/{limit}")]
     public async Task<IActionResult> GetNotifications(int limit)
     {
+        // Ensuring the token is valid
         var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (userIdString == null)
             return Unauthorized("Invalid token");
         var userId = int.Parse(userIdString);
 
+        // Getting notifications and ordering them from most recent to oldest and only take the limit amount
         var notifications = await _context.Notification
             .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
@@ -39,25 +41,5 @@ public class NotificationController : ControllerBase
             .ToListAsync();
 
         return Ok(notifications);
-    }
-
-    [HttpPatch("MarkAsRead/{notificationId}")]
-    public async Task<IActionResult> MarkAsRead(int notificationId)
-    {
-        var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (userIdString == null)
-            return Unauthorized("Invalid token");
-        var userId = int.Parse(userIdString);
-
-        var notification = await _context.Notification
-            .FirstOrDefaultAsync(n => n.Id == notificationId && n.UserId == userId);
-
-        if (notification == null)
-            return NotFound("Notification not found");
-
-        notification.IsRead = true;
-        await _context.SaveChangesAsync();
-
-        return Ok("Notification marked as read");
     }
 }
