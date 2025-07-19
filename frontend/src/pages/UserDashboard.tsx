@@ -124,7 +124,7 @@ function UserDashboard() {
                                         }`}
                                     >
                                         <Icon size={20} />
-                                        <span className='font-semibold'>
+                                        <span className='lg:block hidden font-semibold'>
                                             {item.label}
                                         </span>
                                     </SideBarButton>
