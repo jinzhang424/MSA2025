@@ -42,9 +42,9 @@ export interface ChatRoomListing {
     }
  * ```
  */
-export const getChatroomListings = async (token: string): Promise<ChatRoomListing[]> => {
+export const getChatrooms = async (token: string): Promise<ChatRoomListing[]> => {
     try {
-        const res = await axios.get(`${API_BASE_URL}/api/Chatroom/GetChatroomListings`, {
+        const res = await axios.get(`${API_BASE_URL}/api/Chatroom/GetChatrooms`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         return res.data as ChatRoomListing[];

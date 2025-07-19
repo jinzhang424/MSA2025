@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { FiSend, FiSearch, FiUsers, FiMessageCircle } from 'react-icons/fi';
 import { type User } from '../../types/dashboard';
 import { FaChevronLeft } from "react-icons/fa6";
-import { getChatroomListings } from '../../api/Chatroom';
+import { getChatrooms } from '../../api/Chatroom';
 import { getChatroomMessages, sendMessage, type Message, type MessageDto } from '../../api/Message';
 import { createSignalRConnection } from '../../utils/signalr';
 import { toast, ToastContainer } from 'react-toastify';
@@ -93,7 +93,7 @@ const Chat = ({ user }: ChatProps) => {
         isLoading: isLoadingChatrooms
     } = useQuery({
         queryKey: ["chatrooms"],
-        queryFn: () => getChatroomListings(user.token)
+        queryFn: () => getChatrooms(user.token)
     })
 
     if (isGetChatroomsError) {

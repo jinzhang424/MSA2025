@@ -25,15 +25,11 @@ public class ChatroomService(ApplicationDbContext context)
         _context.SaveChanges();
     }
 
-    public async Task DeleteChatroom(int userId, int chatroomId)
+    public async Task DeleteChatroom(int chatroomId)
     {
+        // Finding the chatroom and throws an exception if not found
         var chatroom = _context.Chatrooms.FirstOrDefault(c => c.ChatroomId == chatroomId) ?? throw new ArgumentNullException("Chatroom not found");
-
-        if (userId != chatroom.OwnerId)
-        {
-            throw new UnauthorizedAccessException("Only owners can delete a chatroom");
-        }
-
+        
         _context.Chatrooms.Remove(chatroom);
         await _context.SaveChangesAsync();
     }
