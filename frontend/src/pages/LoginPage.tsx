@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { RiLoginBoxLine } from 'react-icons/ri';
 import BackLink from '../components/BackLink';
 import { login } from '../api/Auth';
@@ -10,21 +9,30 @@ import { useNavigate } from 'react-router';
 import SubmitButton from '../components/buttons/SubmitButton';
 import { toast, ToastContainer } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
+import TextInput from '../components/inputs/TextInput';
 
 interface LoginFormData {
     email: string;
     password: string;
 }
 
+/**
+ * 
+ * @returns The login page
+ */
 const LoginPage = () => {
     const [formData, setFormData] = useState<LoginFormData>({
         email: '',
         password: '',
     });
-    const [showPassword, setShowPassword] = useState(false);
     const dispatch = useDispatch()
     const navigate = useNavigate();
 
+    /**
+     * Adjusts the formData state when user changes the input values
+     *  
+     * @param e The event of the html element
+     */
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
@@ -33,6 +41,9 @@ const LoginPage = () => {
         }));
     };
 
+    /**
+     * The mutation function that handles the login api call
+     */
     const mutation = useMutation({
         mutationFn: login,
         onSuccess: (user) => {
@@ -47,6 +58,10 @@ const LoginPage = () => {
         }
     })
 
+    /**
+     * Handles the login submission form by calling the mutation function
+     * @param e The submit event
+     */
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         mutation.mutate({email: formData.email, password: formData.password})
@@ -61,6 +76,7 @@ const LoginPage = () => {
             </BackLink>
 
             <div className="w-full max-w-md">
+                {/* Login section */}
                 <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8">
                     {/* Header */}
                     <div className="text-center mb-8">
@@ -76,47 +92,24 @@ const LoginPage = () => {
                     {/* Login Form */}
                     <form onSubmit={handleSubmit} className="space-y-5">
                         {/* Email */}
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                                Email Address
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                required
-                                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent transition-all duration-200 text-gray-950"
-                                placeholder="Enter your email"
-                                value={formData.email}
-                                onChange={handleChange}
-                            />
-                        </div>
-
+                        <TextInput
+                            label='Email Address'
+                            type='email'
+                            required={true}
+                            placeholder='Enter your email'
+                            value={formData.email}
+                            onChange={handleChange}
+                        />
+                        
                         {/* Password */}
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
-                                Password
-                            </label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    id="password"
-                                    name="password"
-                                    required
-                                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent transition-all duration-200 text-gray-950"
-                                    placeholder="Enter your password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                />
-                                <button
-                                    type="button"
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? <IoEyeOffOutline size={20} /> : <IoEyeOutline size={20} />}
-                                </button>
-                            </div>
-                        </div>
+                        <TextInput
+                            label='Password'
+                            type='password'
+                            required={true}
+                            placeholder="Enter your password"
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
 
                         {/* Remember Me & Forgot Password */}
                         <div className="flex items-center justify-end">
@@ -142,7 +135,7 @@ const LoginPage = () => {
                     </div>
                 </div>
 
-                {/* Bottom gradient overlay */}
+                {/* Bottom black fade overlay */}
                 <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
             </div>
         </div>
