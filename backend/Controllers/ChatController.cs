@@ -32,9 +32,10 @@ public class ChatController(ApplicationDbContext context, JwtTokenService jwtSer
             .Include(c => c.Messages)
             .Where(c => c.ChatroomUsers.Any(cu => cu.UserId == userId))
             .ToListAsync();
-
+        
         var result = chatrooms.Select(chatroom =>
         {
+            // Getting the last message sent to each chatroom
             var lastMsg = chatroom.Messages
                 .OrderByDescending(m => m.CreatedAt)
                 .Select(m => new {
@@ -44,7 +45,8 @@ public class ChatController(ApplicationDbContext context, JwtTokenService jwtSer
                     m.CreatedAt
                 })
                 .FirstOrDefault();
-
+            
+            // Return the data in the expected structure
             return new
             {
                 chatroomId = chatroom.ChatroomId,
@@ -57,7 +59,7 @@ public class ChatController(ApplicationDbContext context, JwtTokenService jwtSer
                     firstName = cu.User.FirstName,
                     lastName = cu.User.LastName
                 }).ToList(),
-                lastMessage = lastMsg == null? null : new
+                lastMessage = lastMsg == null ? null : new
                 {
                     senderId = lastMsg.SenderId,
                     senderFirstName = lastMsg.FirstName,

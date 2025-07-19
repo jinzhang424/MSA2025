@@ -9,22 +9,23 @@ namespace backend.Controllers;
 [ApiController]
 [Route("api/ProjectApplication")]
 
-public class ApplicationController(ApplicationDbContext context, NotificationService notificationService) : ControllerBase
+public class ApplicationController(ApplicationDbContext context, NotificationService notificationService, ChatroomService chatroomService) : ControllerBase
 {
     private readonly ApplicationDbContext _context = context;
     private readonly NotificationService _notificationService = notificationService;
+    private readonly ChatroomService _chatroomService = chatroomService;
 
     private async void RemoveUserApplication(int userId, int projectId)
     {
-        var waitingListUser = await _context.ProjectApplication
-            .FirstOrDefaultAsync(pwu => pwu.UserId == userId && pwu.ProjectId == projectId)
+        // Ensuring the project application exists
+        var projectApplication = await _context.ProjectApplication
+            .FirstOrDefaultAsync(pa => pa.UserId == userId && pa.ProjectId == projectId)
             ?? throw new Exception("User not found in this project's waiting list");
 
-        _context.ProjectApplication.Remove(waitingListUser);
+        _context.ProjectApplication.Remove(projectApplication);
         await _context.SaveChangesAsync();
     }
 
-    // Gets a user's recent application data
     [HttpGet("GetRecentApplications/{limit}")]
     public async Task<IActionResult> GetRecentApplications(int limit)
     {
@@ -36,6 +37,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
 
         var userId = int.Parse(userIdString);
 
+        // Getting the applications recent applications and only taking the limit amount 
         var applications = await _context.ProjectApplication
             .Include(pa => pa.User)
             .Include(pa => pa.Project)
@@ -44,6 +46,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             .Take(limit)
             .ToListAsync();
 
+        // Returning them in the expected structure
         var result = applications.Select(pa => new
         {
             applicantName = pa.User.FirstName + " " + pa.User.LastName,
@@ -67,12 +70,21 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         }
         var userId = int.Parse(userIdString);
 
+        // Ensure that the project exists
         var project = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
         if (project == null)
         {
             return NotFound("Project not found");
         }
 
+        // Ensure that the user exists
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+
+        // Prevent users from applying if they've already applied
         var existingApplication = await _context.ProjectApplication
             .AnyAsync(pa => pa.ProjectId == projectId && pa.UserId == userId);
         if (existingApplication)
@@ -80,6 +92,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             return Conflict("You have already applied for this project.");
         }
 
+        // Creating the application
         var waitingListUser = new ProjectApplication
         {
             CoverMessage = projectApplicationDto.CoverMessage,
@@ -91,36 +104,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         await _context.ProjectApplication.AddAsync(waitingListUser);
         await _context.SaveChangesAsync();
 
-        
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
-        if (user == null)
-        {
-            return NotFound("User not found");
-        }
-
-        var fullName = $"{user.FirstName} {user.LastName}";
-
         return Ok("Successfully applied to project");
-    }
-
-    [HttpDelete("RemoveProjectApplication/{projectId}")]
-    public IActionResult RemoveProjectApplication(int projectId)
-    {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
-        {
-            return Unauthorized("Invalid Token");
-        }
-
-        try
-        {
-            RemoveUserApplication(int.Parse(userId), projectId);
-            return Ok("Successfully removed from project waiting list");
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
     }
 
     [HttpPut("AcceptUserApplication/{applicantId}/{projectId}")]
@@ -176,6 +160,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         }
         var userId = int.Parse(userIdString);
 
+        // Prevent unauthorized users from rejecting application
         var project = await _context.Projects
             .FirstOrDefaultAsync(p => p.ProjectId == projectId && p.OwnerId == userId);
         if (project == null)
@@ -183,6 +168,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             return Unauthorized("Only owners can reject applicants");
         }
 
+        // Searching for project and ensure that it exists
         var projectApplication = await _context.ProjectApplication
             .FirstOrDefaultAsync(pa => pa.ProjectId == projectId && pa.UserId == applicantId);
         if (projectApplication == null)
@@ -193,6 +179,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         projectApplication.Status = "Rejected";
         await _context.SaveChangesAsync();
 
+        // Sending the notification to the user that they have been rejected
         await _notificationService.ApplicationDecisionNotification(applicantId, project.Title, false);
 
         return Ok("Successfully rejected user");
@@ -212,6 +199,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             return NotFound("Project not found");
         }
 
+        // Getting pending applications and adjusting return structure for frontend
         var result = project.ProjectApplications
             .Where(pa => pa.Status == "Pending")
             .Select(pa => new
@@ -241,12 +229,14 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
 
         int userId = int.Parse(userIdString);
 
+        // Getting all outgoing applications
         var applications = await _context.ProjectApplication
             .Include(pa => pa.Project)
             .Where(pa => pa.UserId == userId)
             .OrderByDescending(pa => pa.DateApplied)
             .ToListAsync();
 
+        // Structuring results for frontend
         var result = applications.Select(pa => new
         {
             projectId = pa.ProjectId,
@@ -288,6 +278,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             .OrderByDescending(pa => pa.DateApplied)
             .ToListAsync();
 
+        // Structuring them for frontend
         var result = applications.Select(pa => new
         {
             applicant = new

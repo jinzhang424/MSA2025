@@ -19,11 +19,13 @@ public class NotificationController : ControllerBase
     [HttpGet("GetNotifications/{limit}")]
     public async Task<IActionResult> GetNotifications(int limit)
     {
+        // Ensuring the token is valid
         var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         if (userIdString == null)
             return Unauthorized("Invalid token");
         var userId = int.Parse(userIdString);
 
+        // Getting notifications and ordering them from most recent to oldest and only take the limit amount
         var notifications = await _context.Notification
             .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
