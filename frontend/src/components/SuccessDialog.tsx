@@ -3,10 +3,16 @@ interface SuccessDialogProps {
     submitted: boolean
 }
 
+/**
+ * Tells the user that they successfully created a project
+ * @param projectTitle - The title of the project that the user submitted an application to
+ * @param submitted - Determines whether the dialog should be shown
+ * @returns 
+ */
 const SuccessDialog = ({projectTitle, submitted} : SuccessDialogProps) => {
   return (
     <div className={`absolute mt-32 mx-8 max-w-md ${!submitted && 'opacity-0 scale-50 pointer-events-none'} duration-200`}>
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 text-center">
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-2xl p-8 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
