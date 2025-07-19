@@ -68,6 +68,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<ChatroomService>();
 
 var app = builder.Build();
     
