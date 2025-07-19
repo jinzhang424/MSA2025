@@ -11,7 +11,17 @@ interface DashboardOverviewProps {
     user: User;
 }
 
+/**
+ * 
+ * Overview of activities for the user
+ * 
+ * Displays:
+ * - basic user stats
+ * - recent events and applications
+ * @returns 
+ */
 const DashboardOverview = ({ user }: DashboardOverviewProps) => {
+    // Getting user's stats
     const {
         data: stats, 
         isError: isStatsError, 
@@ -26,7 +36,8 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
         toast.success(statsError.message)
         console.error(statsError)
     }
-
+    
+    // Getting user's recent applications
     const {
         data: recentApplications = [], 
         isError: isRecentAppsError, 
@@ -45,6 +56,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
         console.error('Error fetching your applications:', recentAppsError);
     }
     
+    // Getting user's recent events (notifications)
     const {
         data: notifications = [], 
         isError: isNotifsError, 

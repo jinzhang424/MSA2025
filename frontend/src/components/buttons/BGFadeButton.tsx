@@ -7,6 +7,14 @@ interface ButtonProps {
     onClick?: MouseEventHandler<HTMLButtonElement>
 }
 
+/**
+ * 
+ * @param bgFade determines if the background should fade or not (false by default)
+ * @param children children components
+ * @param className class name of the component 
+ * @param onClick onClick handler
+ * @returns A button that if bgFade is true, background will fade from 0 to full opacity
+ */
 function BGFadeButton({bgFade = false, children, className, onClick}: ButtonProps) {
     let buttonStyle = "rounded-md outline outline-gray-100 outline-2 hover:cursor-pointer font-semibold"
     if (bgFade) {

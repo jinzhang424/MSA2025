@@ -11,6 +11,11 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 
+/**
+ * Allows user to create projects
+ * 
+ * @returns the create project
+ */
 const CreateProject = () => {
     const [formData, setFormData] = useState<CreateProjectParams>({
         title: '',

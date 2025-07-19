@@ -14,6 +14,13 @@ interface ProjectManagementDialogProps {
     onClose: () => void;
 }
 
+/**
+ * Allows users to manage projects by:
+ * - Removing members
+ * - Seeing applications and handle them (reject/accept)
+ * @param param0 
+ * @returns 
+ */
 const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagementDialogProps) => {
     const [activeTab, setActiveTab] = useState<'members' | 'applicants'>('members');
     const user = useSelector((state: RootState) => state.user);

@@ -14,6 +14,13 @@ interface ChatProps {
     user: User;
 }
 
+/**
+ * The dashboard's chatting tab
+ * 
+ * Allows users to see all their chats and send messages
+ * 
+ * @returns dashboard chat
+ */
 const Chat = ({ user }: ChatProps) => {
     const [selectedChat, setSelectedChat] = useState<number | null>(null);
     const [newMessage, setNewMessage] = useState('');
