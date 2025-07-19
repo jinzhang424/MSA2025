@@ -10,44 +10,17 @@ namespace backend.Controllers;
 [ApiController]
 [Route("api/Chatroom")]
 
-public class ChatController : ControllerBase
+public class ChatController(ApplicationDbContext context, JwtTokenService jwtService) : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
-    private readonly JwtTokenService _jwtService;
+    private readonly ApplicationDbContext _context = context;
+    private readonly JwtTokenService _jwtService = jwtService;
 
-    public ChatController(ApplicationDbContext context, JwtTokenService jwtService)
-    {
-        _context = context;
-        _jwtService = jwtService;
-    }
-
-    [HttpPost("CreateChatroom")]
-    public IActionResult CreateChatroom([FromBody] ChatroomDto chatroomDto)
-    {
-        var chatroom = new Chatroom
-        {
-            Name = chatroomDto.Name,
-            OwnerId = chatroomDto.OwnerId
-        };
-
-        _context.Chatrooms.Add(chatroom);
-        _context.SaveChanges();
-
-        var chatroomUser = new ChatroomUser
-        {
-            UserId = chatroomDto.OwnerId,
-            ChatroomId = chatroom.ChatroomId
-        };
-
-        _context.ChatroomUser.Add(chatroomUser);
-        _context.SaveChanges();
-
-        return Ok("Successfully created chatroom");
-    }
+    
 
     [HttpGet("GetChatroomUsers/{chatroomId}")]
     public IActionResult GetChatroomUsers(int chatroomId)
     {
+        // Getting the users of a particular chatroom
         var chatroomUsers = _context.ChatroomUser
             .Where(cu => cu.ChatroomId == chatroomId)
             .Include(cu => cu.User)
@@ -61,32 +34,6 @@ public class ChatController : ControllerBase
             .ToList();
 
         return Ok(chatroomUsers);
-    }
-
-    [HttpDelete("DeleteChatroom")]
-    public IActionResult DeleteChatroom([FromBody] ChatroomUserDto chatroomDto)
-    {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
-        {
-            return Unauthorized("Invalid token");
-        }
-
-        var chatroom = _context.Chatrooms.FirstOrDefault(c => c.ChatroomId == chatroomDto.ChatroomId);
-        if (chatroom == null)
-        {
-            return NotFound("Chatrooom not found");
-        }
-
-        if (int.Parse(userId) != chatroom.OwnerId)
-        {
-            return Unauthorized("Only owners can delete a chatroom");
-        }
-
-        _context.Chatrooms.Remove(chatroom);
-        _context.SaveChanges();
-
-        return Ok("Successfully deleted chatroom");
     }
 
     [HttpPut("AddChatroomUser")]
