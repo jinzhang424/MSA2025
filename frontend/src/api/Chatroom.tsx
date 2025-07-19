@@ -23,6 +23,25 @@ export interface ChatRoomListing {
     }
 }
 
+/**
+ * Gets a user's chat list
+ * @param token user's jwt
+ * @returns A ChatRoomListing[] with the following properties: 
+ * ```
+ * {
+ * chatroomId: number,
+    name: string,
+    isGroup: boolean,
+    participants: Participants[]
+        lastMessage: {
+            senderId: number,
+            senderFirstName: string,
+            content: string,
+            createdAt: string,
+        }
+    }
+ * ```
+ */
 export const getChatroomListings = async (token: string): Promise<ChatRoomListing[]> => {
     try {
         const res = await axios.get(`${API_BASE_URL}/api/Chatroom/GetChatroomListings`, {

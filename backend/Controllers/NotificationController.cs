@@ -40,24 +40,4 @@ public class NotificationController : ControllerBase
 
         return Ok(notifications);
     }
-
-    [HttpPatch("MarkAsRead/{notificationId}")]
-    public async Task<IActionResult> MarkAsRead(int notificationId)
-    {
-        var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (userIdString == null)
-            return Unauthorized("Invalid token");
-        var userId = int.Parse(userIdString);
-
-        var notification = await _context.Notification
-            .FirstOrDefaultAsync(n => n.Id == notificationId && n.UserId == userId);
-
-        if (notification == null)
-            return NotFound("Notification not found");
-
-        notification.IsRead = true;
-        await _context.SaveChangesAsync();
-
-        return Ok("Notification marked as read");
-    }
 }
