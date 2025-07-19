@@ -153,6 +153,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                 <>
                     {activeTab === 'outgoing' ? (
                         <div className="space-y-4">
+                            {/* Outgoing applications results */}
                             {outgoingApplications.length === 0 ? (
                                 <div className="text-center py-12">
                                     <FiUser size={48} className="mx-auto text-gray-400 mb-4" />
@@ -166,9 +167,11 @@ const Applications = ({ user }: ApplicationsProps) => {
                                     </Link>
                                 </div>
                             ) : (
+                                // Outgoing appliations
                                 outgoingApplications.map((application, i) => (
                                     <div key={i} className="bg-white rounded-lg border border-gray-200 p-6">
                                         <div className="flex items-start space-x-4">
+                                            {/* Project image */}
                                             <img
                                                 src={application.image || "project-img-replacement.png"}
                                                 alt={application.title}

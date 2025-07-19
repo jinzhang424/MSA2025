@@ -287,7 +287,8 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             projectTitle = pa.Project.Title,
             status = pa.Status,
             dateApplied = pa.DateApplied.ToString("yyyy-MM-dd"),
-            coverMessage = pa.CoverMessage
+            coverMessage = pa.CoverMessage,
+            availability = pa.Availablity
         }).ToList();
 
         return Ok(result);
