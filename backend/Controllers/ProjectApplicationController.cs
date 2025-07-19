@@ -135,15 +135,8 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         await _context.ProjectMembers.AddAsync(projectMember);
         projectApplication.Status = "Accepted";
 
-
-        var chatroomUser = new ChatroomUser
-        {
-            UserId = applicantId,
-            ChatroomId = project.Chatroom.ChatroomId
-        };
-
-        await _context.ChatroomUser.AddAsync(chatroomUser);
-        _context.SaveChanges();
+        // Adding user to project chatroom
+        await _chatroomService.AddUser(project.Chatroom.ChatroomId, applicantId);
 
         await _notificationService.ApplicationDecisionNotification(applicantId, project.Title, true);
 

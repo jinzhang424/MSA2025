@@ -2,12 +2,14 @@ public class ChatroomService(ApplicationDbContext context)
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task CreateChatroom(string chatroomName, int ownerId)
+    public async Task CreateChatroom(string chatroomName, int projectId, int ownerId, bool isGroup)
     {
         // Creating the chatroom
         var chatroom = new Chatroom
         {
             Name = chatroomName,
+            IsGroup = isGroup,
+            ProjectId = projectId,
             OwnerId = ownerId
         };
 
@@ -15,22 +17,18 @@ public class ChatroomService(ApplicationDbContext context)
         await _context.SaveChangesAsync();
 
         // Adding the user to the chatroom
-        var chatroomUser = new ChatroomUser
-        {
-            UserId = ownerId,
-            ChatroomId = chatroom.ChatroomId
-        };
-
-        _context.ChatroomUser.Add(chatroomUser);
-        _context.SaveChanges();
+        await AddUser(chatroom.ChatroomId, ownerId);
     }
 
-    public async Task DeleteChatroom(int chatroomId)
+    public async Task AddUser(int chatroomId, int userId)
     {
-        // Finding the chatroom and throws an exception if not found
-        var chatroom = _context.Chatrooms.FirstOrDefault(c => c.ChatroomId == chatroomId) ?? throw new ArgumentNullException("Chatroom not found");
-        
-        _context.Chatrooms.Remove(chatroom);
-        await _context.SaveChangesAsync();
+        var chatroomUser = new ChatroomUser
+        {
+            UserId = userId,
+            ChatroomId = chatroomId
+        };
+
+        await _context.ChatroomUser.AddAsync(chatroomUser);
+        _context.SaveChanges();
     }
 }
