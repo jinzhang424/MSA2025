@@ -35,7 +35,7 @@ export interface LoginParams {
 }
 
 export const login = async ({email, password}: LoginParams) : Promise<User> => {
-    const res =  await axios.post(`http://localhost:5152/api/Auth/Login`, {
+    const res =  await axios.post(`${API_BASE_URL}/api/Auth/Login`, {
         Email: email,
         Password: password
     });
