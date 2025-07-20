@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { FiCheck, FiClock, FiX } from "react-icons/fi"
+import SkillTag from "../SkillTag"
 
 interface ApplicationCardProps {
     image: ReactNode
@@ -101,9 +102,7 @@ const ApplicationCard = ({
                     {/* Applicant skills */}
                     <div className="flex flex-wrap gap-1 mb-3">
                         {skills.map((skill) => (
-                            <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                {skill}
-                            </span>
+                            <SkillTag key={skill} label={skill}/>
                         ))}
                     </div>
 

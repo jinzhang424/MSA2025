@@ -1,11 +1,11 @@
 interface SkillTagProps {
-    skill: string
+    label: string
 }
 
-const SkillTag = ({skill} : SkillTagProps) => {
+const SkillTag = ({label} : SkillTagProps) => {
     return (
-        <span key={skill} className="px-2 py-1 bg-purple-100 text-purple-950 rounded text-xs font-semibold">
-            {skill}
+        <span key={label} className="px-2 py-1 bg-purple-100 text-purple-950 rounded text-xs">
+            {label}
         </span>
     )
 }

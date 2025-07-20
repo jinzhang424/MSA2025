@@ -96,7 +96,7 @@ const ProjectMemberCard = ({ member, refetchMembers }: ProjectMemberCardProps ) 
                         {/* Skills */}
                         <div className="flex flex-wrap gap-1 mt-2">
                             {member.user.skills.map((skill) => (
-                                <SkillTag key={skill} skill={skill}/>
+                                <SkillTag key={skill} label={skill}/>
                             ))}
                         </div>
                         <p className="text-xs text-gray-500 mt-2">
