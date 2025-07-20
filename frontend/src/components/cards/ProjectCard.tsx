@@ -2,7 +2,7 @@ import { type FC } from 'react';
 import { Link } from 'react-router';
 import { FiCalendar } from "react-icons/fi";
 import { LuUsers } from "react-icons/lu";
-import { type ProjectCardProps } from '../api/Project';
+import { type ProjectCardProps } from '../../api/Project';
 
 const ProjectCard: FC<ProjectCardProps> = ({
   projectId,

@@ -1,4 +1,4 @@
-import WhoIsItForCard from "./WhoIsItForCard";
+import WhoIsItForCard from "./cards/WhoIsItForCard";
 import { GoPeople } from "react-icons/go";
 import { PiStudent } from "react-icons/pi";
 import { PiSuitcase } from "react-icons/pi";

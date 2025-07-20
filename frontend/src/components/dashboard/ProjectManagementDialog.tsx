@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import BGFadeButton from '../buttons/BGFadeButton';
 import ProfileImage from '../ProfileImage';
 import Spinner from '../animation/Spinner';
+import ApplicationCard from '../cards/ApplicationCard';
 
 interface ProjectManagementDialogProps {
     project: UserProjectCardProps;
@@ -329,44 +330,21 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                     </div>
                                 ) : (
                                     applicants.map((applicant) => (
-                                        <div key={applicant.userId} className="bg-white border border-gray-200 rounded-md p-4">
-                                            <div className="flex items-start justify-between">
-                                                <div className="flex items-start space-x-4 flex-1">
-                                                    {/* Avatar */}
-                                                    <ProfileImage
-                                                        profileImage={applicant.profileImage}
-                                                        firstName={applicant.firstName}
-                                                        lastName={applicant.lastName}
-                                                    />
-                                                    
-                                                    {/* Applicant Info */}
-                                                    <div className="flex-1">
-                                                        <h3 className="font-semibold text-gray-900">
-                                                            {applicant.firstName} {applicant.lastName}
-                                                        </h3>
-                                                        <p className="text-sm text-gray-600 flex items-center mt-1">
-                                                            <FiMail size={14} className="mr-1" />
-                                                            {applicant.email}
-                                                        </p>
-                                                        <div className="flex flex-wrap gap-1 mt-2">
-                                                            {applicant.skills.map((skill) => (
-                                                                <span key={skill} className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs">
-                                                                    {skill}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                        {applicant.message && (
-                                                            <div className="mt-3 p-3 bg-gray-50 rounded-md">
-                                                                <p className="text-sm text-gray-700">{applicant.message}</p>
-                                                            </div>
-                                                        )}
-                                                        <p className="text-xs text-gray-500 mt-2">
-                                                            Applied {formatDate(applicant.dateApplied)}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                {/* Actions */}
+                                        <ApplicationCard
+                                            key={applicant.userId}
+                                            image={
+                                                <ProfileImage
+                                                    profileImage={applicant.profileImage}
+                                                    firstName={applicant.firstName}
+                                                    lastName={applicant.lastName}
+                                                />
+                                            }
+                                            header={`${applicant.firstName} ${applicant.lastName}`}
+                                            subheader={applicant.email}
+                                            skills={applicant.skills}
+                                            coverMessage={applicant.message}
+                                            dateApplied={formatDate(applicant.dateApplied)}
+                                            actions={
                                                 <div className="flex items-center space-x-2 ml-4 font-semibold">
                                                     <BGFadeButton
                                                         onClick={() => handleAcceptApplicant(applicant.userId)}
@@ -383,8 +361,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                                         Reject
                                                     </BGFadeButton>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            }
+                                        />
                                     ))
                                 )}
                             </div>

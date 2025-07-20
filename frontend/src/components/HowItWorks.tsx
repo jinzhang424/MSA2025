@@ -1,4 +1,4 @@
-import HowItWorksCard from "./HowItWorksCard"
+import HowItWorksCard from "./cards/HowItWorksCard"
 
 function HowItWorks() {
     return (
