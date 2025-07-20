@@ -204,6 +204,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
                 userId = pa.User.UserId,
                 firstName = pa.User.FirstName,
                 lastName = pa.User.LastName,
+                profileImage = pa.User.ProfileImage,
                 email = pa.User.Email,
                 skills = pa.User.Skills ?? new List<string>(),
                 dateApplied = pa.DateApplied.ToString("yyyy-MM-dd HH:mm"),

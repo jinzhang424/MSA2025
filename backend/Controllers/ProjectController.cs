@@ -261,6 +261,7 @@ public class ProjectController(ApplicationDbContext context, JwtTokenService jwt
                 id = pm.User.UserId,
                 firstName = pm.User.FirstName,
                 lastName = pm.User.LastName,
+                profileImage = pm.User.ProfileImage,
                 email = pm.User.Email,
                 bio = pm.User.Bio,
                 skills = pm.User.Skills ?? new List<string>()

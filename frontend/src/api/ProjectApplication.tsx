@@ -55,6 +55,7 @@ export interface ProjectApplication {
     userId: number,
     firstName: string,
     lastName: string,
+    profileImage: string,
     email: string,
     skills: string[],
     dateApplied: string,

@@ -7,6 +7,9 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import BGFadeButton from '../buttons/BGFadeButton';
+import ProfileImage from '../ProfileImage';
+import Spinner from '../animation/Spinner';
 
 interface ProjectManagementDialogProps {
     project: UserProjectCardProps;
@@ -28,6 +31,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
     const {
         data: members = [],
         isError: isGetMembersError,
+        isLoading: isLoadingMembers,
         error: getMembersError,
         refetch: refetchMembers
     } = useQuery({
@@ -44,6 +48,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
         data: applicants = [],
         isError: isGetPendingAppsError,
         error: getPendingAppsError,
+        isLoading: isLoadingApplications,
         refetch: refetchPendingApps
     } = useQuery({
         queryKey: ["applicants"],
@@ -121,23 +126,23 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
     const getRoleIcon = (role: string) => {
         switch (role) {
-            case 'creator':
+            case 'Owner':
                 return <FiStar className="text-yellow-500" size={16} />;
-            case 'lead':
+            case 'Lead':
                 return <FiUserCheck className="text-blue-500" size={16} />;
             default:
-                return <FiUser className="text-gray-500" size={16} />;
+                return <FiUser className="text-green-500" size={16} />;
         }
     };
 
     const getRoleBadgeColor = (role: string) => {
         switch (role) {
-            case 'creator':
+            case 'Owner':
                 return 'bg-yellow-100 text-yellow-800';
-            case 'lead':
+            case 'Lead':
                 return 'bg-blue-100 text-blue-800';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-green-100 text-green-800';
         }
     };
 
@@ -235,37 +240,51 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
                     {/* Content */}
                     <div className="flex-1 overflow-y-auto p-6">
-                        {activeTab === 'members' && (
+                        {/* Project members */}
+                        
+                        {isLoadingMembers ? (
+                            <div className="flex items-center justify-center text-center py-12">
+                                    <Spinner isLoading={true}/>
+                                    <p className="text-gray-600 ml-4">Loading applications...</p>
+                                </div>
+                        ) : activeTab === 'members' && (
                             <div className="space-y-4">
                                 {members.map((member) => (
                                     <div key={member.userId} className="bg-white border border-gray-200 rounded-md p-4">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-4">
                                                 {/* Avatar */}
-                                                <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
-                                                    <span className="text-white font-semibold text-sm">
-                                                        {member.user.firstName[0]}{member.user.lastName[0]}
-                                                    </span>
-                                                </div>
+                                                <ProfileImage
+                                                    profileImage={member.user.profileImage}
+                                                    firstName={member.user.firstName}
+                                                    lastName={member.user.lastName}
+                                                />
                                                 
                                                 {/* Member Info */}
                                                 <div className="flex-1">
                                                     <div className="flex items-center space-x-2">
+                                                        {/* Nmae */}
                                                         <h3 className="font-semibold text-gray-900">
                                                             {member.user.firstName} {member.user.lastName}
                                                         </h3>
+
+                                                        {/* Role */}
                                                         {getRoleIcon(member.role)}
-                                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(member.role)}`}>
+                                                        <span className={`px-2 py-1 rounded-md text-xs font-medium ${getRoleBadgeColor(member.role)}`}>
                                                             {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
                                                         </span>
                                                     </div>
+
+                                                    {/* Email */}
                                                     <p className="text-sm text-gray-600 flex items-center mt-1">
                                                         <FiMail size={14} className="mr-1" />
                                                         {member.user.email}
                                                     </p>
+
+                                                    {/* Skills */}
                                                     <div className="flex flex-wrap gap-1 mt-2">
                                                         {member.user.skills.map((skill) => (
-                                                            <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                            <span key={skill} className="px-2 py-1 bg-purple-100 text-purple-950 rounded text-xs font-semibold">
                                                                 {skill}
                                                             </span>
                                                         ))}
@@ -279,12 +298,13 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                             {/* Actions */}
                                             {member.role !== 'Owner' && (
                                                 <div className="flex items-center space-x-2">
-                                                    <button
+                                                    <BGFadeButton
                                                         onClick={() => handleRemoveMember(member.userId)}
-                                                        className="text-sm text-gray-100 font-semibold bg-red-600 px-4 py-2 hover:bg-red-500 rounded-md transition-colors cursor-pointer"
+                                                        className="text-sm text-white font-semibold bg-red-700 px-4 py-2 hover:bg-red-500 rounded-md transition-colors cursor-pointer"
+                                                        isLoading={removeMember.isPending}
                                                     >
                                                         Remove
-                                                    </button>
+                                                    </BGFadeButton>
                                                 </div>
                                             )}
                                         </div>
@@ -294,8 +314,14 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                         )}
 
                         {activeTab === 'applicants' && (
+                            // Applicants
                             <div className="space-y-4">
-                                {applicants.length === 0 ? (
+                                {isLoadingApplications ? (
+                                    <div className="text-center py-12">
+                                        <Spinner isLoading={true}/>
+                                        <p className="text-gray-600">Loading applications...</p>
+                                    </div>
+                                ) : applicants.length === 0 ? (
                                     <div className="text-center py-12">
                                         <FiUsers size={48} className="mx-auto text-gray-400 mb-4" />
                                         <h3 className="text-lg font-medium text-gray-900 mb-2">No pending applicants</h3>
@@ -307,11 +333,11 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                             <div className="flex items-start justify-between">
                                                 <div className="flex items-start space-x-4 flex-1">
                                                     {/* Avatar */}
-                                                    <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
-                                                        <span className="text-white font-semibold text-sm">
-                                                            {applicant.firstName[0]}{applicant.lastName[0]}
-                                                        </span>
-                                                    </div>
+                                                    <ProfileImage
+                                                        profileImage={applicant.profileImage}
+                                                        firstName={applicant.firstName}
+                                                        lastName={applicant.lastName}
+                                                    />
                                                     
                                                     {/* Applicant Info */}
                                                     <div className="flex-1">
@@ -342,18 +368,20 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
                                                 {/* Actions */}
                                                 <div className="flex items-center space-x-2 ml-4 font-semibold">
-                                                    <button
+                                                    <BGFadeButton
                                                         onClick={() => handleAcceptApplicant(applicant.userId)}
                                                         className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors"
+                                                        isLoading={acceptApplication.isPending}
                                                     >
                                                         Accept
-                                                    </button>
-                                                    <button
+                                                    </BGFadeButton>
+                                                    <BGFadeButton
                                                         onClick={() => handleRejectApplicant(applicant.userId)}
                                                         className="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors"
+                                                        isLoading={rejectApplication.isPending}
                                                     >
                                                         Reject
-                                                    </button>
+                                                    </BGFadeButton>
                                                 </div>
                                             </div>
                                         </div>
