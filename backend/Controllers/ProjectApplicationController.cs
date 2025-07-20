@@ -70,6 +70,11 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         }
         var userId = int.Parse(userIdString);
 
+        if (string.IsNullOrEmpty(projectApplicationDto.CoverMessage))
+        {
+            return BadRequest("DWADAWDWADWAD");
+        }
+
         // Ensure that the project exists
         var project = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
         if (project == null)
@@ -96,7 +101,6 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         var waitingListUser = new ProjectApplication
         {
             CoverMessage = projectApplicationDto.CoverMessage,
-            Availablity = projectApplicationDto.Availability,
             ProjectId = projectId,
             UserId = userId
         };
@@ -200,6 +204,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
                 userId = pa.User.UserId,
                 firstName = pa.User.FirstName,
                 lastName = pa.User.LastName,
+                profileImage = pa.User.ProfileImage,
                 email = pa.User.Email,
                 skills = pa.User.Skills ?? new List<string>(),
                 dateApplied = pa.DateApplied.ToString("yyyy-MM-dd HH:mm"),
@@ -239,7 +244,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             dateApplied = pa.DateApplied.ToString("yyyy-MM-dd"),
             skills = pa.Project.Skills ?? new List<string>(),
             status = pa.Status,
-            coverMessage = pa.CoverMessage
+            coverMessage = pa.CoverMessage,
         }).ToList();
 
         return Ok(result);
@@ -287,7 +292,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             projectTitle = pa.Project.Title,
             status = pa.Status,
             dateApplied = pa.DateApplied.ToString("yyyy-MM-dd"),
-            coverMessage = pa.CoverMessage
+            coverMessage = pa.CoverMessage,
         }).ToList();
 
         return Ok(result);

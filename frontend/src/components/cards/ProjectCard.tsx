@@ -2,7 +2,8 @@ import { type FC } from 'react';
 import { Link } from 'react-router';
 import { FiCalendar } from "react-icons/fi";
 import { LuUsers } from "react-icons/lu";
-import { type ProjectCardProps } from '../api/Project';
+import { type ProjectCardProps } from '../../api/Project';
+import SkillTag from '../SkillTag';
 
 const ProjectCard: FC<ProjectCardProps> = ({
   projectId,
@@ -35,9 +36,8 @@ const ProjectCard: FC<ProjectCardProps> = ({
         {/* Skills needed */}
         <div className="flex flex-wrap gap-2 mb-4">
           {skills.slice(0, 3).map((skill, index) => 
-            <span key={index} className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
-              {skill}
-            </span>)}
+            <SkillTag key={index} label={skill}/>
+          )}
             
           {skills.length > 3 && 
             <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">

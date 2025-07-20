@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { IoClose } from "react-icons/io5";
-import ProjectCard from '../components/ProjectCard';
+import ProjectCard from '../components/cards/ProjectCard';
 import SimpleHero from '../components/SimpleHero';
 import { BsFilterRight } from "react-icons/bs";
 import Footer from '../components/Footer';

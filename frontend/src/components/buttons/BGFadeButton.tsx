@@ -1,9 +1,11 @@
 import { type MouseEventHandler, type ReactNode } from 'react'
+import Spinner from '../animation/Spinner'
 
 interface ButtonProps {
     children: ReactNode
     bgFade?: boolean
     className?: string
+    isLoading?: boolean
     onClick?: MouseEventHandler<HTMLButtonElement>
 }
 
@@ -15,7 +17,7 @@ interface ButtonProps {
  * @param onClick onClick handler
  * @returns A button that if bgFade is true, background will fade from 0 to full opacity
  */
-function BGFadeButton({bgFade = false, children, className, onClick}: ButtonProps) {
+function BGFadeButton({ bgFade = false, children, className, onClick, isLoading = false }: ButtonProps) {
     let buttonStyle = "rounded-md outline outline-gray-100 outline-2 hover:cursor-pointer font-semibold"
     if (bgFade) {
         buttonStyle += " text-gray-100 hover:text-navy bg-gray-100/0 hover:bg-gray-100/100 duration-300 ease-in-out"
@@ -26,8 +28,13 @@ function BGFadeButton({bgFade = false, children, className, onClick}: ButtonProp
     buttonStyle += ` ${className}`
 
     return (
-        <button className={buttonStyle} onClick={onClick}>
-            {children}
+        <button className={`relative ${buttonStyle}`} onClick={onClick}>
+            <div className={`${isLoading && "opacity-0"}`}>
+                {children}
+            </div>
+            <div className='flex justify-center items-center absolute inset-0'>
+                <Spinner isLoading={isLoading}/>
+            </div>
         </button>
     )
 }

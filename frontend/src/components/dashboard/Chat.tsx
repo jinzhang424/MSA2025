@@ -127,8 +127,8 @@ const Chat = ({ user }: ChatProps) => {
         onSuccess: () => {
             setNewMessage("");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while sending message");
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while sending message");
         }
     })
 

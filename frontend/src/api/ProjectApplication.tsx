@@ -1,11 +1,9 @@
 import axios from "axios";
-import { toast } from "react-toastify";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export interface ApplicationFormData {
     coverMessage: string,
-    availability: string,
 }
 
 /**
@@ -18,14 +16,13 @@ export interface ApplicationFormData {
 export const sendApplication = async (application: ApplicationFormData, projectId: number, token: string) => {
     const res = await axios.post(`${API_BASE_URL}/api/ProjectApplication/ApplyForProject/${projectId}`, {
         CoverMessage: application.coverMessage,
-        Availability: application.availability
     }, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
 
-    return res.data
+    return res
 }
 
 export interface RecentApplications {
@@ -58,6 +55,7 @@ export interface ProjectApplication {
     userId: number,
     firstName: string,
     lastName: string,
+    profileImage: string,
     email: string,
     skills: string[],
     dateApplied: string,
@@ -128,7 +126,7 @@ export interface UserOutgoingApplication {
     dateApplied: string,
     skills: string[],
     status: string,
-    coverMessage: string
+    coverMessage: string,
 }
 
 /**
@@ -150,14 +148,14 @@ export interface UserIncomingApplication {
         firstName: string,
         lastName: string,
         email: string,
-        profilePicture: string | null,
+        profilePicture: string | undefined,
         skills: string[]
     },
     projectId: number,
     projectTitle: string,
     status: string,
     dateApplied: string,
-    coverMessage: string
+    coverMessage: string,
 }
 
 /**
@@ -166,14 +164,8 @@ export interface UserIncomingApplication {
  * @returns a list of incoming applications (see `UserIncomingApplication` for full structure)
  */
 export const GetIncomingApplications = async (token: string): Promise<UserIncomingApplication[]> => {
-    try {
-        const res = await axios.get(`${API_BASE_URL}/api/ProjectApplication/GetIncomingApplications`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        return res.data as UserIncomingApplication[];
-    } catch (e: any) {
-        toast.error(e.response?.data || "Unknown error ocurred while getting incoming applications")
-        console.error(e);
-        return [];
-    }
+    const res = await axios.get(`${API_BASE_URL}/api/ProjectApplication/GetIncomingApplications`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    return res.data as UserIncomingApplication[];
 };

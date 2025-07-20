@@ -1,12 +1,18 @@
 import { useState } from 'react';
-import { FiX, FiUsers, FiUserCheck, FiMail, FiUser, FiStar } from 'react-icons/fi';
-import { removeUserFromProject, type UserProjectCardProps } from '../../api/Project';
+import { FiX, FiUsers, FiUserCheck } from 'react-icons/fi';
+import { type UserProjectCardProps } from '../../api/Project';
 import { getProjectMembers } from '../../api/Project';
 import { acceptUserApplication, getProjectPendingApplications, rejectUserApplication } from '../../api/ProjectApplication';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import BGFadeButton from '../buttons/BGFadeButton';
+import ProfileImage from '../ProfileImage';
+import Spinner from '../animation/Spinner';
+import ApplicationCard from '../cards/ApplicationCard';
+import { formatDate } from '../../utils/formatTime';
+import ProjectMemberCard from '../cards/ProjectMemberCard';
 
 interface ProjectManagementDialogProps {
     project: UserProjectCardProps;
@@ -28,6 +34,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
     const {
         data: members = [],
         isError: isGetMembersError,
+        isLoading: isLoadingMembers,
         error: getMembersError,
         refetch: refetchMembers
     } = useQuery({
@@ -44,6 +51,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
         data: applicants = [],
         isError: isGetPendingAppsError,
         error: getPendingAppsError,
+        isLoading: isLoadingApplications,
         refetch: refetchPendingApps
     } = useQuery({
         queryKey: ["applicants"],
@@ -66,8 +74,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
             refetchPendingApps();
             toast.success("Successfully accepted applicant");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while accepting applicant")
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while accepting applicant")
             console.error("Error while accepting applicant", e);
         }
     })
@@ -86,8 +94,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
             refetchPendingApps();
             toast.success("Successfully rejected applicant");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while rejecting applicant")
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while rejecting applicant")
             console.error("Error while rejecting applicant", e);
         }
     })
@@ -97,57 +105,6 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
         rejectApplication.mutate(applicantId);
     };
 
-    const removeMember = useMutation({
-        mutationFn: (memberId: number) => removeUserFromProject({
-            userId: memberId, 
-            projectId: project.projectId, 
-            token: user.token
-        }),
-        onSuccess: () => {
-            refetchMembers();
-            toast.success("Successfully removed applicant");
-        },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while removing member")
-            console.error("Error while removing member", e);
-        }
-    })
-
-    const handleRemoveMember = async (memberId: number) => {
-        if (window.confirm('Are you sure you want to remove this member from the project?')) {
-            removeMember.mutate(memberId)
-        }
-    };
-
-    const getRoleIcon = (role: string) => {
-        switch (role) {
-            case 'creator':
-                return <FiStar className="text-yellow-500" size={16} />;
-            case 'lead':
-                return <FiUserCheck className="text-blue-500" size={16} />;
-            default:
-                return <FiUser className="text-gray-500" size={16} />;
-        }
-    };
-
-    const getRoleBadgeColor = (role: string) => {
-        switch (role) {
-            case 'creator':
-                return 'bg-yellow-100 text-yellow-800';
-            case 'lead':
-                return 'bg-blue-100 text-blue-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    };
 
     if (!isOpen) return null;
 
@@ -235,67 +192,34 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
 
                     {/* Content */}
                     <div className="flex-1 overflow-y-auto p-6">
-                        {activeTab === 'members' && (
+                        {/* Project members */}
+                        
+                        {isLoadingMembers ? (
+                            <div className="flex items-center justify-center text-center py-12">
+                                    <Spinner isLoading={true}/>
+                                    <p className="text-gray-600 ml-4">Loading applications...</p>
+                                </div>
+                        ) : activeTab === 'members' && (
                             <div className="space-y-4">
                                 {members.map((member) => (
-                                    <div key={member.userId} className="bg-white border border-gray-200 rounded-md p-4">
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center space-x-4">
-                                                {/* Avatar */}
-                                                <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
-                                                    <span className="text-white font-semibold text-sm">
-                                                        {member.user.firstName[0]}{member.user.lastName[0]}
-                                                    </span>
-                                                </div>
-                                                
-                                                {/* Member Info */}
-                                                <div className="flex-1">
-                                                    <div className="flex items-center space-x-2">
-                                                        <h3 className="font-semibold text-gray-900">
-                                                            {member.user.firstName} {member.user.lastName}
-                                                        </h3>
-                                                        {getRoleIcon(member.role)}
-                                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(member.role)}`}>
-                                                            {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-sm text-gray-600 flex items-center mt-1">
-                                                        <FiMail size={14} className="mr-1" />
-                                                        {member.user.email}
-                                                    </p>
-                                                    <div className="flex flex-wrap gap-1 mt-2">
-                                                        {member.user.skills.map((skill) => (
-                                                            <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                                                {skill}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                    <p className="text-xs text-gray-500 mt-2">
-                                                        Joined {formatDate(member.joinedAt)}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            {/* Actions */}
-                                            {member.role !== 'Owner' && (
-                                                <div className="flex items-center space-x-2">
-                                                    <button
-                                                        onClick={() => handleRemoveMember(member.userId)}
-                                                        className="text-sm text-gray-100 font-semibold bg-red-600 px-4 py-2 hover:bg-red-500 rounded-md transition-colors cursor-pointer"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
+                                    <ProjectMemberCard
+                                        key={member.userId}
+                                        member={member}
+                                        refetchMembers={refetchMembers}
+                                    />
                                 ))}
                             </div>
                         )}
 
                         {activeTab === 'applicants' && (
+                            // Applicants
                             <div className="space-y-4">
-                                {applicants.length === 0 ? (
+                                {isLoadingApplications ? (
+                                    <div className="text-center py-12">
+                                        <Spinner isLoading={true}/>
+                                        <p className="text-gray-600">Loading applications...</p>
+                                    </div>
+                                ) : applicants.length === 0 ? (
                                     <div className="text-center py-12">
                                         <FiUsers size={48} className="mx-auto text-gray-400 mb-4" />
                                         <h3 className="text-lg font-medium text-gray-900 mb-2">No pending applicants</h3>
@@ -303,60 +227,39 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                     </div>
                                 ) : (
                                     applicants.map((applicant) => (
-                                        <div key={applicant.userId} className="bg-white border border-gray-200 rounded-md p-4">
-                                            <div className="flex items-start justify-between">
-                                                <div className="flex items-start space-x-4 flex-1">
-                                                    {/* Avatar */}
-                                                    <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
-                                                        <span className="text-white font-semibold text-sm">
-                                                            {applicant.firstName[0]}{applicant.lastName[0]}
-                                                        </span>
-                                                    </div>
-                                                    
-                                                    {/* Applicant Info */}
-                                                    <div className="flex-1">
-                                                        <h3 className="font-semibold text-gray-900">
-                                                            {applicant.firstName} {applicant.lastName}
-                                                        </h3>
-                                                        <p className="text-sm text-gray-600 flex items-center mt-1">
-                                                            <FiMail size={14} className="mr-1" />
-                                                            {applicant.email}
-                                                        </p>
-                                                        <div className="flex flex-wrap gap-1 mt-2">
-                                                            {applicant.skills.map((skill) => (
-                                                                <span key={skill} className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs">
-                                                                    {skill}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                        {applicant.message && (
-                                                            <div className="mt-3 p-3 bg-gray-50 rounded-md">
-                                                                <p className="text-sm text-gray-700">{applicant.message}</p>
-                                                            </div>
-                                                        )}
-                                                        <p className="text-xs text-gray-500 mt-2">
-                                                            Applied {formatDate(applicant.dateApplied)}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                {/* Actions */}
+                                        <ApplicationCard
+                                            key={applicant.userId}
+                                            image={
+                                                <ProfileImage
+                                                    profileImage={applicant.profileImage}
+                                                    firstName={applicant.firstName}
+                                                    lastName={applicant.lastName}
+                                                />
+                                            }
+                                            header={`${applicant.firstName} ${applicant.lastName}`}
+                                            subheader={applicant.email}
+                                            skills={applicant.skills}
+                                            coverMessage={applicant.message}
+                                            dateApplied={formatDate(applicant.dateApplied)}
+                                            actions={
                                                 <div className="flex items-center space-x-2 ml-4 font-semibold">
-                                                    <button
+                                                    <BGFadeButton
                                                         onClick={() => handleAcceptApplicant(applicant.userId)}
                                                         className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors"
+                                                        isLoading={acceptApplication.isPending}
                                                     >
                                                         Accept
-                                                    </button>
-                                                    <button
+                                                    </BGFadeButton>
+                                                    <BGFadeButton
                                                         onClick={() => handleRejectApplicant(applicant.userId)}
                                                         className="px-4 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors"
+                                                        isLoading={rejectApplication.isPending}
                                                     >
                                                         Reject
-                                                    </button>
+                                                    </BGFadeButton>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            }
+                                        />
                                     ))
                                 )}
                             </div>

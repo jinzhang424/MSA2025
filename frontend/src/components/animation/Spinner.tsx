@@ -3,7 +3,7 @@ interface SpinnerProps {
     className?: string
 }
 
-function Spinner({isLoading = false, className = "text-white"} : SpinnerProps) {
+function Spinner({isLoading = false, className = ""} : SpinnerProps) {
     return (
         <svg className={`animate-spin h-5 w-5 ${!isLoading && "hidden"} ${className}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

@@ -161,6 +161,7 @@ export interface ProjectMemberData {
         id: number,
         firstName: string,
         lastName: string,
+        profileImage: string,
         email: string,
         bio: string,
         skills: string[],

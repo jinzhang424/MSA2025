@@ -83,8 +83,8 @@ const CreateProject = () => {
         onSuccess: () => {
             toast.success("Sucessfully created project")
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while creating project")
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while creating project")
         }
     })
 

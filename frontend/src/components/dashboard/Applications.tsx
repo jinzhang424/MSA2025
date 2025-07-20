@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiClock, FiCheck, FiX, FiEye, FiUser } from 'react-icons/fi';
+import { FiEye, FiUser } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
 import { 
@@ -11,6 +11,9 @@ import {
 import SpinnerLoader from '../loaders/SpinnerLoader';
 import { toast, ToastContainer } from 'react-toastify';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import ProfileImage from '../ProfileImage';
+import BGFadeButton from '../buttons/BGFadeButton';
+import ApplicationCard from '../cards/ApplicationCard';
 
 interface ApplicationsProps {
     user: User;
@@ -53,39 +56,13 @@ const Applications = ({ user }: ApplicationsProps) => {
         console.error("Error while fetching outgoing applications", outgoingError)
     }
 
-    const getStatusIcon = (status: string) => {
-        switch (status) {
-            case 'Pending':
-                return <FiClock size={16} />;
-            case 'Accepted':
-                return <FiCheck size={16} />;
-            case 'Rejected':
-                return <FiX size={16} />;
-            default:
-                return <FiClock size={16} />;
-        }
-    };
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'Pending':
-                return 'bg-yellow-100 text-yellow-800';
-            case 'Accepted':
-                return 'bg-green-100 text-green-800';
-            case 'Rejected':
-                return 'bg-red-100 text-red-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
-    };
-
     const acceptMutation = useMutation({
         mutationFn: acceptUserApplication,
         onSuccess: () => {
             toast.success("Successfully accepted applicant");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while accepting applicant");
+        onError: (e: any) => {
+            toast.error(e.response?.data || "Unknown error occurred while accepting applicant");
             console.error("Error while accepting applicant", e.message);
         }
     })
@@ -95,8 +72,8 @@ const Applications = ({ user }: ApplicationsProps) => {
         onSuccess: () => {
             toast.success("Successfully rejected applicant");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while rejecting applicant");
+        onError: (e: any) => {
+            toast.error(e.response?.data || "Unknown error occurred while rejecting applicant");
             console.error("Error while rejecting applicant", e.message);
         }
     })
@@ -153,6 +130,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                 <>
                     {activeTab === 'outgoing' ? (
                         <div className="space-y-4">
+                            {/* Outgoing applications results */}
                             {outgoingApplications.length === 0 ? (
                                 <div className="text-center py-12">
                                     <FiUser size={48} className="mx-auto text-gray-400 mb-4" />
@@ -166,59 +144,39 @@ const Applications = ({ user }: ApplicationsProps) => {
                                     </Link>
                                 </div>
                             ) : (
+                                // Outgoing appliations
                                 outgoingApplications.map((application, i) => (
-                                    <div key={i} className="bg-white rounded-lg border border-gray-200 p-6">
-                                        <div className="flex items-start space-x-4">
+                                    <ApplicationCard
+                                        key={i}
+                                        image={
                                             <img
                                                 src={application.image || "project-img-replacement.png"}
                                                 alt={application.title}
                                                 className="w-16 h-16 rounded-lg object-cover"
                                             />
-                                            <div className="flex-1 min-w-0">
-                                                {/* Header and status */}
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <h3 className="text-lg font-semibold text-gray-900">
-                                                        {application.title}
-                                                    </h3>
-
-                                                    <div className={`flex items-center space-x-2 px-2 py-1 rounded-md ${getStatusColor(application.status)}`}>
-                                                        {getStatusIcon(application.status)}
-                                                        <span className='text-xs font-medium'>
-                                                            {application.status}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <p className="text-gray-600 text-sm mb-3">{application.description}</p>
-                                                <div className="flex flex-wrap gap-1 mb-3">
-                                                    {application.skills.map((skill) => (
-                                                        <span key={skill} className="px-2 py-1 bg-purple-200 text-purple-700 rounded-md text-xs">
-                                                            {skill}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                                {application.coverMessage && (
-                                                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
-                                                        <p className="text-sm text-gray-700 italic">"{application.coverMessage}"</p>
-                                                    </div>
-                                                )}
-                                                <div className="flex items-center justify-between text-sm">
-                                                    <span className='text-gray-500'>Applied {application.dateApplied}</span>
-                                                    <Link
-                                                        to={`/project/${application.projectId}`}
-                                                        className="flex items-center bg-purple-950 hover:bg-purple-800 font-semibold px-4 py-2 rounded-md text-gray-100"
-                                                    >
-                                                        <FiEye size={16} className="mr-2 mt-0.5" />
-                                                        View Project
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        }
+                                        header={application.title}
+                                        subheader={application.description}
+                                        status={application.status}
+                                        skills={application.skills}
+                                        coverMessage={application.coverMessage}
+                                        dateApplied={application.dateApplied}
+                                        actions={
+                                            <Link
+                                                to={`/project/${application.projectId}`}
+                                                className="flex items-center bg-purple-950 hover:bg-purple-800 font-semibold px-4 py-2 rounded-md text-gray-100"
+                                            >
+                                                <FiEye size={16} className="mr-2 mt-0.5" />
+                                                View Project
+                                            </Link>
+                                        }
+                                    />
                                 ))
                             )}
                         </div>
                     ) : (
                         <div className="space-y-4">
+                            {/* No incoming applications */}
                             {incomingApplications.length === 0 ? (
                                 <div className="text-center py-12">
                                     <FiUser size={48} className="mx-auto text-gray-400 mb-4" />
@@ -226,63 +184,45 @@ const Applications = ({ user }: ApplicationsProps) => {
                                     <p className="text-gray-600">No one has applied to your projects yet.</p>
                                 </div>
                             ) : (
+                                // Incoming applications
                                 incomingApplications.map((application, i) => (
-                                    <div key={i} className="bg-white rounded-lg border border-gray-200 p-6">
-                                        <div className="flex items-start space-x-4">
-                                            <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
-                                                <span className="text-white font-semibold text-sm">
-                                                    {application.applicant.firstName[0]}{application.applicant.lastName[0]}
-                                                </span>
+                                    <ApplicationCard
+                                        key={i}
+                                        image={
+                                            <ProfileImage 
+                                                profileImage={application.applicant.profilePicture}
+                                                firstName={application.applicant.firstName}
+                                                lastName={application.applicant.lastName}
+                                            />
+                                        }
+                                        firstName={application.applicant.firstName}
+                                        lastName={application.applicant.lastName}
+                                        header={`${application.applicant.firstName} ${application.applicant.lastName}`}
+                                        subheader={application.applicant.email}
+                                        status={application.status}
+                                        appliedTo={application.projectTitle}
+                                        skills={application.applicant.skills}
+                                        coverMessage={application.coverMessage}
+                                        dateApplied={application.dateApplied}
+                                        actions={
+                                            <div className='flex lg:space-x-3 lg:justify-end justify-between lg:fit w-full'>
+                                                <BGFadeButton
+                                                    onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'accept')}
+                                                    className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
+                                                    isLoading={acceptMutation.isPending}
+                                                >
+                                                    Accept
+                                                </BGFadeButton>
+                                                <BGFadeButton
+                                                    onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'reject')}
+                                                    className="px-3 py-1 text-sm border-2 border-red-700 text-red-700 rounded hover:bg-red-700 hover:text-gray-50 transition-colors font-semibold"
+                                                    isLoading={rejectMutation.isPending}
+                                                >
+                                                    Reject
+                                                </BGFadeButton>
                                             </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <div>
-                                                        <h3 className="text-lg font-semibold text-gray-900">
-                                                            {application.applicant.firstName} {application.applicant.lastName}
-                                                        </h3>
-                                                        <p className="text-sm text-gray-600">{application.applicant.email}</p>
-                                                    </div>
-                                                    <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(application.status)}`}>
-                                                        {application.status}
-                                                    </span>
-                                                </div>
-                                                <p className="text-sm text-gray-600 mb-2">Applied to: <span className="font-medium">{application.projectTitle}</span></p>
-                                                <div className="flex flex-wrap gap-1 mb-3">
-                                                    {application.applicant.skills.map((skill) => (
-                                                        <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                                            {skill}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                                {application.coverMessage && (
-                                                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
-                                                        <p className="text-sm text-gray-700 italic">"{application.coverMessage}"</p>
-                                                    </div>
-                                                )}
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-sm text-gray-500">
-                                                        Applied {application.dateApplied}
-                                                    </span>
-                                                    {application.status === 'Pending' && (
-                                                        <div className="flex space-x-2">
-                                                            <button
-                                                                onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'reject')}
-                                                                className="px-3 py-1 text-sm border-2 border-red-700 text-red-700 rounded hover:bg-red-700 hover:text-gray-50 transition-colors font-semibold"
-                                                            >
-                                                                Reject
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'accept')}
-                                                                className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
-                                                            >
-                                                                Accept
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        }
+                                    />
                                 ))
                             )}
                         </div>
