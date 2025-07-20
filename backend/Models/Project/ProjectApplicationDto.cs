@@ -1,5 +1,5 @@
 public class ProjectApplicationDto
 {
-    public string CoverMessage = "";
-    public string Availability = "";
+    public string CoverMessage { get; set; } = "";
+    public string Availability { get; set; } = "";
 }

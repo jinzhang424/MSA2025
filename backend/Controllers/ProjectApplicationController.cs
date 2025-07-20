@@ -70,6 +70,11 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         }
         var userId = int.Parse(userIdString);
 
+        if (string.IsNullOrEmpty(projectApplicationDto.CoverMessage))
+        {
+            return BadRequest("DWADAWDWADWAD");
+        }
+
         // Ensure that the project exists
         var project = await _context.Projects.FirstOrDefaultAsync(p => p.ProjectId == projectId);
         if (project == null)
