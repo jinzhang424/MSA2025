@@ -57,7 +57,7 @@ const ApplicationCard = ({
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'Pending':
-                return 'bg-yellow-100 text-yellow-800';
+                return 'bg-yellow-100 text-orange-600';
             case 'Accepted':
                 return 'bg-green-100 text-green-800';
             case 'Rejected':
@@ -68,28 +68,31 @@ const ApplicationCard = ({
     };
 
     return (    
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-5">
             <div className="flex items-start space-x-4">
                 {image}
 
                 {/* Applicantion details */}
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2">
                         {/* Applicant info */}
-                        <div>
+                        <div className="flex justify-between w-full">
+                            {/* Header */}
                             <h3 className="text-lg font-semibold text-gray-900">
                                 {header}
                             </h3>
-                            <p className="text-sm text-gray-600">{subheader}</p>
-                        </div>
 
-                        {/* Application status */}
-                        {status && <div className={`flex items-center space-x-2 px-2 py-1 rounded-md ${getStatusColor(status)}`}>
-                            {getStatusIcon(status)}
-                            <span className='text-xs font-medium'>
-                                {status}
-                            </span>
-                        </div>}
+                            {/* Application status */}
+                            {status && 
+                                <div className={`flex items-center space-x-2 px-2 py-1 rounded-md max-h-[28px] ${getStatusColor(status)}`}>
+                                    {getStatusIcon(status)}
+                                    <span className='text-xs font-medium'>
+                                        {status}
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <p className="text-sm text-gray-600">{subheader}</p>
                     </div>
 
                     {/* Applied to */}
@@ -118,7 +121,7 @@ const ApplicationCard = ({
                         </div>
                     )}
                     
-                    <div className="flex items-center justify-between">
+                    <div className="grid lg:grid-cols-2 lg:grid-rows-1 grid-rows-2">
                         {/* Date applied */}
                         <span className="text-sm text-gray-500">
                             Applied {dateApplied}

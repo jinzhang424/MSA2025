@@ -205,20 +205,20 @@ const Applications = ({ user }: ApplicationsProps) => {
                                         coverMessage={application.coverMessage}
                                         dateApplied={application.dateApplied}
                                         actions={
-                                            <div className='flex space-x-3'>
-                                                <BGFadeButton
-                                                    onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'reject')}
-                                                    className="px-3 py-1 text-sm border-2 border-red-700 text-red-700 rounded hover:bg-red-700 hover:text-gray-50 transition-colors font-semibold"
-                                                    isLoading={rejectMutation.isPending}
-                                                >
-                                                    Reject
-                                                </BGFadeButton>
+                                            <div className='flex lg:space-x-3 lg:justify-end justify-between lg:fit w-full'>
                                                 <BGFadeButton
                                                     onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'accept')}
                                                     className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
                                                     isLoading={acceptMutation.isPending}
                                                 >
                                                     Accept
+                                                </BGFadeButton>
+                                                <BGFadeButton
+                                                    onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'reject')}
+                                                    className="px-3 py-1 text-sm border-2 border-red-700 text-red-700 rounded hover:bg-red-700 hover:text-gray-50 transition-colors font-semibold"
+                                                    isLoading={rejectMutation.isPending}
+                                                >
+                                                    Reject
                                                 </BGFadeButton>
                                             </div>
                                         }

@@ -141,7 +141,7 @@ function UserDashboard() {
                         onClick={handleLogout}
                     >
                         <HiOutlineLogout size={20} />
-                        Logout
+                        <p className='lg:block hidden'>Logout</p>
                     </SideBarButton>
                 </div>
             </div>
