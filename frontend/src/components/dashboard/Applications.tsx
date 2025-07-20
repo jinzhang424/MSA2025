@@ -12,6 +12,7 @@ import SpinnerLoader from '../loaders/SpinnerLoader';
 import { toast, ToastContainer } from 'react-toastify';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import ProfileImage from '../ProfileImage';
+import BGFadeButton from '../buttons/BGFadeButton';
 
 interface ApplicationsProps {
     user: User;
@@ -175,18 +176,25 @@ const Applications = ({ user }: ApplicationsProps) => {
                                     <div key={i} className="bg-white rounded-lg border border-gray-200 p-6">
                                         <div className="flex items-start space-x-4">
                                             {/* Project image */}
-                                            <img
-                                                src={application.image || "project-img-replacement.png"}
-                                                alt={application.title}
-                                                className="w-16 h-16 rounded-lg object-cover"
-                                            />
+                                            <div>
+                                                <img
+                                                    src={application.image || "project-img-replacement.png"}
+                                                    alt={application.title}
+                                                    className="w-16 h-16 rounded-lg object-cover"
+                                                />
+                                            </div>
                                             <div className="flex-1 min-w-0">
-                                                {/* Header and status */}
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <h3 className="text-lg font-semibold text-gray-900">
-                                                        {application.title}
-                                                    </h3>
+                                                {/* Header, description and status */}
+                                                <div className="flex items-center justify-between">
+                                                    {/* Project name and description */}
+                                                    <div>
+                                                        <h3 className="text-lg font-semibold text-gray-900">
+                                                            {application.title}
+                                                        </h3>
+                                                        <p className="text-gray-600 text-sm mb-3">{application.description}</p>
+                                                    </div>
 
+                                                    {/* Status */}
                                                     <div className={`flex items-center space-x-2 px-2 py-1 rounded-md ${getStatusColor(application.status)}`}>
                                                         {getStatusIcon(application.status)}
                                                         <span className='text-xs font-medium'>
@@ -194,7 +202,6 @@ const Applications = ({ user }: ApplicationsProps) => {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <p className="text-gray-600 text-sm mb-3">{application.description}</p>
                                                 <div className="flex flex-wrap gap-1 mb-3">
                                                     {application.skills.map((skill) => (
                                                         <span key={skill} className="px-2 py-1 bg-purple-200 text-purple-700 rounded-md text-xs">
@@ -202,11 +209,19 @@ const Applications = ({ user }: ApplicationsProps) => {
                                                         </span>
                                                     ))}
                                                 </div>
+
+                                                {/* Cover message */}
                                                 {application.coverMessage && (
-                                                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
-                                                        <p className="text-sm text-gray-700 italic">"{application.coverMessage}"</p>
+                                                    <div>
+                                                        <h1 className='text-sm font-semibold text-gray-900'>Cover Message:</h1>
+                                                        <div className="bg-gray-100 rounded-md p-2 mb-3 mt-1">
+                                                            <p className="text-sm text-gray-700">
+                                                                "{application.coverMessage}"
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 )}
+
                                                 <div className="flex items-center justify-between text-sm">
                                                     <span className='text-gray-500'>Applied {application.dateApplied}</span>
                                                     <Link
@@ -276,10 +291,13 @@ const Applications = ({ user }: ApplicationsProps) => {
 
                                                 {/* Applicant cover message */}
                                                 {application.coverMessage && (
-                                                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
-                                                        <p className="text-sm text-gray-700 italic">
-                                                            "{application.coverMessage}"
-                                                        </p>
+                                                    <div>
+                                                        <h1 className='text-sm font-semibold text-gray-900'>Cover Message:</h1>
+                                                        <div className="bg-gray-100 rounded-md p-2 mb-3 mt-1">
+                                                            <p className="text-sm text-gray-700">
+                                                                "{application.coverMessage}"
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 )}
                                                 
@@ -292,18 +310,20 @@ const Applications = ({ user }: ApplicationsProps) => {
                                                     {/* Application actions */}
                                                     {application.status === 'Pending' && (
                                                         <div className="flex space-x-2">
-                                                            <button
+                                                            <BGFadeButton
                                                                 onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'reject')}
                                                                 className="px-3 py-1 text-sm border-2 border-red-700 text-red-700 rounded hover:bg-red-700 hover:text-gray-50 transition-colors font-semibold"
+                                                                isLoading={rejectMutation.isPending}
                                                             >
                                                                 Reject
-                                                            </button>
-                                                            <button
+                                                            </BGFadeButton>
+                                                            <BGFadeButton
                                                                 onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'accept')}
                                                                 className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
+                                                                isLoading={acceptMutation.isPending}
                                                             >
                                                                 Accept
-                                                            </button>
+                                                            </BGFadeButton>
                                                         </div>
                                                     )}
                                                 </div>

@@ -101,7 +101,6 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
         var waitingListUser = new ProjectApplication
         {
             CoverMessage = projectApplicationDto.CoverMessage,
-            Availablity = projectApplicationDto.Availability,
             ProjectId = projectId,
             UserId = userId
         };
@@ -244,7 +243,7 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             dateApplied = pa.DateApplied.ToString("yyyy-MM-dd"),
             skills = pa.Project.Skills ?? new List<string>(),
             status = pa.Status,
-            coverMessage = pa.CoverMessage
+            coverMessage = pa.CoverMessage,
         }).ToList();
 
         return Ok(result);
@@ -293,7 +292,6 @@ public class ApplicationController(ApplicationDbContext context, NotificationSer
             status = pa.Status,
             dateApplied = pa.DateApplied.ToString("yyyy-MM-dd"),
             coverMessage = pa.CoverMessage,
-            availability = pa.Availablity
         }).ToList();
 
         return Ok(result);

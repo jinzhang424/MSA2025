@@ -4,7 +4,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export interface ApplicationFormData {
     coverMessage: string,
-    availability: string,
 }
 
 /**
@@ -17,7 +16,6 @@ export interface ApplicationFormData {
 export const sendApplication = async (application: ApplicationFormData, projectId: number, token: string) => {
     const res = await axios.post(`${API_BASE_URL}/api/ProjectApplication/ApplyForProject/${projectId}`, {
         CoverMessage: application.coverMessage,
-        Availability: application.availability
     }, {
         headers: {
             Authorization: `Bearer ${token}`
@@ -127,7 +125,7 @@ export interface UserOutgoingApplication {
     dateApplied: string,
     skills: string[],
     status: string,
-    coverMessage: string
+    coverMessage: string,
 }
 
 /**
@@ -157,7 +155,6 @@ export interface UserIncomingApplication {
     status: string,
     dateApplied: string,
     coverMessage: string,
-    availability: string
 }
 
 /**

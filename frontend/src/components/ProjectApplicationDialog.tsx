@@ -20,7 +20,6 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
     const [submitted, setSubmitted] = useState(false);
     const [formData, setFormData] = useState<ApplicationFormData>({
         coverMessage: '',
-        availability: ''
     });
     const dialogRef = useRef<HTMLDivElement>(null);
     const user = useSelector((state: RootState) => state.user)
@@ -95,23 +94,6 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
                                 className="w-full px-4 py-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent transition-all duration-200 text-gray-950"
                                 placeholder="Introduce yourself and explain why you're interested in this project..."
                                 value={formData.coverMessage}
-                                onChange={handleInputChange}
-                            />
-                        </div>
-
-                        {/* Availability */}
-                        <div>
-                            <label htmlFor="availability" className="block text-sm font-semibold text-gray-700 mb-2">
-                                Availability *
-                            </label>
-                            <input
-                                type="text"
-                                id="availability"
-                                name="availability"
-                                required
-                                className="w-full px-4 py-3 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-950 focus:border-transparent transition-all duration-200 text-gray-950"
-                                placeholder="e.g., 20 hours/week, weekends only, full-time..."
-                                value={formData.availability}
                                 onChange={handleInputChange}
                             />
                         </div>
