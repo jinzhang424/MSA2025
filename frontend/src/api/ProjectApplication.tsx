@@ -24,7 +24,7 @@ export const sendApplication = async (application: ApplicationFormData, projectI
         }
     });
 
-    return res.data
+    return res
 }
 
 export interface RecentApplications {
@@ -149,7 +149,7 @@ export interface UserIncomingApplication {
         firstName: string,
         lastName: string,
         email: string,
-        profilePicture: string | null,
+        profilePicture: string | undefined,
         skills: string[]
     },
     projectId: number,

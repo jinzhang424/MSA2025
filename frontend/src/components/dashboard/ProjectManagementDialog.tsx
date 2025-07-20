@@ -66,8 +66,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
             refetchPendingApps();
             toast.success("Successfully accepted applicant");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while accepting applicant")
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while accepting applicant")
             console.error("Error while accepting applicant", e);
         }
     })
@@ -86,8 +86,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
             refetchPendingApps();
             toast.success("Successfully rejected applicant");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while rejecting applicant")
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while rejecting applicant")
             console.error("Error while rejecting applicant", e);
         }
     })
@@ -107,8 +107,8 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
             refetchMembers();
             toast.success("Successfully removed applicant");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while removing member")
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while removing member")
             console.error("Error while removing member", e);
         }
     })

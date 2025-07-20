@@ -11,6 +11,7 @@ import {
 import SpinnerLoader from '../loaders/SpinnerLoader';
 import { toast, ToastContainer } from 'react-toastify';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import ProfileImage from '../ProfileImage';
 
 interface ApplicationsProps {
     user: User;
@@ -84,8 +85,8 @@ const Applications = ({ user }: ApplicationsProps) => {
         onSuccess: () => {
             toast.success("Successfully accepted applicant");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while accepting applicant");
+        onError: (e: any) => {
+            toast.error(e.response?.data || "Unknown error occurred while accepting applicant");
             console.error("Error while accepting applicant", e.message);
         }
     })
@@ -95,8 +96,8 @@ const Applications = ({ user }: ApplicationsProps) => {
         onSuccess: () => {
             toast.success("Successfully rejected applicant");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while rejecting applicant");
+        onError: (e: any) => {
+            toast.error(e.response?.data || "Unknown error occurred while rejecting applicant");
             console.error("Error while rejecting applicant", e.message);
         }
     })
@@ -108,6 +109,8 @@ const Applications = ({ user }: ApplicationsProps) => {
             rejectMutation.mutate({applicantId, projectId, token: user.token});
         }
     };
+
+    console.log(incomingApplications)
 
     return (
         <div className="space-y-6">
@@ -222,6 +225,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                         </div>
                     ) : (
                         <div className="space-y-4">
+                            {/* No incoming applications */}
                             {incomingApplications.length === 0 ? (
                                 <div className="text-center py-12">
                                     <FiUser size={48} className="mx-auto text-gray-400 mb-4" />
@@ -229,27 +233,39 @@ const Applications = ({ user }: ApplicationsProps) => {
                                     <p className="text-gray-600">No one has applied to your projects yet.</p>
                                 </div>
                             ) : (
+                                // Incoming applications
                                 incomingApplications.map((application, i) => (
                                     <div key={i} className="bg-white rounded-lg border border-gray-200 p-6">
                                         <div className="flex items-start space-x-4">
-                                            <div className="w-12 h-12 bg-purple-950 rounded-full flex items-center justify-center">
-                                                <span className="text-white font-semibold text-sm">
-                                                    {application.applicant.firstName[0]}{application.applicant.lastName[0]}
-                                                </span>
-                                            </div>
+                                            <ProfileImage 
+                                                profileImage={application.applicant.profilePicture}
+                                                firstName={application.applicant.firstName}
+                                                lastName={application.applicant.lastName}
+                                            />
+
+                                            {/* Applicantion details */}
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center justify-between mb-2">
+                                                    {/* Applicant info */}
                                                     <div>
                                                         <h3 className="text-lg font-semibold text-gray-900">
                                                             {application.applicant.firstName} {application.applicant.lastName}
                                                         </h3>
                                                         <p className="text-sm text-gray-600">{application.applicant.email}</p>
                                                     </div>
+
+                                                    {/* Application status */}
                                                     <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(application.status)}`}>
                                                         {application.status}
                                                     </span>
                                                 </div>
-                                                <p className="text-sm text-gray-600 mb-2">Applied to: <span className="font-medium">{application.projectTitle}</span></p>
+
+                                                {/* Applied to */}
+                                                <p className="text-sm text-gray-600 mb-2">
+                                                    Applied to: <span className="font-medium">{application.projectTitle}</span>
+                                                </p>
+
+                                                {/* Applicant skills */}
                                                 <div className="flex flex-wrap gap-1 mb-3">
                                                     {application.applicant.skills.map((skill) => (
                                                         <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
@@ -257,15 +273,23 @@ const Applications = ({ user }: ApplicationsProps) => {
                                                         </span>
                                                     ))}
                                                 </div>
+
+                                                {/* Applicant cover message */}
                                                 {application.coverMessage && (
                                                     <div className="bg-gray-50 rounded-lg p-3 mb-3">
-                                                        <p className="text-sm text-gray-700 italic">"{application.coverMessage}"</p>
+                                                        <p className="text-sm text-gray-700 italic">
+                                                            "{application.coverMessage}"
+                                                        </p>
                                                     </div>
                                                 )}
+                                                
                                                 <div className="flex items-center justify-between">
+                                                    {/* Date applied */}
                                                     <span className="text-sm text-gray-500">
                                                         Applied {application.dateApplied}
                                                     </span>
+
+                                                    {/* Application actions */}
                                                     {application.status === 'Pending' && (
                                                         <div className="flex space-x-2">
                                                             <button

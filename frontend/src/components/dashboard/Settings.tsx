@@ -103,8 +103,8 @@ const Settings = ({ user }: SettingsProps) => {
             }))
             toast.success("Successfully updated profile");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while updating profile");
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while updating profile");
             console.error("Error while updating profile");
         }
     })
@@ -124,8 +124,8 @@ const Settings = ({ user }: SettingsProps) => {
                 confirmPassword: ''
             });
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while updating password");
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while updating password");
             console.error("Error while updating password", e.message)
         }
     })

@@ -35,8 +35,8 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
 
     const sendApplicationMutate = useMutation({
         mutationFn: () => sendApplication(formData, projectId, user.token),
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while sending application");
+        onError: (e: any) => {
+            toast.error(e.response?.data || "Unknown error occurred while sending application");
             console.error("Error while sending application", e);
         },
         onSuccess: () => {

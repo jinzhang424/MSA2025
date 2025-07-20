@@ -72,8 +72,8 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
             refetchJoinedProjects();
             toast.success("Successfully left from project");
         },
-        onError: (e) => {
-            toast.error(e.message || "Unknown error occurred while leaving project");
+        onError: (e:any) => {
+            toast.error(e.response?.data || "Unknown error occurred while leaving project");
             console.error("Error while leaving project", e)
         }
     })
