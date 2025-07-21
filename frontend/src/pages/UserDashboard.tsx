@@ -81,6 +81,7 @@ function UserDashboard() {
      * Clears the user redux state
      */
     const handleLogout = () => {
+        localStorage.setItem('jwtToken', '');
         dispatch(logout());
         navigate("/login");
     };
