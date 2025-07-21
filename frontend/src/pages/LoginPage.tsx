@@ -51,6 +51,9 @@ const LoginPage = () => {
             localStorage.setItem('jwtToken', token);
 
             const user = await getUserProfile(token);
+
+            // Setting the user's token since getUserProfile doesn't return a user token
+            user.token = token;
             dispatch(setCredentials(
                 user
             ))

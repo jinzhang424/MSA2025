@@ -16,6 +16,7 @@ import { useEffect } from "react"
 function App() {
   const dispatch = useDispatch();
   const token = localStorage.getItem('jwtToken');
+  console.log(token)
 
   const {data: user, isError, error, isSuccess} = useQuery({
     queryKey: ['GetUserProfile', token],
