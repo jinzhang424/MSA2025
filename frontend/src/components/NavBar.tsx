@@ -13,6 +13,7 @@ import type { RootState } from "../store/store";
 export default function NavBar() {
     const [openMenu, setOpenMenu] = useState(false);
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const user = useSelector((state: RootState) => state.user)
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,8 +21,6 @@ export default function NavBar() {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-
-    const user = useSelector((state: RootState) => state.user);
 
     const navbarLinks = [
         {
@@ -72,7 +71,7 @@ export default function NavBar() {
                             
                         </div>
 
-                        {user.token? (
+                        {user.token ? (
                             <Link to="/dashboard" className="flex p-4 pl-6 w-full hover:bg-white/5 duration-300 font-semibold">
                                 <MdOutlineSpaceDashboard className="mr-4" size={24}/>
                                 Dashboard

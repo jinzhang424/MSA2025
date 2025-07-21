@@ -3,11 +3,11 @@ import { removeUserFromProject, type ProjectMemberData } from "../../api/Project
 import ProfileImage from "../ProfileImage"
 import { formatDate } from "../../utils/formatTime"
 import BGFadeButton from "../buttons/BGFadeButton"
-import { useSelector } from "react-redux"
-import type { RootState } from "../../store/store"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "react-toastify"
 import SkillTag from "../SkillTag"
+import { useSelector } from "react-redux"
+import type { RootState } from "../../store/store"
 
 interface ProjectMemberCardProps {
     member: ProjectMemberData
@@ -15,7 +15,7 @@ interface ProjectMemberCardProps {
 }
 
 const ProjectMemberCard = ({ member, refetchMembers }: ProjectMemberCardProps ) => {
-    const user = useSelector((state: RootState) => state.user)
+    const user = useSelector((state: RootState) => state.user);
 
     const getRoleIcon = (role: string) => {
         switch (role) {
@@ -40,10 +40,10 @@ const ProjectMemberCard = ({ member, refetchMembers }: ProjectMemberCardProps ) 
     };
 
     const removeMember = useMutation({
-        mutationFn: (memberId: number) => removeUserFromProject({
+        mutationFn: ({ memberId, token }: { memberId: number; token: string }) => removeUserFromProject({
             userId: memberId, 
             projectId: member.projectId, 
-            token: user.token
+            token: token
         }),
         onSuccess: () => {
             refetchMembers();
@@ -57,7 +57,10 @@ const ProjectMemberCard = ({ member, refetchMembers }: ProjectMemberCardProps ) 
 
     const handleRemoveMember = async (memberId: number) => {
         if (window.confirm('Are you sure you want to remove this member from the project?')) {
-            removeMember.mutate(memberId)
+            removeMember.mutate({
+                memberId: memberId, 
+                token: user.token
+            });
         }
     };
 

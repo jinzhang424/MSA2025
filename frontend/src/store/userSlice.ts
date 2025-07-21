@@ -7,8 +7,8 @@ const initialState: User = {
   lastName: '',
   email: '',
   bio: '',
-  token: '',
   profileImage: '',
+  token: '',
   skills: [],
 };
 
@@ -25,8 +25,8 @@ const userSlice = createSlice({
       state.lastName = action.payload.lastName;
       state.email = action.payload.email;
       state.bio = action.payload.bio;
-      state.token = action.payload.token;
       state.skills = action.payload.skills;
+      state.token = action.payload.token;
       state.profileImage = action.payload.profileImage;
     },
 
@@ -36,8 +36,8 @@ const userSlice = createSlice({
       state.lastName = '';
       state.email = '';
       state.bio = '';
-      state.token = '';
       state.profileImage = ''
+      state.token = ''
       state.skills = [];
     },
   },
