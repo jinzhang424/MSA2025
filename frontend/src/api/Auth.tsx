@@ -1,5 +1,4 @@
 import axios from "axios"
-import type { User } from "../types/dashboard";
 import { createAvatar } from '@dicebear/core';
 import { funEmoji } from '@dicebear/collection';
 
@@ -43,7 +42,7 @@ export interface LoginParams {
  * 
  * @param email - user's email
  * @param password - user's password
- * @returns returns a User object with the following parameters:
+ * @returns returns a jwt token
  * ```
  * {
  *  id: number,
@@ -57,11 +56,11 @@ export interface LoginParams {
  * }
  * ```
  */
-export const login = async ({email, password}: LoginParams) : Promise<User> => {
+export const login = async ({email, password}: LoginParams) : Promise<string> => {
     const res =  await axios.post(`${API_BASE_URL}/api/Auth/Login`, {
         Email: email,
         Password: password
     });
 
-    return res.data as User
+    return res.data
 }

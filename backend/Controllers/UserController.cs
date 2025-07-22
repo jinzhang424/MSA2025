@@ -77,5 +77,31 @@ public class UserController(ApplicationDbContext context) : ControllerBase
         return Ok("Successfully updated password");
     }
 
+    [HttpGet("GetUserProfile")]
+    public async Task<IActionResult> GetUserProfile()
+    {
+        var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdString == null)
+        {
+            return Unauthorized("Invalid Token");
+        }
+        var userId = int.Parse(userIdString);
 
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+
+        return Ok(new
+        {
+            id = user.UserId,
+            user.FirstName,
+            user.LastName,
+            user.Email,
+            user.Bio,
+            user.ProfileImage,
+            user.Skills
+        });
+    }
 }

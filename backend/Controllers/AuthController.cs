@@ -80,16 +80,6 @@ public class AuthController : ControllerBase
         }
 
         // Returning user info and a jwt
-        return Ok(new
-        {
-            id = user.UserId,
-            firstName = user.FirstName,
-            lastName = user.LastName,
-            email = user.Email,
-            bio = user.Bio,
-            profileImage = user.ProfileImage,
-            token = _jwtService.GenerateJwtToken(user.UserId.ToString()),
-            skills = user.Skills
-        });
+        return Ok(_jwtService.GenerateJwtToken(user.UserId.ToString()));
     }
 }

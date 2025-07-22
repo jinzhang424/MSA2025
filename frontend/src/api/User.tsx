@@ -1,5 +1,6 @@
 import axios from "axios"
 import type { PasswordData, ProfileData } from "../components/dashboard/Settings"
+import type { User } from "../types/dashboard";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
@@ -43,4 +44,14 @@ export const updatePassword = async (passwordData: PasswordData, token: string) 
     });
     
     return res.data;
+}
+
+export const getUserProfile = async (token: string): Promise<User> => {
+    const res = await axios.get(`${API_BASE_URL}/api/User/GetUserProfile`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+
+    return res.data as User;
 }

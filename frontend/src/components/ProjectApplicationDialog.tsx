@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { FiSend } from 'react-icons/fi';
 import { useRef } from 'react';
 import SuccessDialog from './SuccessDialog';
-import { useSelector } from 'react-redux';
-import { type RootState } from '../store/store';
 import { sendApplication } from '../api/ProjectApplication';
 import { type ApplicationFormData } from '../api/ProjectApplication';
 import { toast, ToastContainer } from 'react-toastify';
 import SubmitButton from './buttons/SubmitButton';
 import { useMutation } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store/store';
 
 interface ProjectApplicationDialogProps {
     projectId: number,
@@ -21,8 +21,8 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
     const [formData, setFormData] = useState<ApplicationFormData>({
         coverMessage: '',
     });
+    const user = useSelector((state: RootState) => state.user);
     const dialogRef = useRef<HTMLDivElement>(null);
-    const user = useSelector((state: RootState) => state.user)
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -33,7 +33,7 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
     };
 
     const sendApplicationMutate = useMutation({
-        mutationFn: () => sendApplication(formData, projectId, user.token),
+        mutationFn: (token: string) => sendApplication(formData, projectId, token),
         onError: (e: any) => {
             toast.error(e.response?.data || "Unknown error occurred while sending application");
             console.error("Error while sending application", e);
@@ -45,7 +45,8 @@ const ProjectApplicationDialog = ({projectId, projectTitle} : ProjectApplication
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        sendApplicationMutate.mutate();
+
+        sendApplicationMutate.mutate(user.token);
     };
 
     const openDialog = () => {

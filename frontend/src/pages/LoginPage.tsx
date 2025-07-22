@@ -3,13 +3,14 @@ import { Link } from 'react-router';
 import { RiLoginBoxLine } from 'react-icons/ri';
 import BackLink from '../components/BackLink';
 import { login } from '../api/Auth';
-import { useDispatch } from 'react-redux';
-import { setCredentials } from '../store/userSlice';
 import { useNavigate } from 'react-router';
 import SubmitButton from '../components/buttons/SubmitButton';
 import { toast, ToastContainer } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
 import TextInput from '../components/inputs/TextInput';
+import { getUserProfile } from '../api/User';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../store/userSlice';
 
 interface LoginFormData {
     email: string;
@@ -25,8 +26,8 @@ const LoginPage = () => {
         email: '',
         password: '',
     });
-    const dispatch = useDispatch()
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     /**
      * Adjusts the formData state when user changes the input values
@@ -46,10 +47,16 @@ const LoginPage = () => {
      */
     const mutation = useMutation({
         mutationFn: login,
-        onSuccess: (user) => {
-            dispatch(setCredentials({
-                ...user
-            }));
+        onSuccess: async (token) => {
+            localStorage.setItem('jwtToken', token);
+
+            const user = await getUserProfile(token);
+
+            // Setting the user's token since getUserProfile doesn't return a user token
+            user.token = token;
+            dispatch(setCredentials(
+                user
+            ))
 
             navigate("/dashboard")
         },
