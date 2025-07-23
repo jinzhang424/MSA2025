@@ -20,7 +20,11 @@ COPY .env ./.env
 # This stage is used for development of the frontend application. It sets 
 # the default command to start the Vite development server.
 ###################################################
-FROM frontend-base AS frontend-dev
+FROM node:20 AS frontend-dev
+WORKDIR /app
+COPY package.json ./
+RUN npm install
+COPY . .
 CMD ["npm", "run", "dev"]
 
 ###################################################
