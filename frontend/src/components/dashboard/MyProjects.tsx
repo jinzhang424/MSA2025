@@ -8,6 +8,8 @@ import { getUserProjectCardData, type UserProjectCardProps } from '../../api/Pro
 import SpinnerLoader from '../loaders/SpinnerLoader';
 import { ToastContainer } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
+import { setActiveTab } from '../../store/dashboardSlice';
 
 interface MyProjectsProps {
     user: User;
@@ -20,6 +22,7 @@ const MyProjects = ({ user }: MyProjectsProps) => {
     const [filter, setFilter] = useState<'All' | 'Active' | 'Completed' | 'cancelled'>('All');
     const [selectedProject, setSelectedProject] = useState<UserProjectCardProps | null>(null);
     const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
+    const dispatch = useDispatch();
 
     const {
         data: myProjects = [],
@@ -65,13 +68,13 @@ const MyProjects = ({ user }: MyProjectsProps) => {
                     <h2 className="text-xl font-semibold text-gray-900">My Projects</h2>
                     <p className="text-gray-600 mt-1">Projects you've created and are managing</p>
                 </div>
-                <Link
-                    to="/create-project"
+                <button
+                    onClick={() => dispatch(setActiveTab('create-project'))}
                     className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-purple-950 text-white rounded-lg hover:bg-purple-900 transition-colors"
                 >
                     <FiPlus size={16} className="mr-2" />
                     Create New Project
-                </Link>
+                </button>
             </div>
 
             {/* Filters */}
