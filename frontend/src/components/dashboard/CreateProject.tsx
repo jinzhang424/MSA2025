@@ -102,7 +102,7 @@ const CreateProject = () => {
             </div>
 
             {/* Create Project */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mt-8">
+            <div className="bg-white rounded-lg border-gray-200 p-6 mt-8">
 
                 <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
                 <form onSubmit={handleSubmit}>
