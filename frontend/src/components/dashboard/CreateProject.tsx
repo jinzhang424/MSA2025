@@ -254,7 +254,7 @@ const CreateProject = () => {
 
                                         <button 
                                             type="button" 
-                                            className="ml-2 text-purple-800 hover:text-purple-900" 
+                                            className="ml-2 text-purple-800 hover:text-purple-900 cursor-pointer" 
                                             onClick={() => removeSkill(skill)}
                                         >
                                             <IoClose className="h-4 w-4" />
