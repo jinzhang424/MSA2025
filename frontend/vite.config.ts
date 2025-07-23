@@ -10,6 +10,9 @@ export default defineConfig({
     proxy: {
       '/chathub': 'http://backend:5152',
       '/api': 'http://backend:5152',
-    }
+    },
+    watch: {
+      usePolling: true, // Enable polling for file changes
+    },
   }
 });

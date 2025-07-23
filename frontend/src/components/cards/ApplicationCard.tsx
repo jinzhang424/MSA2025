@@ -121,14 +121,16 @@ const ApplicationCard = ({
                         </div>
                     )}
                     
-                    <div className="grid lg:grid-cols-2 lg:grid-rows-1 grid-rows-2">
+                    <div className="grid items-center lg:grid-cols-2 lg:grid-rows-1 grid-rows-2">
                         {/* Date applied */}
                         <span className="text-sm text-gray-500">
                             Applied {dateApplied}
                         </span>
 
                         {/* Application actions */}
-                        {actions}
+                        <div className="flex justify-end">
+                            {actions}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -102,7 +102,7 @@ const CreateProject = () => {
             </div>
 
             {/* Create Project */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mt-8">
+            <div className="bg-white rounded-lg border-gray-200 p-6 mt-8">
 
                 <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
                 <form onSubmit={handleSubmit}>
@@ -249,12 +249,12 @@ const CreateProject = () => {
                             {/* Skills Tags */}
                             <div className="flex flex-wrap gap-2 mt-2">
                                 {formData.skills.map((skill, index) => 
-                                    <div key={index} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full flex items-center">
+                                    <div key={index} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-md flex items-center">
                                         <span>{skill}</span>
 
                                         <button 
                                             type="button" 
-                                            className="ml-2 text-purple-800 hover:text-purple-900" 
+                                            className="ml-2 text-purple-800 hover:text-purple-900 cursor-pointer" 
                                             onClick={() => removeSkill(skill)}
                                         >
                                             <IoClose className="h-4 w-4" />
