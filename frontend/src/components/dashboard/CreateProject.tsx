@@ -249,7 +249,7 @@ const CreateProject = () => {
                             {/* Skills Tags */}
                             <div className="flex flex-wrap gap-2 mt-2">
                                 {formData.skills.map((skill, index) => 
-                                    <div key={index} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full flex items-center">
+                                    <div key={index} className="bg-purple-100 text-purple-800 px-3 py-1 rounded-md flex items-center">
                                         <span>{skill}</span>
 
                                         <button 
