@@ -164,7 +164,7 @@ const Applications = ({ user }: ApplicationsProps) => {
                                         actions={
                                             <Link
                                                 to={`/project/${application.projectId}`}
-                                                className="flex items-center bg-purple-950 hover:bg-purple-800 font-semibold px-4 py-2 rounded-md text-gray-100"
+                                                className="flex items-center bg-purple-950 hover:bg-purple-800 font-semibold px-4 py-2 rounded-md text-gray-100 justify-center w-fit self-end"
                                             >
                                                 <FiEye size={16} className="mr-2 mt-0.5" />
                                                 View Project

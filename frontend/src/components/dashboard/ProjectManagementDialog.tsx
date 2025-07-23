@@ -242,7 +242,7 @@ const ProjectManagementDialog = ({ project, isOpen, onClose }: ProjectManagement
                                             coverMessage={applicant.message}
                                             dateApplied={formatDate(applicant.dateApplied)}
                                             actions={
-                                                <div className="flex items-center space-x-2 ml-4 font-semibold">
+                                                <div className="flex items-center space-x-2 ml-4 font-semibold justify-end">
                                                     <BGFadeButton
                                                         onClick={() => handleAcceptApplicant(applicant.userId)}
                                                         className="px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 transition-colors"
