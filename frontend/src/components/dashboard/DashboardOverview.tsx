@@ -6,6 +6,7 @@ import { getNotifications } from '../../api/Notifications';
 import { toast, ToastContainer } from 'react-toastify';
 import SpinnerLoader from '../loaders/SpinnerLoader';
 import { useQuery } from '@tanstack/react-query';
+import StateDisplay from '../StateDisplay';
 
 interface DashboardOverviewProps {
     user: User;
@@ -33,7 +34,6 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
     })
 
     if (isStatsError) {
-        toast.success(statsError.message)
         console.error(statsError)
     }
     
@@ -52,7 +52,6 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
     })
 
     if (isRecentAppsError) {
-        toast.error(recentAppsError.message)
         console.error('Error fetching your applications:', recentAppsError);
     }
     
@@ -162,44 +161,50 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     </div>
                     <div className="p-6">
                         <div className="space-y-4">
-                            {recentApplications.length === 0 ? (
-                                <div className="text-center text-gray-400">No applications found.</div>
-                            ) : recentApplications.map((application) => (
-                                <div key={application.id} className="flex items-start space-x-3">
-                                    <img 
-                                        className='w-24'
-                                        src={application.projectImageUrl || "project-img-replacement.png"} 
-                                        alt={application.projectName} 
-                                    />  
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center justify-between">
-                                            <h4 className="text-sm font-medium text-gray-900">
-                                                Applied to: {application.projectName}
-                                            </h4>
-                                            <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-                                                application.status === 'Pending' ? 'bg-yellow-100 text-orange-700' :
-                                                application.status === 'Accepted' ? 'bg-green-100 text-green-700' :
-                                                'bg-red-100 text-red-800'
-                                            }`}>
-                                                {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
-                                            </span>
-                                        </div>
-                                        <div className={`flex flex-wrap gap-1 mt-2 ${application.skills.length === 0 && "hidden"}`}>
-                                            {application.skills.slice(0, 2).map((skill) => (
-                                                <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                                    {skill}
+                            <StateDisplay 
+                                isLoading={isRecentAppsLoading} 
+                                isError={isRecentAppsError} 
+                                errorMsg={recentAppsError?.message || "Unknown error occurred while loading recent appliations."}
+                                isEmpty = {recentApplications.length === 0}
+                                emptyMsg='No applications found.'
+                            >
+                                {recentApplications.map((application) => (
+                                    <div key={application.id} className="flex items-start space-x-3">
+                                        <img 
+                                            className='w-24'
+                                            src={application.projectImageUrl || "project-img-replacement.png"} 
+                                            alt={application.projectName} 
+                                        />  
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center justify-between">
+                                                <h4 className="text-sm font-medium text-gray-900">
+                                                    Applied to: {application.projectName}
+                                                </h4>
+                                                <span className={`px-2 py-1 rounded-md text-xs font-medium ${
+                                                    application.status === 'Pending' ? 'bg-yellow-100 text-orange-700' :
+                                                    application.status === 'Accepted' ? 'bg-green-100 text-green-700' :
+                                                    'bg-red-100 text-red-800'
+                                                }`}>
+                                                    {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
                                                 </span>
-                                            ))}
-                                            {application.skills.length > 2 && (
-                                                <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                                                    +{application.skills.length - 2} more
-                                                </span>
-                                            )}
+                                            </div>
+                                            <div className={`flex flex-wrap gap-1 mt-2 ${application.skills.length === 0 && "hidden"}`}>
+                                                {application.skills.slice(0, 2).map((skill) => (
+                                                    <span key={skill} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                        {skill}
+                                                    </span>
+                                                ))}
+                                                {application.skills.length > 2 && (
+                                                    <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                                                        +{application.skills.length - 2} more
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-gray-500 mt-2">{application.time}</p>
                                         </div>
-                                        <p className="text-xs text-gray-500 mt-2">{application.time}</p>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </StateDisplay>
                         </div>
                     </div>
                 </div>
@@ -209,29 +214,31 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     <div className="p-6 border-b border-gray-200">
                         <h3 className="text-lg font-semibold text-gray-900">Recent Events</h3>
                     </div>
-                    {notifications.length === 0 ? (
-                        <div className="text-center text-gray-400 p-6">No recent events.</div>
-                    ) : (
-                        <div className="p-6">
-                            <div className="space-y-4">
-                                {notifications.map((notification) => (
-                                    <div key={notification.id} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                                        <div>
-                                            <h4 className="text-sm font-medium text-gray-900">
-                                                {notification.title}
-                                            </h4>
-                                            <p className='text-gray-500 text-sm'>{notification.content}   </p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-xs text-gray-500">
-                                                {new Date(notification.createdAt).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
+                    <div className="p-6 space-y-4">
+                        <StateDisplay
+                            isLoading={true} 
+                            isError={isNotifsError} 
+                            errorMsg={errorNotifs?.message || "Unknown error while loading recent activity"}
+                            isEmpty = {notifications.length === 0}
+                            emptyMsg='No recent events.'
+                        >
+                        {notifications.map((notification) => (
+                            <div key={notification.id} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                                <div>
+                                    <h4 className="text-sm font-medium text-gray-900">
+                                        {notification.title}
+                                    </h4>
+                                    <p className='text-gray-500 text-sm'>{notification.content}   </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xs text-gray-500">
+                                        {new Date(notification.createdAt).toLocaleDateString()}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        ))}
+                        </StateDisplay>
+                    </div>
                 </div>
             </div>
         </div>
