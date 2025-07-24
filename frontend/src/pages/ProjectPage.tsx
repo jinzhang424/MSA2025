@@ -1,8 +1,7 @@
-import { useParams, useNavigate } from 'react-router';
+import { useParams } from 'react-router';
 import { LuClock4 } from "react-icons/lu";
 import { FiUsers } from "react-icons/fi";
 // import { FaRegMessage } from "react-icons/fa6";
-import { BsArrowLeft } from "react-icons/bs";
 import ProjectApplicationDialog from '../components/ProjectApplicationDialog';
 import { getProject } from '../api/Project';
 import { useSelector } from 'react-redux';
@@ -14,7 +13,6 @@ import BackButton from '../components/buttons/BackButton';
 const ProjectPage = () => {
     const { id } = useParams<{ id: string; }>();
     const user = useSelector((state: RootState) => state.user);
-    const navigate = useNavigate();
 
     const {data: project, isLoading} = useQuery({
         queryKey: ['getProject', id],
