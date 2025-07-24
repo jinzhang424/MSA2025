@@ -46,7 +46,7 @@ const ProjectCard: FC<ProjectCardProps> = ({
         </div>
         
         {/* Spots left and deadline */}
-        <div className="flex justify-between items-center text-sm text-gray-500 mb-4 mt-3">
+        <div className="flex justify-between flex-wrap gap-4 items-center text-sm text-gray-500 mb-4 mt-3">
           {/* Spots left */}
           <div className="flex items-center">
             <LuUsers className="h-4 w-4 mr-1" />
