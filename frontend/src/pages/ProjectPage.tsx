@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import { LuClock4 } from "react-icons/lu";
 import { FiUsers } from "react-icons/fi";
 // import { FaRegMessage } from "react-icons/fa6";
@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { type RootState } from '../store/store';
 import { FaRegFaceDizzy } from "react-icons/fa6";
 import { useQuery } from '@tanstack/react-query';
+import BackButton from '../components/buttons/BackButton';
 
 const ProjectPage = () => {
     const { id } = useParams<{ id: string; }>();
@@ -42,10 +43,7 @@ const ProjectPage = () => {
                         The project you're looking for doesn't exist or has been removed.
                     </p>
 
-                    <button onClick={() => navigate(-1)} className="inline-flex items-center text-purple-navy hover:text-purple-950 cursor-pointer">
-                        <BsArrowLeft className="group-hover:-translate-x-1 duration-300 h-4 w-4 mr-2" />
-                        Back
-                    </button>
+                    <BackButton/>
                 </div>
             </div>
         )
@@ -57,11 +55,7 @@ const ProjectPage = () => {
             <div className="max-w-5xl mx-auto">
                 {/* Breadcrumb */}
                 <div className="mb-6">
-                <Link to="/discover-projects" className="group inline-flex items-center text-gray-600 hover:text-navy">
-                    <BsArrowLeft className="group-hover:-translate-x-2 duration-300 h-4 w-4" />
-                    <p className='ml-2'>Back to projects</p>
-                </Link>
-
+                    <BackButton/>
                 </div>
                 {/* Project Header */}
                 <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
