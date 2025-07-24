@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router';
+import { useParams, Link, useNavigate } from 'react-router';
 import { LuClock4 } from "react-icons/lu";
 import { FiUsers } from "react-icons/fi";
 // import { FaRegMessage } from "react-icons/fa6";
@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 const ProjectPage = () => {
     const { id } = useParams<{ id: string; }>();
     const user = useSelector((state: RootState) => state.user);
+    const navigate = useNavigate();
 
     const {data: project, isLoading} = useQuery({
         queryKey: ['getProject', id],
@@ -41,10 +42,10 @@ const ProjectPage = () => {
                         The project you're looking for doesn't exist or has been removed.
                     </p>
 
-                    <Link to="/discover-projects" className="inline-flex items-center text-purple-navy hover:text-purple-950">
+                    <button onClick={() => navigate(-1)} className="inline-flex items-center text-purple-navy hover:text-purple-950 cursor-pointer">
                         <BsArrowLeft className="group-hover:-translate-x-1 duration-300 h-4 w-4 mr-2" />
-                        Back to projects
-                    </Link>
+                        Back
+                    </button>
                 </div>
             </div>
         )
