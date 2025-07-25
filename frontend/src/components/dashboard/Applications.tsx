@@ -21,6 +21,8 @@ interface ApplicationsProps {
 
 const Applications = ({ user }: ApplicationsProps) => {
     const [activeTab, setActiveTab] = useState<'outgoing' | 'incoming'>('outgoing');
+    const [acceptingIds, setAcceptingIds] = useState({ applicantId: 0, projectId: 0});
+    const [rejectIds, setRejectingIds] = useState({ applicantId: 0, projectId: 0 });
 
     // Getting outgoing applications
     const {
@@ -80,8 +82,10 @@ const Applications = ({ user }: ApplicationsProps) => {
 
     const handleApplicationAction = async (applicantId: number, projectId: number, action: 'accept' | 'reject') => {
         if (action == 'accept') {
+            setAcceptingIds({ applicantId, projectId })
             acceptMutation.mutate({applicantId, projectId, token: user.token});
         } else {
+            setRejectingIds({ applicantId, projectId })
             rejectMutation.mutate({applicantId, projectId, token: user.token});
         }
     };
@@ -194,14 +198,22 @@ const Applications = ({ user }: ApplicationsProps) => {
                                         <BGFadeButton
                                             onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'accept')}
                                             className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
-                                            isLoading={acceptMutation.isPending}
+                                            isLoading={
+                                                acceptMutation.isPending && 
+                                                acceptingIds.applicantId === application.applicant.userId &&
+                                                acceptingIds.projectId === application.projectId
+                                            }
                                         >
                                             Accept
                                         </BGFadeButton>
                                         <BGFadeButton
                                             onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'reject')}
                                             className="px-3 py-1 text-sm border-2 border-red-700 text-red-700 rounded hover:bg-red-700 hover:text-gray-50 transition-colors font-semibold"
-                                            isLoading={rejectMutation.isPending}
+                                            isLoading={
+                                                rejectMutation.isPending &&
+                                                rejectIds.applicantId === application.applicant.userId &&
+                                                rejectIds.projectId === application.projectId
+                                            }
                                         >
                                             Reject
                                         </BGFadeButton>
