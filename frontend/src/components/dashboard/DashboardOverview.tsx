@@ -7,6 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import SpinnerLoader from '../loaders/SpinnerLoader';
 import { useQuery } from '@tanstack/react-query';
 import StateDisplay from '../StateDisplay';
+import type { ReactNode } from 'react';
 
 interface DashboardOverviewProps {
     user: User;
@@ -101,56 +102,48 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* My Projects */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <div className="flex items-center">
+                <StatCard 
+                    val={stats.myProjects}
+                    label='My Projects'
+                    icon= {
                         <div className="p-3 rounded-full bg-blue-100 text-blue-600">
                             <FiFolder size={24} />
                         </div>
-                        <div className="ml-4">
-                            <h3 className="text-sm font-medium text-gray-500">My Projects</h3>
-                            <p className="text-2xl font-bold text-gray-900">{stats.myProjects}</p>
-                        </div>
-                    </div>
-                </div>
+                    }
+                />
 
                 {/* Joined Projects */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <div className="flex items-center">
+                <StatCard 
+                    val={stats.joinedProjects}
+                    label='Joined Projects'
+                    icon= {
                         <div className="p-3 rounded-full bg-green-100 text-green-600">
                             <FiUsers size={24} />
                         </div>
-                        <div className="ml-4">
-                            <h3 className="text-sm font-medium text-gray-500">Joined Projects</h3>
-                            <p className="text-2xl font-bold text-gray-900">{stats.joinedProjects}</p>
-                        </div>
-                    </div>
-                </div>
+                    }
+                />
 
                 {/* Pending Apps */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <div className="flex items-center">
+                <StatCard 
+                    val={stats.pendingApplications}
+                    label='Pending Apps'
+                    icon= {
                         <div className="p-3 rounded-full bg-yellow-100 text-yellow-600">
                             <FiFileText size={24} />
                         </div>
-                        <div className="ml-4">
-                            <h3 className="text-sm font-medium text-gray-500">Pending Apps</h3>
-                            <p className="text-2xl font-bold text-gray-900">{stats.pendingApplications}</p>
-                        </div>
-                    </div>
-                </div>
+                    }
+                />
 
                 {/* Completed */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <div className="flex items-center">
+                <StatCard 
+                    val={stats.completedProjects}
+                    label='Completed'
+                    icon= {
                         <div className="p-3 rounded-full bg-purple-100 text-purple-600">
                             <FiTrendingUp size={24} />
                         </div>
-                        <div className="ml-4">
-                            <h3 className="text-sm font-medium text-gray-500">Completed</h3>
-                            <p className="text-2xl font-bold text-gray-900">{stats.completedProjects}</p>
-                        </div>
-                    </div>
-                </div>
+                    }
+                />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -216,7 +209,7 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
                     </div>
                     <div className="p-6 space-y-4">
                         <StateDisplay
-                            isLoading={true} 
+                            isLoading={isNotifsLoading} 
                             isError={isNotifsError} 
                             errorMsg={errorNotifs?.message || "Unknown error while loading recent activity"}
                             isEmpty = {notifications.length === 0}
@@ -244,5 +237,25 @@ const DashboardOverview = ({ user }: DashboardOverviewProps) => {
         </div>
     );
 };
+
+interface StatCardProps {
+    val: number
+    label: string
+    icon: ReactNode
+}
+const StatCard = ({ val, label, icon } : StatCardProps) => {
+    return (
+        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+            <div className="flex items-center">
+                {icon}
+
+                <div className="ml-4">
+                    <h3 className="text-sm font-medium text-gray-500">{label}</h3>
+                    <p className="text-2xl font-bold text-gray-900">{val}</p>
+                </div>
+            </div>
+        </div>
+    )
+}
 
 export default DashboardOverview;
