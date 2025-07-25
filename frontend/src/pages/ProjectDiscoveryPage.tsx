@@ -8,7 +8,7 @@ import { getProjectCardData } from '../api/Project';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store/store';
 import { useQuery } from '@tanstack/react-query';
-import { toast } from 'react-toastify';
+import StateDisplay from '../components/StateDisplay';
 
 const CATEGORIES = ['All', 'Software Development', 'Web Design', 'Mobile App', 'Graphic Design', 'UI/UX', 'Data Science', 'Game Development'];
 
@@ -37,7 +37,7 @@ const DiscoverProjects = ({isDashboardView = false}: DiscoverProjectsProps) => {
     })
 
     if (isError) {
-        toast.error(error.message || "Unknown error occurred while getting projects")
+        console.error("Error while getting projects", error);
     }
 
     /**
@@ -120,22 +120,26 @@ const DiscoverProjects = ({isDashboardView = false}: DiscoverProjectsProps) => {
 
             {/* Results count */}
             <div className="mb-6 flex justify-between items-center">
-            <p className="text-gray-600 font-semibold">
-                {filteredProjects.length}{' '}
-                {filteredProjects.length === 1 ? 'project' : 'projects'} found
-            </p>
+                <p className="text-gray-600 font-semibold">
+                    {filteredProjects.length}{' '}
+                    {filteredProjects.length === 1 ? 'project' : 'projects'} found
+                </p>
             </div>
 
             {/* Project Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {isPending ? (
-                    <div className="col-span-full text-center py-12 text-gray-500">Loading projects...</div>
-                ) : (
-                    filteredProjects.map(project => 
+            <StateDisplay 
+                isLoading={isPending} 
+                isError={isError} 
+                errorMsg='Error occurred while loading projects.'
+                isEmpty={filteredProjects.length == 0}
+                emptyMsg='No projects were found.'
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filteredProjects.map(project => 
                         <ProjectCard key={project.projectId} {...project} />
-                    )
-                )}
-            </div>
+                    )}
+                </div>
+            </StateDisplay>
 
             {/* Empty state */}
             {!isPending && filteredProjects.length === 0 && <div className="text-center py-16">

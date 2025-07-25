@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiEye, FiUser } from 'react-icons/fi';
+import { FiEye } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
 import { 
@@ -8,12 +8,12 @@ import {
     rejectUserApplication, 
     acceptUserApplication 
 } from '../../api/ProjectApplication';
-import SpinnerLoader from '../loaders/SpinnerLoader';
 import { toast, ToastContainer } from 'react-toastify';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import ProfileImage from '../ProfileImage';
 import BGFadeButton from '../buttons/BGFadeButton';
 import ApplicationCard from '../cards/ApplicationCard';
+import StateDisplay from '../StateDisplay';
 
 interface ApplicationsProps {
     user: User;
@@ -21,6 +21,8 @@ interface ApplicationsProps {
 
 const Applications = ({ user }: ApplicationsProps) => {
     const [activeTab, setActiveTab] = useState<'outgoing' | 'incoming'>('outgoing');
+    const [acceptingIds, setAcceptingIds] = useState({ applicantId: 0, projectId: 0});
+    const [rejectIds, setRejectingIds] = useState({ applicantId: 0, projectId: 0 });
 
     // Getting outgoing applications
     const {
@@ -80,8 +82,10 @@ const Applications = ({ user }: ApplicationsProps) => {
 
     const handleApplicationAction = async (applicantId: number, projectId: number, action: 'accept' | 'reject') => {
         if (action == 'accept') {
+            setAcceptingIds({ applicantId, projectId })
             acceptMutation.mutate({applicantId, projectId, token: user.token});
         } else {
+            setRejectingIds({ applicantId, projectId })
             rejectMutation.mutate({applicantId, projectId, token: user.token});
         }
     };
@@ -122,112 +126,103 @@ const Applications = ({ user }: ApplicationsProps) => {
             </div>
 
             {/* Content */}
-            {isOutgoingLoading || isIncomingLoading ? (
-                <SpinnerLoader className='flex mt-12 justify-center w-full'>
-                    Loading applications...
-                </SpinnerLoader>
-            ) : (
-                <>
-                    {activeTab === 'outgoing' ? (
-                        <div className="space-y-4">
-                            {/* Outgoing applications results */}
-                            {outgoingApplications.length === 0 ? (
-                                <div className="text-center py-12">
-                                    <FiUser size={48} className="mx-auto text-gray-400 mb-4" />
-                                    <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
-                                    <p className="text-gray-600 mb-6">You haven't applied to any projects yet.</p>
-                                    <Link
-                                        to="/projects"
-                                        className="inline-flex items-center px-4 py-2 bg-purple-950 text-white rounded-lg hover:bg-purple-900 transition-colors"
-                                    >
-                                        Discover Projects
-                                    </Link>
-                                </div>
-                            ) : (
-                                // Outgoing appliations
-                                outgoingApplications.map((application, i) => (
-                                    <ApplicationCard
-                                        key={i}
-                                        image={
-                                            <img
-                                                src={application.image || "project-img-replacement.png"}
-                                                alt={application.title}
-                                                className="w-16 h-16 rounded-lg object-cover"
-                                            />
-                                        }
-                                        header={application.title}
-                                        subheader={application.description}
-                                        status={application.status}
-                                        skills={application.skills}
-                                        coverMessage={application.coverMessage}
-                                        dateApplied={application.dateApplied}
-                                        actions={
-                                            <Link
-                                                to={`/project/${application.projectId}`}
-                                                className="flex items-center bg-purple-950 hover:bg-purple-800 font-semibold px-4 py-2 rounded-md text-gray-100 justify-center w-fit self-end"
-                                            >
-                                                <FiEye size={16} className="mr-2 mt-0.5" />
-                                                View Project
-                                            </Link>
-                                        }
+            {activeTab === 'outgoing' ? (
+                <div className="space-y-4">
+                    <StateDisplay
+                        isLoading={isOutgoingLoading}
+                        isError={isOutgoingError}
+                        errorMsg='Error while getting your outgoing applications.'
+                        isEmpty={outgoingApplications.length === 0}
+                        emptyMsg='You have no outgoing applications yet.'
+                    >
+                        {outgoingApplications.map((application, i) => (
+                            <ApplicationCard
+                                key={i}
+                                image={
+                                    <img
+                                        src={application.image || "project-img-replacement.png"}
+                                        alt={application.title}
+                                        className="w-16 h-16 rounded-lg object-cover"
                                     />
-                                ))
-                            )}
-                        </div>
-                    ) : (
-                        <div className="space-y-4">
-                            {/* No incoming applications */}
-                            {incomingApplications.length === 0 ? (
-                                <div className="text-center py-12">
-                                    <FiUser size={48} className="mx-auto text-gray-400 mb-4" />
-                                    <h3 className="text-lg font-medium text-gray-900 mb-2">No applications received</h3>
-                                    <p className="text-gray-600">No one has applied to your projects yet.</p>
-                                </div>
-                            ) : (
-                                // Incoming applications
-                                incomingApplications.map((application, i) => (
-                                    <ApplicationCard
-                                        key={i}
-                                        image={
-                                            <ProfileImage 
-                                                profileImage={application.applicant.profilePicture}
-                                                firstName={application.applicant.firstName}
-                                                lastName={application.applicant.lastName}
-                                            />
-                                        }
+                                }
+                                header={application.title}
+                                subheader={application.description}
+                                status={application.status}
+                                skills={application.skills}
+                                coverMessage={application.coverMessage}
+                                dateApplied={application.dateApplied}
+                                actions={
+                                    <Link
+                                        to={`/project/${application.projectId}`}
+                                        className="flex items-center bg-purple-950 hover:bg-purple-800 font-semibold px-4 py-2 rounded-md text-gray-100 justify-center w-fit self-end"
+                                    >
+                                        <FiEye size={16} className="mr-2 mt-0.5" />
+                                        View Project
+                                    </Link>
+                                }
+                            />
+                        ))}
+                    </StateDisplay>
+                </div>
+            ) : (
+                <div className="space-y-4">
+                    <StateDisplay
+                        isLoading={isIncomingLoading}
+                        isError={isIncomingError}
+                        errorMsg='Error while getting your incoming applications.'
+                        isEmpty={incomingApplications.length === 0}
+                        emptyMsg='You have no incoming applications yet.'
+                    >
+                        {/* No incoming applications */}
+                        {incomingApplications.map((application, i) => (
+                            <ApplicationCard
+                                key={i}
+                                image={
+                                    <ProfileImage 
+                                        profileImage={application.applicant.profilePicture}
                                         firstName={application.applicant.firstName}
                                         lastName={application.applicant.lastName}
-                                        header={`${application.applicant.firstName} ${application.applicant.lastName}`}
-                                        subheader={application.applicant.email}
-                                        status={application.status}
-                                        appliedTo={application.projectTitle}
-                                        skills={application.applicant.skills}
-                                        coverMessage={application.coverMessage}
-                                        dateApplied={application.dateApplied}
-                                        actions={
-                                            <div className='flex lg:space-x-3 lg:justify-end justify-between lg:fit w-full'>
-                                                <BGFadeButton
-                                                    onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'accept')}
-                                                    className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
-                                                    isLoading={acceptMutation.isPending}
-                                                >
-                                                    Accept
-                                                </BGFadeButton>
-                                                <BGFadeButton
-                                                    onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'reject')}
-                                                    className="px-3 py-1 text-sm border-2 border-red-700 text-red-700 rounded hover:bg-red-700 hover:text-gray-50 transition-colors font-semibold"
-                                                    isLoading={rejectMutation.isPending}
-                                                >
-                                                    Reject
-                                                </BGFadeButton>
-                                            </div>
-                                        }
                                     />
-                                ))
-                            )}
-                        </div>
-                    )}
-                </>
+                                }
+                                firstName={application.applicant.firstName}
+                                lastName={application.applicant.lastName}
+                                header={`${application.applicant.firstName} ${application.applicant.lastName}`}
+                                subheader={application.applicant.email}
+                                status={application.status}
+                                appliedTo={application.projectTitle}
+                                skills={application.applicant.skills}
+                                coverMessage={application.coverMessage}
+                                dateApplied={application.dateApplied}
+                                actions={
+                                    <div className='flex lg:space-x-3 lg:justify-end justify-between lg:fit w-full'>
+                                        <BGFadeButton
+                                            onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'accept')}
+                                            className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors font-semibold"
+                                            isLoading={
+                                                acceptMutation.isPending && 
+                                                acceptingIds.applicantId === application.applicant.userId &&
+                                                acceptingIds.projectId === application.projectId
+                                            }
+                                        >
+                                            Accept
+                                        </BGFadeButton>
+                                        <BGFadeButton
+                                            onClick={() => handleApplicationAction(application.applicant.userId, application.projectId, 'reject')}
+                                            className="px-3 py-1 text-sm border-2 border-red-700 text-red-700 rounded hover:bg-red-700 hover:text-gray-50 transition-colors font-semibold"
+                                            isLoading={
+                                                rejectMutation.isPending &&
+                                                rejectIds.applicantId === application.applicant.userId &&
+                                                rejectIds.projectId === application.projectId
+                                            }
+                                        >
+                                            Reject
+                                        </BGFadeButton>
+                                    </div>
+                                }
+                            />
+                        ))}
+                    </StateDisplay>
+                </div>
             )}
         </div>
     );

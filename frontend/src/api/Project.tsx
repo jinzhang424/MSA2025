@@ -1,5 +1,4 @@
 import axios from "axios"
-import { toast } from "react-toastify";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
@@ -177,19 +176,13 @@ export interface ProjectMemberData {
  * @returns a list of project member data
  */
 export const getProjectMembers = async (projectId: number, token: string): Promise<ProjectMemberData[]> => {
-    try {
-        const res = await axios.get(`${API_BASE_URL}/api/Project/GetProjectMembers/${projectId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+    const res = await axios.get(`${API_BASE_URL}/api/Project/GetProjectMembers/${projectId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 
-        return res.data as ProjectMemberData[];
-    } catch (e: any) {
-        console.error(e);
-        toast.error(e.response?.data || "Unknown error occurred while getting project members.");
-        return [];
-    }
+    return res.data as ProjectMemberData[];
 }
 
 interface ProjectActionParam {
