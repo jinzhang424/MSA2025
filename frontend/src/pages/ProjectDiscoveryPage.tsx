@@ -33,7 +33,8 @@ const DiscoverProjects = ({isDashboardView = false}: DiscoverProjectsProps) => {
      */
     const {isPending, isError, data, error} = useQuery({ 
         queryKey: ['projects', user.token], 
-        queryFn: () => getProjectCardData(user.token)
+        queryFn: () => getProjectCardData(user.token),
+        retry: false
     })
 
     if (isError) {
@@ -140,29 +141,6 @@ const DiscoverProjects = ({isDashboardView = false}: DiscoverProjectsProps) => {
                     )}
                 </div>
             </StateDisplay>
-
-            {/* Empty state */}
-            {!isPending && filteredProjects.length === 0 && <div className="text-center py-16">
-                <div className="text-gray-400 mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-
-                <h3 className="text-xl font-medium mb-2 text-navy">No projects found</h3>
-                <p className="text-gray-500 mb-4">
-                    Try adjusting your search or filter criteria to find more projects.
-                </p>
-
-                <button 
-                    className="text-purple-950 hover:text-purple-700 font-semibold cursor-pointer" 
-                    onClick={() => { 
-                        setSearchQuery('');
-                        setSelectedCategory('All');
-                }}>
-                    Clear all filters
-                </button>
-            </div>}
         </div>
     )
 }
