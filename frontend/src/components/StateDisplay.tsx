@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { BsEmojiDizzy } from "react-icons/bs";
+import { PiEmptyLight } from "react-icons/pi";
 import Spinner from "./animation/Spinner";
 
 interface StateDisplayProps {
@@ -35,29 +36,30 @@ const StateDisplay = ({
 
     if (isLoading) {
         return (
-            <div className="flex justify-center gap-x-3 items-center text-gray-400 h-full">
+            <div className="flex justify-center gap-x-3 items-center text-gray-500 mx-auto my-auto">
                 <Spinner isLoading={true} />
                 <p>{!!loadingMsg ? loadingMsg : 'Loading...'}</p>
             </div>
         )
     } else if (isError) {
         return (
-            <div className="flex flex-col justify-center items-center text-gray-400 gap-y-1 text-center">
+            <div className="flex flex-col justify-center items-center mx-auto my-auto text-gray-500 gap-y-1 text-center">
                 <BsEmojiDizzy className="w-10 h-10"/>
                 <p>{errorMsg ? errorMsg : 'Oops! An unexpected has error occurred.'}</p>
             </div>
         )
     } else if (isEmpty) { 
         return (
-            <div className="mx-auto my-auto text-center text-gray-400">
-                {emptyMsg ? emptyMsg : 'Nothing was found'}
+            <div className="flex flex-col justify-center items-center gap-1 mx-auto my-auto text-center text-gray-500">
+                <PiEmptyLight className="w-10 h-10"/>
+                <p>{emptyMsg ? emptyMsg : 'Nothing was found'}</p>
             </div>
         )
     } else {
         return (
-            <div>
+            <>
                 {children}
-            </div>
+            </>
         )
     }
 }

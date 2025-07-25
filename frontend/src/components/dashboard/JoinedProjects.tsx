@@ -3,9 +3,9 @@ import { FiUsers, FiEye, FiLogOut } from 'react-icons/fi';
 import { Link } from 'react-router';
 import { type User } from '../../types/dashboard';
 import { getJoinedProjectsCardData, removeUserFromProject } from '../../api/Project';
-import SpinnerLoader from '../loaders/SpinnerLoader';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import StateDisplay from '../StateDisplay';
 
 interface JoinedProjectsProps {
     user: User;
@@ -22,18 +22,17 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
     // Getting the projects the user has joined
     const {
         data: joinedProjects = [], 
-        isLoading: isJoinedProjectsLoading,
-        isError: isJoinedProjectsError,
-        error: joinedProjectsError,
+        isLoading,
+        isError,
+        error,
         refetch: refetchJoinedProjects
     } = useQuery({
         queryKey: ["joinedProjects", user.token],
         queryFn: () => getJoinedProjectsCardData(user.token)
     })
 
-    if (isJoinedProjectsError) {
-        toast.error(joinedProjectsError.message || "Unknown error occurred while fetching joined projects");
-        console.error("Error occurred while fetching joined projects", joinedProjectsError);
+    if (isError) {
+        console.error("Error occurred while fetching joined projects", error);
     }
 
     const filteredProjects = joinedProjects.filter(member => 
@@ -114,12 +113,14 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
             </div>
 
             {/* Projects Grid */}
-            {isJoinedProjectsLoading ? (
-                <SpinnerLoader className='flex mt-12 justify-center w-full'>
-                    Loading joined projects...
-                </SpinnerLoader>
-            ) : (
-                <>
+            <div className='flex flex-1 w-full justify-center items-center'>
+                <StateDisplay
+                    isLoading={isLoading}
+                    isError={isError}
+                    errorMsg='Error while loading your joined projects.'
+                    isEmpty={filteredProjects.length == 0 || true}
+                    emptyMsg='You have not joined any projects or do not have any projects with this status.'
+                >
                     {filteredProjects.length === 0 ? (
                         <div className="text-center py-12">
                             <FiUsers size={48} className="mx-auto text-gray-400 mb-4" />
@@ -220,8 +221,8 @@ const JoinedProjects = ({ user }: JoinedProjectsProps) => {
                             })}
                         </div>
                     )}
-                </>
-            )}
+                </StateDisplay>
+            </div>
         </div>
     );
 };

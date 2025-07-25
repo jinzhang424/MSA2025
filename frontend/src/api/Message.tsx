@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { toast } from 'react-toastify';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
@@ -40,16 +39,10 @@ export const sendMessage = async (token: string, messageDto: MessageDto) => {
  * @param chatroomId The chatroom's id
  * @returns A list of messages or null
  */
-export const getChatroomMessages = async (token: string, chatroomId: number): Promise<Message[] | null> => {
-    try {
-        const res = await axios.get(`${API_BASE_URL}/api/Message/GetChatroomMessages/${chatroomId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+export const getChatroomMessages = async (token: string, chatroomId: number): Promise<Message[]> => {
+    const res = await axios.get(`${API_BASE_URL}/api/Message/GetChatroomMessages/${chatroomId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
 
-        return res.data as Message[];
-    } catch (e) {
-        toast.error("Error occured while loading messages");
-        console.error(e);
-        return null;
-    }
+    return res.data as Message[];
 }
